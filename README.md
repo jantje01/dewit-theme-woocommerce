@@ -1,4 +1,4 @@
-# Dewit Theme
+# De Wit Theme
 
 A custom WordPress theme with WooCommerce integration.
 
@@ -12,7 +12,7 @@ A custom WordPress theme with WooCommerce integration.
 ## Installation
 
 1. Upload this folder to `wp-content/themes/dewit-theme`.
-2. Activate **Dewit Theme** in WordPress.
+2. Activate **De Wit Theme** in WordPress.
 3. Install and activate WooCommerce.
 4. Configure menus, logo, homepage, and WooCommerce pages in the WordPress admin.
 
