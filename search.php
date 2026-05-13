@@ -1,6 +1,6 @@
 <?php
 /**
- * Main template file.
+ * Search results template.
  *
  * @package DewitTheme
  */
@@ -11,6 +11,17 @@ get_header();
 <main id="primary" class="site-main">
 	<div class="container content-layout">
 		<section class="content-area">
+			<header class="page-header">
+				<h1 class="page-title">
+					<?php
+					printf(
+						esc_html__( 'Search results for: %s', 'dewit-theme-woocommerce' ),
+						'<span>' . esc_html( get_search_query() ) . '</span>'
+					);
+					?>
+				</h1>
+			</header>
+
 			<?php
 			if ( have_posts() ) :
 				while ( have_posts() ) :
