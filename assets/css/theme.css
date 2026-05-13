@@ -403,14 +403,85 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product {
+	background: #fff;
+	border: 1px solid #d9dde3;
+	border-radius: 10px;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 	display: block !important;
 	float: none !important;
 	max-width: none !important;
 	min-width: 0 !important;
+	overflow: hidden;
 	width: 100% !important;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product > .e-con {
 	max-width: none !important;
 	width: 100% !important;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-element-4169925 {
+	align-items: center;
+	display: grid !important;
+	gap: 6px 18px;
+	grid-template-columns: 170px minmax(0, 1fr);
+	padding: 14px !important;
+	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-widget-image {
+	grid-column: 1;
+	grid-row: 1 / span 2;
+	margin: 0 !important;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product img {
+	aspect-ratio: 4 / 3;
+	height: auto;
+	max-height: 150px;
+	object-fit: contain;
+	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-widget-text-editor,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-widget-heading {
+	grid-column: 2;
+	margin: 0 !important;
+	min-width: 0;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-widget-text-editor {
+	color: #7b8794;
+	font-size: 0.88rem;
+	font-weight: 600;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-widget-text-editor p {
+	margin: 0;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-heading-title {
+	font-size: 1.08rem;
+	line-height: 1.25;
+	margin: 0;
+}
+
+@media (max-width: 560px) {
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-element-4169925 {
+		gap: 4px 12px;
+		grid-template-columns: 96px minmax(0, 1fr);
+		padding: 10px !important;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product img {
+		max-height: 92px;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-widget-text-editor {
+		font-size: 0.76rem;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-heading-title {
+		font-size: 0.88rem;
+	}
 }
