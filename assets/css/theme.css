@@ -407,11 +407,16 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 	border: 1px solid #d9dde3;
 	border-radius: 10px;
 	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-	display: block !important;
+	display: grid !important;
 	float: none !important;
+	gap: 6px 18px;
+	grid-template-columns: 170px minmax(0, 1fr);
+	grid-template-rows: auto auto;
+	align-items: center;
 	max-width: none !important;
 	min-width: 0 !important;
 	overflow: hidden;
+	padding: 14px;
 	width: 100% !important;
 }
 
@@ -420,9 +425,16 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 	width: 100% !important;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product > .e-con,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .e-con-boxed,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .e-con-inner,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .e-con-full {
+	display: contents !important;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-element-4169925 {
 	align-items: center;
-	display: grid !important;
+	display: contents !important;
 	gap: 6px 18px;
 	grid-template-columns: 170px minmax(0, 1fr);
 	padding: 14px !important;
@@ -471,6 +483,12 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 		gap: 4px 12px;
 		grid-template-columns: 96px minmax(0, 1fr);
 		padding: 10px !important;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product {
+		gap: 4px 12px;
+		grid-template-columns: 96px minmax(0, 1fr);
+		padding: 10px;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product img {
