@@ -7,7 +7,7 @@
 	--color-brand: #c43b24;
 	--color-brand-dark: #8f2718;
 	--color-accent: #1e6b5f;
-	--font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--font-body: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 	--container: 1180px;
 }
 
@@ -470,7 +470,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-widget-text-editor {
 	color: #9c9c9c;
-	font-family: Helvetica, Arial, sans-serif;
+	font-family: var(--font-body);
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 1.25;
@@ -482,7 +482,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-heading-title {
 	color: var(--color-ink);
-	font-family: Helvetica, Arial, sans-serif;
+	font-family: var(--font-body);
 	font-size: 12px;
 	font-weight: 600;
 	line-height: 1.25;
