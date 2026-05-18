@@ -512,6 +512,23 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-t
 	gap: 6px;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-heading-title,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .e-filter-item {
+	color: #fff;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-heading .elementor-heading-title {
+	color: rgba(255, 255, 255, 0.78);
+	font-family: var(--font-body);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 1.2;
+	margin: 0 0 14px;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-group {
 	width: 100%;
 }
@@ -520,14 +537,14 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-tri
 	align-items: center;
 	background: transparent;
 	border: 0;
-	color: inherit;
+	color: #fff;
 	cursor: pointer;
 	display: flex;
 	font: inherit;
 	font-weight: 700;
 	justify-content: space-between;
 	line-height: 1.2;
-	padding: 9px 0;
+	padding: 8px 0;
 	text-align: left;
 	width: 100%;
 }
@@ -560,6 +577,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-pan
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item {
+	color: rgba(255, 255, 255, 0.82);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.22;
 	opacity: 0.9;
 	padding: 6px 0 6px 10px;
 	position: relative;
@@ -567,7 +588,14 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-t
 	width: 100%;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item:hover,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item[aria-pressed="true"] {
+	color: #fff;
+	opacity: 1;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item::before {
+	background: currentColor;
 	content: "";
 	height: 1px;
 	left: 0;
