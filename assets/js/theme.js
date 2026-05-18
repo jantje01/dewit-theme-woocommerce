@@ -11,70 +11,149 @@
 }());
 
 (function () {
-	const groups = [
-		{
-			label: 'Steigermateriaal',
-			slugs: ['onderdelen', 'buiskoppelingen', 'tube-lock', 'steigerdoeken'],
-		},
-		{
-			label: 'Ondersteuningsmateriaal',
-			slugs: ['schroefstempels', 'duw-trekstempels', 'stut-alone'],
-		},
-		{
-			label: 'Afstandhouders',
-			slugs: [
-				'vezelbeton-afstandhouders',
-				'stelribben-en-steltegels',
-				'pe-buizen-en-konussen',
-				'vloerstrips-en-hoeklijsten',
-				'ringafstandhouders-afstandhouders',
-			],
-		},
-		{
-			label: 'Voegafdichting',
-			slugs: ['kimband', 'voegkit-en-mortel', 'noppenmatten'],
-		},
-		{
-			label: 'Transport en Opslag',
-			slugs: [
-				'stapelpallets-stapelpallets-en-opslag',
-				'stapelbakken',
-				'bouwhekpallets',
-				'kruiwagens-stapelpallets-en-opslag',
-				'kraancontainers',
-				'platowagens',
-			],
-		},
-		{
-			label: 'Bouwmachines',
-			slugs: ['betonmolens-bouwmachines'],
-		},
-		{
-			label: 'Bouwelektra',
-			slugs: ['verdeelkasten'],
-		},
-		{
-			label: 'PBM',
-			slugs: ['bouwhelmen', 'regenkleding'],
-		},
-		{
-			label: 'Bouwhekken',
-			slugs: ['bouwhekwielen'],
-		},
-	];
+	let categoryTreePromise = null;
+
+	function fetchCategoryTree() {
+		if (categoryTreePromise) {
+			return categoryTreePromise;
+		}
+
+		categoryTreePromise = fetch('/wp-json/wc/store/v1/products/categories', {
+			credentials: 'same-origin',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(function (response) {
+				if (!response.ok) {
+					throw new Error('Could not load product categories.');
+				}
+
+				return response.json();
+			})
+			.then(function (categories) {
+				return buildGroupsFromCategories(categories);
+			})
+			.catch(function () {
+				return [];
+			});
+
+		return categoryTreePromise;
+	}
+
+	function buildGroupsFromCategories(categories) {
+		const childrenByParent = new Map();
+		const categoryBySlug = new Map();
+
+		categories.forEach(function (category) {
+			categoryBySlug.set(category.slug, category);
+
+			if (!childrenByParent.has(category.parent)) {
+				childrenByParent.set(category.parent, []);
+			}
+
+			childrenByParent.get(category.parent).push(category);
+		});
+
+		childrenByParent.forEach(function (children) {
+			children.sort(function (a, b) {
+				return a.name.localeCompare(b.name, 'nl');
+			});
+		});
+
+		return (childrenByParent.get(0) || [])
+			.map(function (parent) {
+				return {
+					label: parent.name,
+					parentSlug: parent.slug,
+					slugs: getDescendantSlugs(parent.id, childrenByParent),
+					categoriesBySlug: categoryBySlug,
+				};
+			})
+			.filter(function (group) {
+				return group.slugs.length;
+			});
+	}
+
+	function getDescendantSlugs(parentId, childrenByParent) {
+		const children = childrenByParent.get(parentId) || [];
+
+		return children.flatMap(function (child) {
+			return [child.slug].concat(getDescendantSlugs(child.id, childrenByParent));
+		});
+	}
+
+	function getFilterParamName(filter) {
+		const widget = filter.closest('.elementor-widget-taxonomy-filter');
+		let loopId = '';
+		let taxonomy = 'product_cat';
+
+		if (widget) {
+			try {
+				const settings = JSON.parse(widget.getAttribute('data-settings') || '{}');
+				loopId = settings.selected_element || '';
+				taxonomy = settings.taxonomy || taxonomy;
+			} catch (error) {
+				loopId = '';
+			}
+		}
+
+		if (loopId) {
+			return 'e-filter-' + loopId + '-' + taxonomy;
+		}
+
+		const existingParam = Array.from(new URL(window.location.href).searchParams.keys())
+			.find(function (key) {
+				return key.indexOf('e-filter-') === 0 && key.indexOf('-' + taxonomy) > -1;
+			});
+
+		return existingParam || 'e-filter-' + taxonomy;
+	}
+
+	function createGeneratedFilterItem(category, filter) {
+		const item = document.createElement('button');
+		const filterParamName = getFilterParamName(filter);
+
+		item.className = 'e-filter-item dewit-generated-filter';
+		item.type = 'button';
+		item.setAttribute('data-filter', category.slug);
+		item.setAttribute('aria-pressed', String(isSlugActive(category.slug)));
+		item.textContent = category.name;
+
+		item.addEventListener('click', function () {
+			const url = new URL(window.location.href);
+			url.searchParams.set(filterParamName, category.slug);
+			url.searchParams.delete('product-page');
+			window.location.href = url.toString();
+		});
+
+		return item;
+	}
 
 	function isItemActive(item) {
-		const slug = item.getAttribute('data-filter');
+		return isSlugActive(item.getAttribute('data-filter')) ||
+			item.getAttribute('aria-pressed') === 'true';
+	}
+
+	function isSlugActive(slug) {
 		const url = new URL(window.location.href);
 
-		return item.getAttribute('aria-pressed') === 'true' ||
-			Array.from(url.searchParams.values()).includes(slug);
+		return Array.from(url.searchParams.values()).includes(slug);
 	}
 
 	function buildCategoryDropdowns() {
 		const filters = document.querySelectorAll('.elementor-widget-taxonomy-filter .e-filter');
 
-		filters.forEach(function (filter) {
+		if (!filters.length) {
+			return;
+		}
+
+		fetchCategoryTree().then(function (groups) {
+			if (!groups.length) {
+				return;
+			}
+
+			filters.forEach(function (filter) {
 			if (filter.classList.contains('dewit-category-dropdowns-ready')) {
 				return;
 			}
@@ -96,7 +175,12 @@
 			groups.forEach(function (group, index) {
 				const matchingItems = group.slugs
 					.map(function (slug) {
-						return itemsBySlug.get(slug);
+						if (itemsBySlug.has(slug)) {
+							return itemsBySlug.get(slug);
+						}
+
+						const category = group.categoriesBySlug.get(slug);
+						return category ? createGeneratedFilterItem(category, filter) : null;
 					})
 					.filter(Boolean);
 
@@ -151,6 +235,7 @@
 			filter.innerHTML = '';
 			filter.appendChild(fragment);
 			filter.classList.add('dewit-category-dropdowns-ready');
+		});
 		});
 	}
 
