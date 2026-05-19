@@ -704,10 +704,11 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-tri
 	border: 0;
 	color: #fff;
 	cursor: pointer;
-	display: flex;
+	display: grid;
 	font: inherit;
 	font-weight: 700;
-	justify-content: space-between;
+	gap: 10px;
+	grid-template-columns: minmax(0, 1fr) auto;
 	line-height: 1.2;
 	min-height: 36px;
 	padding: 8px 10px;
@@ -725,8 +726,9 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-tri
 	border-bottom: 2px solid currentColor;
 	border-right: 2px solid currentColor;
 	content: "";
+	display: block;
+	flex: 0 0 auto;
 	height: 7px;
-	margin-left: 12px;
 	transform: rotate(45deg);
 	transition: transform 160ms ease;
 	width: 7px;
