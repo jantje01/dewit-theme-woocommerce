@@ -473,7 +473,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 	align-items: center;
 	background: #f5a710;
-	border-radius: 999px;
+	border-radius: 14px;
 	color: #fff;
 	display: inline-flex;
 	font-family: var(--font-body);
