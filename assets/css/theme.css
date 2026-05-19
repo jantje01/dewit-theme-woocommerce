@@ -395,13 +395,19 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-location
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-b680c70 {
+	align-items: stretch !important;
 	background: #f4f5f6 !important;
+	gap: 18px !important;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
 	background: #003965 !important;
 	border-radius: 14px;
+	box-sizing: border-box;
+	flex: 0 0 250px !important;
 	overflow: hidden;
+	padding: 16px !important;
+	width: 250px !important;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-5c7860e {
@@ -410,6 +416,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-
 	border-radius: 14px;
 	box-shadow: none !important;
 	overflow: visible;
+	padding-left: 20px !important;
+	padding-right: 14px !important;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid {
@@ -487,9 +495,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.elementor-grid {
 	display: grid !important;
-	gap: 16px !important;
+	column-gap: 18px !important;
 	grid-auto-flow: row !important;
 	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)) !important;
+	row-gap: 20px !important;
 	width: 100% !important;
 }
 
@@ -664,7 +673,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .e-filter {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: 4px;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar,
@@ -691,6 +700,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-gro
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-trigger {
 	align-items: center;
 	background: transparent;
+	border-radius: 10px;
 	border: 0;
 	color: #fff;
 	cursor: pointer;
@@ -699,9 +709,16 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-tri
 	font-weight: 700;
 	justify-content: space-between;
 	line-height: 1.2;
-	padding: 8px 0;
+	min-height: 36px;
+	padding: 8px 10px;
 	text-align: left;
+	transition: background-color 160ms ease, color 160ms ease;
 	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-trigger:hover,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-group.is-open .dewit-category-trigger {
+	background: rgba(255, 255, 255, 0.08);
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-trigger::after {
@@ -723,8 +740,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-pan
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-	margin: 0 0 8px;
-	padding-left: 12px;
+	margin: 2px 0 10px;
+	padding-left: 8px;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-panel[hidden] {
@@ -733,18 +750,21 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-pan
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item {
 	color: rgba(255, 255, 255, 0.82);
+	border-radius: 9px;
 	font-size: 13px;
 	font-weight: 600;
 	line-height: 1.22;
 	opacity: 0.9;
-	padding: 6px 0 6px 10px;
+	padding: 7px 8px 7px 16px;
 	position: relative;
 	text-align: left;
+	transition: background-color 160ms ease, color 160ms ease, opacity 160ms ease;
 	width: 100%;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item:hover,
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item[aria-pressed="true"] {
+	background: rgba(255, 255, 255, 0.1);
 	color: #fff;
 	opacity: 1;
 }
@@ -753,8 +773,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-t
 	background: currentColor;
 	content: "";
 	height: 1px;
-	left: 0;
-	opacity: 0.45;
+	left: 6px;
+	opacity: 0.5;
 	position: absolute;
 	top: 50%;
 	width: 5px;
