@@ -11,6 +11,73 @@
 }());
 
 (function () {
+	function injectShopToolbar() {
+		const content = document.querySelector('.elementor-element-5c7860e');
+		const grid = content ? content.querySelector('.elementor-widget-loop-grid') : null;
+
+		if (!content || !grid || content.querySelector('.dewit-shop-toolbar')) {
+			return;
+		}
+
+		const toolbar = document.createElement('div');
+		const form = document.createElement('form');
+		const label = document.createElement('span');
+		const input = document.createElement('input');
+		const button = document.createElement('button');
+		const phone = document.createElement('a');
+		const params = new URL(window.location.href).searchParams;
+
+		toolbar.className = 'dewit-shop-toolbar';
+
+		form.className = 'dewit-shop-search';
+		form.method = 'get';
+		form.action = window.location.origin + '/';
+
+		label.className = 'screen-reader-text';
+		label.textContent = 'Zoeken naar producten';
+
+		input.type = 'search';
+		input.name = 's';
+		input.placeholder = 'Zoeken naar producten';
+		input.value = params.get('s') || '';
+
+		button.type = 'submit';
+		button.textContent = 'Zoeken';
+
+		form.addEventListener('submit', function () {
+			const postType = form.querySelector('input[name="post_type"]');
+
+			if (!postType) {
+				const hidden = document.createElement('input');
+				hidden.type = 'hidden';
+				hidden.name = 'post_type';
+				hidden.value = 'product';
+				form.appendChild(hidden);
+			}
+		});
+
+		phone.className = 'dewit-shop-phone';
+		phone.href = 'tel:+31412634969';
+		phone.textContent = '0412 - 63 49 69';
+
+		form.appendChild(label);
+		form.appendChild(input);
+		form.appendChild(button);
+		toolbar.appendChild(form);
+		toolbar.appendChild(phone);
+		content.insertBefore(toolbar, grid);
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', injectShopToolbar);
+	} else {
+		injectShopToolbar();
+	}
+
+	window.addEventListener('elementor/frontend/init', injectShopToolbar);
+}());
+
+(function () {
 	let categoryTreePromise = null;
 
 	function fetchCategoryTree() {
