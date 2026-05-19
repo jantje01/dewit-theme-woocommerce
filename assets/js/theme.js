@@ -78,6 +78,95 @@
 }());
 
 (function () {
+	function markImageLoaded(card, image) {
+		function setLoaded() {
+			card.classList.add('dewit-product-image-loaded');
+		}
+
+		if (image.complete) {
+			setLoaded();
+			return;
+		}
+
+		image.addEventListener('load', setLoaded, { once: true });
+		image.addEventListener('error', setLoaded, { once: true });
+	}
+
+	function prepareProductCards(root) {
+		const scope = root || document;
+		const cards = [];
+
+		if (scope.matches && scope.matches('.elementor-widget-loop-grid .e-loop-item.product')) {
+			cards.push(scope);
+		}
+
+		if (scope.querySelectorAll) {
+			scope.querySelectorAll('.elementor-widget-loop-grid .e-loop-item.product').forEach(function (card) {
+				cards.push(card);
+			});
+		}
+
+		cards.forEach(function (card) {
+			const image = card.querySelector('img');
+
+			if (image) {
+				image.loading = image.loading || 'lazy';
+				image.decoding = 'async';
+				markImageLoaded(card, image);
+			}
+
+			if (card.classList.contains('dewit-product-card-ready')) {
+				return;
+			}
+
+			card.classList.add('dewit-product-card-ready');
+
+			window.requestAnimationFrame(function () {
+				card.classList.add('is-visible');
+			});
+		});
+	}
+
+	function watchProductGrid() {
+		const containers = document.querySelectorAll('.elementor-widget-loop-grid .elementor-loop-container');
+
+		prepareProductCards(document);
+
+		containers.forEach(function (container) {
+			if (container.classList.contains('dewit-product-grid-watched')) {
+				return;
+			}
+
+			container.classList.add('dewit-product-grid-watched');
+
+			const observer = new MutationObserver(function (mutations) {
+				mutations.forEach(function (mutation) {
+					mutation.addedNodes.forEach(function (node) {
+						if (node.nodeType === Node.ELEMENT_NODE) {
+							prepareProductCards(node);
+						}
+					});
+				});
+			});
+
+			observer.observe(container, {
+				childList: true,
+				subtree: true,
+			});
+		});
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', watchProductGrid);
+	} else {
+		watchProductGrid();
+	}
+
+	window.addEventListener('elementor/frontend/init', watchProductGrid);
+	window.addEventListener('load', watchProductGrid);
+}());
+
+(function () {
 	let categoryTreePromise = null;
 
 	function fetchCategoryTree() {
