@@ -397,7 +397,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-location
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-b680c70 {
 	align-items: stretch !important;
 	background: #f4f5f6 !important;
-	gap: 18px !important;
+	gap: 0 !important;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
@@ -416,8 +416,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-
 	border-radius: 14px;
 	box-shadow: none !important;
 	overflow: visible;
-	padding-left: 20px !important;
-	padding-right: 14px !important;
+	padding-left: 12px !important;
+	padding-right: 12px !important;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid {
