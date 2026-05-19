@@ -495,10 +495,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.elementor-grid {
 	display: grid !important;
-	column-gap: 18px !important;
+	column-gap: 14px !important;
 	grid-auto-flow: row !important;
 	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)) !important;
-	row-gap: 20px !important;
+	row-gap: 16px !important;
 	width: 100% !important;
 }
 
@@ -680,7 +680,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.elementor-grid {
-		gap: 12px !important;
+		gap: 10px !important;
 		grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
 	}
 
