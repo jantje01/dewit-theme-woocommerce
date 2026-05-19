@@ -718,6 +718,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .e
 	margin: 0 0 14px;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-heading {
+	display: none !important;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-group {
 	width: 100%;
 }
