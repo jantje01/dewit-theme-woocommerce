@@ -82,6 +82,23 @@ img {
 	min-height: 78px;
 }
 
+.site-branding {
+	align-items: center;
+	display: flex;
+	min-width: 0;
+}
+
+.site-branding .custom-logo-link {
+	align-items: center;
+	display: inline-flex;
+}
+
+.site-branding .custom-logo {
+	height: auto;
+	max-height: 54px;
+	width: auto;
+}
+
 .site-title {
 	color: var(--color-ink);
 	font-size: 1.35rem;
@@ -125,6 +142,28 @@ img {
 	min-width: 24px;
 	padding: 0 7px;
 	text-align: center;
+}
+
+body.single-product .site-header {
+	background: #003965;
+	border-bottom: 0;
+	box-shadow: none;
+}
+
+body.single-product .site-header__inner {
+	min-height: 60px;
+}
+
+body.single-product .site-branding .custom-logo {
+	max-height: 38px;
+}
+
+body.single-product .main-navigation a {
+	color: #fff;
+}
+
+body.single-product .header-cart {
+	display: none;
 }
 
 .menu-toggle {
