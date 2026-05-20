@@ -749,7 +749,13 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar {
+		background: #f4f5f6;
 		grid-template-columns: 1fr 1fr;
+		margin: -10px 0 14px;
+		padding: 10px 0;
+		position: sticky;
+		top: calc(60px + env(safe-area-inset-top, 0px));
+		z-index: 40;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search {
