@@ -589,13 +589,57 @@ body.single-product.woocommerce div.product div.summary {
 
 .dewit-product-page .related.products {
 	margin-top: 18px;
-	padding: 22px;
+	padding: 18px;
 }
 
 .dewit-product-page .related.products > h2 {
 	font-size: 18px;
 	line-height: 1.2;
 	margin: 0 0 16px;
+}
+
+.dewit-product-page .related.products ul.products {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	margin: 0;
+	padding: 0;
+}
+
+.dewit-product-page .related.products ul.products li.product {
+	border-color: #e5e5e5;
+	border-radius: 14px;
+	margin: 0 !important;
+	min-width: 0;
+	padding: 10px;
+	width: 100% !important;
+}
+
+.dewit-product-page .related.products ul.products li.product a {
+	text-decoration: none;
+}
+
+.dewit-product-page .related.products ul.products li.product img {
+	aspect-ratio: 1 / 1;
+	border-radius: 12px;
+	margin: 0 0 10px !important;
+	object-fit: contain;
+	width: 100%;
+}
+
+.dewit-product-page .related.products .woocommerce-loop-product__title {
+	color: #151515;
+	font-family: var(--font-body);
+	font-size: 12px !important;
+	font-weight: 700;
+	line-height: 1.25;
+	margin: 0;
+	padding: 0 !important;
+}
+
+.dewit-product-page .related.products .price,
+.dewit-product-page .related.products .button {
+	display: none !important;
 }
 
 .woocommerce-cart .cart-collaterals,
@@ -701,6 +745,11 @@ body.single-product.woocommerce div.product div.summary {
 	.dewit-product-details .woocommerce-tabs ul.tabs {
 		overflow-x: auto;
 		padding-bottom: 12px;
+	}
+
+	.dewit-product-page .related.products ul.products {
+		gap: 10px;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
 }
