@@ -758,7 +758,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 		margin: -10px 0 14px;
 		padding: 10px 0;
 		position: sticky;
-		top: calc(72px + env(safe-area-inset-top, 0px));
+		top: calc(60px + env(safe-area-inset-top, 0px));
 		transform: translateZ(0);
 		z-index: 900;
 	}
