@@ -166,6 +166,15 @@ body.single-product .header-cart {
 	display: none;
 }
 
+body.woocommerce-page .site-header .menu-toggle,
+body.woocommerce-page .site-header .main-navigation {
+	display: none !important;
+}
+
+body.woocommerce-page .site-header__inner {
+	grid-template-columns: auto 1fr;
+}
+
 .menu-toggle {
 	background: transparent;
 	border: 1px solid var(--color-line);
