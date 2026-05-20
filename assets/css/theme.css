@@ -430,7 +430,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar
 	align-items: center;
 	display: grid;
 	gap: 12px;
-	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-columns: minmax(0, 1fr) auto auto;
 	margin: 0 0 16px;
 	width: 100%;
 }
@@ -489,6 +489,67 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 	font-weight: 800;
 	min-height: 48px;
 	padding: 0 20px;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-toggle {
+	align-items: center;
+	background: #003965;
+	border: 0;
+	border-radius: 14px;
+	color: #fff;
+	cursor: pointer;
+	display: none;
+	font-family: var(--font-body);
+	font-size: 14px;
+	font-weight: 800;
+	justify-content: center;
+	min-height: 48px;
+	padding: 0 16px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context {
+	align-items: center;
+	display: flex;
+	gap: 12px;
+	justify-content: space-between;
+	margin: -4px 0 14px;
+	min-height: 28px;
+	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context__main {
+	align-items: baseline;
+	display: flex;
+	gap: 10px;
+	min-width: 0;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context__title {
+	color: #151515;
+	font-family: var(--font-body);
+	font-size: 15px;
+	font-weight: 800;
+	line-height: 1.2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context__count {
+	color: #777;
+	font-family: var(--font-body);
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context__reset {
+	color: #003965;
+	font-family: var(--font-body);
+	font-size: 13px;
+	font-weight: 800;
 	text-decoration: none;
 	white-space: nowrap;
 }
@@ -645,6 +706,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 }
 
 @media (max-width: 560px) {
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-mobile-filter-open {
+		overflow: hidden;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-location-archive.product,
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-b680c70 {
 		max-width: 100% !important;
@@ -661,6 +726,19 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 		display: none !important;
 	}
 
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-mobile-filter-open #catalog-sidebar {
+		border-radius: 0 14px 14px 0;
+		display: block !important;
+		height: 100dvh;
+		left: 0;
+		max-width: 320px;
+		overflow-y: auto;
+		position: fixed !important;
+		top: 0;
+		width: min(86vw, 320px) !important;
+		z-index: 1001;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-5c7860e {
 		flex: 0 0 auto !important;
 		margin-left: 0 !important;
@@ -671,12 +749,33 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar {
-		grid-template-columns: 1fr;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search {
+		grid-column: 1 / -1;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-toggle {
+		display: inline-flex;
+		width: 100%;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 		justify-content: center;
 		width: 100%;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context__main {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 2px;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.elementor-grid {
@@ -693,6 +792,20 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-heading-title {
 		font-size: 12px;
 	}
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-overlay {
+	background: rgba(0, 0, 0, 0.34);
+	border: 0;
+	display: none;
+	inset: 0;
+	padding: 0;
+	position: fixed;
+	z-index: 1000;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-mobile-filter-open .dewit-category-overlay {
+	display: block;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .e-filter {
@@ -724,6 +837,28 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .e
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-group {
 	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-all-products {
+	align-items: center;
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+	color: #fff;
+	display: flex;
+	font-family: var(--font-body);
+	font-size: 13px;
+	font-weight: 800;
+	line-height: 1.2;
+	margin: 0 0 6px;
+	min-height: 36px;
+	padding: 8px 10px;
+	text-decoration: none;
+	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-all-products:hover {
+	background: rgba(255, 255, 255, 0.16);
+	color: #fff;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-trigger {

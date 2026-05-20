@@ -24,6 +24,7 @@
 		const label = document.createElement('span');
 		const input = document.createElement('input');
 		const button = document.createElement('button');
+		const categoryToggle = document.createElement('button');
 		const phone = document.createElement('a');
 		const params = new URL(window.location.href).searchParams;
 
@@ -60,10 +61,17 @@
 		phone.href = 'tel:+31412634969';
 		phone.textContent = '0412 - 63 49 69';
 
+		categoryToggle.className = 'dewit-category-toggle';
+		categoryToggle.type = 'button';
+		categoryToggle.setAttribute('aria-expanded', 'false');
+		categoryToggle.setAttribute('aria-controls', 'catalog-sidebar');
+		categoryToggle.textContent = 'Categorieen';
+
 		form.appendChild(label);
 		form.appendChild(input);
 		form.appendChild(button);
 		toolbar.appendChild(form);
+		toolbar.appendChild(categoryToggle);
 		toolbar.appendChild(phone);
 		content.insertBefore(toolbar, grid);
 	}
@@ -75,6 +83,145 @@
 	}
 
 	window.addEventListener('elementor/frontend/init', injectShopToolbar);
+}());
+
+(function () {
+	function getActiveFilterParamNames() {
+		return Array.from(new URL(window.location.href).searchParams.keys())
+			.filter(function (key) {
+				return key.indexOf('e-filter-') === 0 || key === 'product_cat';
+			});
+	}
+
+	function getCleanShopUrl() {
+		const url = new URL(window.location.href);
+
+		getActiveFilterParamNames().forEach(function (key) {
+			url.searchParams.delete(key);
+		});
+
+		url.searchParams.delete('product-page');
+		url.searchParams.delete('codex_grid');
+		url.searchParams.delete('codex_heading');
+
+		return url.toString();
+	}
+
+	function getActiveCategoryLabel() {
+		const active = document.querySelector('#catalog-sidebar .e-filter-item[aria-pressed="true"]');
+
+		if (active && active.textContent.trim()) {
+			return active.textContent.trim();
+		}
+
+		return 'Alle producten';
+	}
+
+	function updateShopContext() {
+		const context = document.querySelector('.dewit-shop-context');
+		const title = context ? context.querySelector('.dewit-shop-context__title') : null;
+		const count = context ? context.querySelector('.dewit-shop-context__count') : null;
+		const reset = context ? context.querySelector('.dewit-shop-context__reset') : null;
+		const visibleCards = document.querySelectorAll('.elementor-widget-loop-grid .e-loop-item.product').length;
+
+		if (title) {
+			title.textContent = getActiveCategoryLabel();
+		}
+
+		if (count) {
+			count.textContent = visibleCards ? visibleCards + ' producten getoond' : 'Producten';
+		}
+
+		if (reset) {
+			reset.href = getCleanShopUrl();
+			reset.hidden = !getActiveFilterParamNames().length;
+		}
+	}
+
+	function injectShopContext() {
+		const content = document.querySelector('.elementor-element-5c7860e');
+		const toolbar = content ? content.querySelector('.dewit-shop-toolbar') : null;
+		const grid = content ? content.querySelector('.elementor-widget-loop-grid') : null;
+
+		if (!content || !toolbar || !grid || content.querySelector('.dewit-shop-context')) {
+			updateShopContext();
+			return;
+		}
+
+		const context = document.createElement('div');
+		const main = document.createElement('div');
+		const title = document.createElement('strong');
+		const count = document.createElement('span');
+		const reset = document.createElement('a');
+
+		context.className = 'dewit-shop-context';
+		main.className = 'dewit-shop-context__main';
+		title.className = 'dewit-shop-context__title';
+		count.className = 'dewit-shop-context__count';
+		reset.className = 'dewit-shop-context__reset';
+		reset.textContent = 'Alle producten';
+
+		main.appendChild(title);
+		main.appendChild(count);
+		context.appendChild(main);
+		context.appendChild(reset);
+		content.insertBefore(context, grid);
+		updateShopContext();
+	}
+
+	function closeMobileCategories() {
+		document.body.classList.remove('dewit-mobile-filter-open');
+		document.querySelectorAll('.dewit-category-toggle').forEach(function (button) {
+			button.setAttribute('aria-expanded', 'false');
+		});
+	}
+
+	function injectMobileCategoryControls() {
+		const toggle = document.querySelector('.dewit-category-toggle');
+
+		if (!toggle || toggle.classList.contains('dewit-category-toggle-ready')) {
+			return;
+		}
+
+		let overlay = document.querySelector('.dewit-category-overlay');
+
+		if (!overlay) {
+			overlay = document.createElement('button');
+			overlay.className = 'dewit-category-overlay';
+			overlay.type = 'button';
+			overlay.setAttribute('aria-label', 'Categorieen sluiten');
+			document.body.appendChild(overlay);
+		}
+
+		toggle.classList.add('dewit-category-toggle-ready');
+		toggle.addEventListener('click', function () {
+			const isOpen = document.body.classList.toggle('dewit-mobile-filter-open');
+			toggle.setAttribute('aria-expanded', String(isOpen));
+		});
+
+		overlay.addEventListener('click', closeMobileCategories);
+		document.addEventListener('keydown', function (event) {
+			if (event.key === 'Escape') {
+				closeMobileCategories();
+			}
+		});
+	}
+
+	function enhanceShopNavigation() {
+		injectShopContext();
+		injectMobileCategoryControls();
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', enhanceShopNavigation);
+	} else {
+		enhanceShopNavigation();
+	}
+
+	window.addEventListener('elementor/frontend/init', enhanceShopNavigation);
+	window.addEventListener('load', enhanceShopNavigation);
+	window.addEventListener('dewit/categories-ready', updateShopContext);
+	window.addEventListener('dewit/products-updated', updateShopContext);
 }());
 
 (function () {
@@ -144,6 +291,7 @@
 					mutation.addedNodes.forEach(function (node) {
 						if (node.nodeType === Node.ELEMENT_NODE) {
 							prepareProductCards(node);
+							window.dispatchEvent(new CustomEvent('dewit/products-updated'));
 						}
 					});
 				});
@@ -327,6 +475,12 @@
 
 			const fragment = document.createDocumentFragment();
 			const groupedItems = new Set();
+			const allProducts = document.createElement('a');
+
+			allProducts.className = 'dewit-all-products';
+			allProducts.href = getCleanCategoryUrl();
+			allProducts.textContent = 'Alle producten';
+			fragment.appendChild(allProducts);
 
 			groups.forEach(function (group, index) {
 				const matchingItems = group.slugs
@@ -391,8 +545,23 @@
 			filter.innerHTML = '';
 			filter.appendChild(fragment);
 			filter.classList.add('dewit-category-dropdowns-ready');
+			window.dispatchEvent(new CustomEvent('dewit/categories-ready'));
 		});
 		});
+	}
+
+	function getCleanCategoryUrl() {
+		const url = new URL(window.location.href);
+
+		Array.from(url.searchParams.keys()).forEach(function (key) {
+			if (key.indexOf('e-filter-') === 0 || key === 'product_cat') {
+				url.searchParams.delete(key);
+			}
+		});
+
+		url.searchParams.delete('product-page');
+
+		return url.toString();
 	}
 
 	if (document.readyState === 'loading') {
