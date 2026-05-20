@@ -755,12 +755,12 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar {
 		background: #f4f5f6;
 		grid-template-columns: 1fr 1fr;
-		margin: -10px 0 14px;
-		padding: 10px 0;
-		position: sticky;
-		top: calc(60px + env(safe-area-inset-top, 0px));
-		transform: translateZ(0);
-		z-index: 900;
+		margin: 0 0 14px;
+		padding: 0;
+		position: relative;
+		top: auto;
+		transform: none;
+		z-index: 1;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search {
