@@ -380,7 +380,7 @@ body.single-product.woocommerce div.product div.summary {
 .dewit-product-hero {
 	display: grid;
 	gap: 18px;
-	grid-template-columns: minmax(0, 1fr) minmax(340px, 0.72fr);
+	grid-template-columns: minmax(280px, 0.72fr) minmax(360px, 1fr);
 }
 
 .dewit-product-gallery,
@@ -395,7 +395,8 @@ body.single-product.woocommerce div.product div.summary {
 }
 
 .dewit-product-gallery {
-	padding: 16px;
+	align-self: start;
+	padding: 14px;
 }
 
 .dewit-product-gallery .woocommerce-product-gallery,
@@ -411,6 +412,7 @@ body.single-product.woocommerce div.product div.summary {
 
 .dewit-product-gallery .woocommerce-product-gallery__image img {
 	aspect-ratio: 1 / 1;
+	max-height: 460px;
 	object-fit: contain;
 	width: 100%;
 }
