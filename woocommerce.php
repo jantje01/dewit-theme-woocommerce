@@ -7,6 +7,10 @@
 
 get_header();
 
-woocommerce_content();
+if ( is_product() ) {
+	get_template_part( 'template-parts/content', 'product-single' );
+} else {
+	woocommerce_content();
+}
 
 get_footer();

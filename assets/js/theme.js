@@ -265,11 +265,26 @@
 
 		cards.forEach(function (card) {
 			const image = card.querySelector('img');
+			const productId = getProductIdFromCard(card);
 
 			if (image) {
 				image.loading = image.loading || 'lazy';
 				image.decoding = 'async';
 				markImageLoaded(card, image);
+			}
+
+			if (productId && !card.querySelector('a')) {
+				card.setAttribute('role', 'link');
+				card.tabIndex = 0;
+				card.addEventListener('click', function () {
+					window.location.href = '/?post_type=product&p=' + productId;
+				});
+				card.addEventListener('keydown', function (event) {
+					if (event.key === 'Enter' || event.key === ' ') {
+						event.preventDefault();
+						window.location.href = '/?post_type=product&p=' + productId;
+					}
+				});
 			}
 
 			if (card.classList.contains('dewit-product-card-ready')) {
@@ -282,6 +297,12 @@
 				card.classList.add('is-visible');
 			});
 		});
+	}
+
+	function getProductIdFromCard(card) {
+		const match = String(card.className).match(/(?:^|\s)post-(\d+)(?:\s|$)/);
+
+		return match ? match[1] : '';
 	}
 
 	function watchProductGrid() {
