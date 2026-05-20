@@ -108,7 +108,17 @@
 	}
 
 	function getActiveCategoryLabel() {
-		const active = document.querySelector('#catalog-sidebar .e-filter-item[aria-pressed="true"]');
+		const url = new URL(window.location.href);
+		const activeSlug = Array.from(url.searchParams.entries())
+			.find(function (entry) {
+				return (entry[0].indexOf('e-filter-') === 0 || entry[0] === 'product_cat') && entry[1];
+			});
+		const active = activeSlug
+			? Array.from(document.querySelectorAll('#catalog-sidebar .e-filter-item'))
+				.find(function (item) {
+					return item.getAttribute('data-filter') === activeSlug[1];
+				})
+			: document.querySelector('#catalog-sidebar .e-filter-item[aria-pressed="true"]');
 
 		if (active && active.textContent.trim()) {
 			return active.textContent.trim();
