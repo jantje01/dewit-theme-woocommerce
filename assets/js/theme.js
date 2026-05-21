@@ -87,6 +87,7 @@
 
 (function () {
 	let categoryLookupPromise = null;
+	let selectedCategoryContext = null;
 
 	function getActiveFilterParamNames() {
 		return Array.from(new URL(window.location.href).searchParams.keys())
@@ -188,7 +189,9 @@
 		const visibleCards = document.querySelectorAll('.elementor-widget-loop-grid .e-loop-item.product').length;
 
 		if (title) {
-			title.textContent = getActiveCategoryLabel();
+			title.textContent = selectedCategoryContext
+				? selectedCategoryContext.label
+				: getActiveCategoryLabel();
 		}
 
 		if (count) {
@@ -197,17 +200,40 @@
 
 		if (reset) {
 			reset.href = getCleanShopUrl();
-			reset.hidden = !getActiveFilterParamNames().length;
+			reset.hidden = selectedCategoryContext
+				? !selectedCategoryContext.slug
+				: !getActiveFilterParamNames().length;
 		}
 
 		const activeSlug = getActiveCategorySlug();
 
-		if (title && activeSlug) {
+		if (title && activeSlug && !selectedCategoryContext) {
 			fetchCategoryLookup().then(function (lookup) {
 				if (lookup[activeSlug]) {
 					title.textContent = lookup[activeSlug];
 				}
 			});
+		}
+	}
+
+	function setShopContextCategory(label, slug) {
+		const context = document.querySelector('.dewit-shop-context');
+		const title = context ? context.querySelector('.dewit-shop-context__title') : null;
+		const reset = context ? context.querySelector('.dewit-shop-context__reset') : null;
+		const selectedLabel = label || (slug ? formatCategorySlug(slug) : 'Alle producten');
+
+		selectedCategoryContext = {
+			label: selectedLabel,
+			slug: slug,
+		};
+
+		if (title) {
+			title.textContent = selectedLabel;
+		}
+
+		if (reset) {
+			reset.href = getCleanShopUrl();
+			reset.hidden = !slug;
 		}
 	}
 
@@ -294,6 +320,9 @@
 	window.addEventListener('elementor/frontend/init', enhanceShopNavigation);
 	window.addEventListener('load', enhanceShopNavigation);
 	window.addEventListener('dewit/categories-ready', updateShopContext);
+	window.addEventListener('dewit/category-selected', function (event) {
+		setShopContextCategory(event.detail ? event.detail.label : '', event.detail ? event.detail.slug : '');
+	});
 	window.addEventListener('dewit/close-mobile-categories', closeMobileCategories);
 	window.addEventListener('dewit/products-updated', updateShopContext);
 }());
@@ -520,6 +549,7 @@
 		item.textContent = category.name;
 
 		item.addEventListener('click', function () {
+			updateSelectedCategoryContext(category.slug, category.name);
 			closeMobileCategoryDrawer();
 
 			const url = new URL(window.location.href);
@@ -535,13 +565,25 @@
 		window.dispatchEvent(new CustomEvent('dewit/close-mobile-categories'));
 	}
 
+	function updateSelectedCategoryContext(slug, label) {
+		window.dispatchEvent(new CustomEvent('dewit/category-selected', {
+			detail: {
+				label: label,
+				slug: slug,
+			},
+		}));
+	}
+
 	function closeDrawerOnFilterClick(item) {
 		if (item.classList.contains('dewit-close-drawer-ready')) {
 			return;
 		}
 
 		item.classList.add('dewit-close-drawer-ready');
-		item.addEventListener('click', closeMobileCategoryDrawer);
+		item.addEventListener('click', function () {
+			updateSelectedCategoryContext(item.getAttribute('data-filter'), item.textContent.trim());
+			closeMobileCategoryDrawer();
+		});
 	}
 
 	function isItemActive(item) {
@@ -590,7 +632,10 @@
 			allProducts.className = 'dewit-all-products';
 			allProducts.href = getCleanCategoryUrl();
 			allProducts.textContent = 'Alle producten';
-			allProducts.addEventListener('click', closeMobileCategoryDrawer);
+			allProducts.addEventListener('click', function () {
+				updateSelectedCategoryContext('', 'Alle producten');
+				closeMobileCategoryDrawer();
+			});
 			fragment.appendChild(allProducts);
 
 			groups.forEach(function (group, index) {
