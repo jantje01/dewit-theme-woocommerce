@@ -358,7 +358,7 @@
 
 		cards.forEach(function (card) {
 			const image = card.querySelector('img');
-			const productId = getProductIdFromCard(card);
+			const productUrl = getProductUrlFromCard(card);
 
 			if (image) {
 				image.loading = image.loading || 'lazy';
@@ -366,16 +366,21 @@
 				markImageLoaded(card, image);
 			}
 
-			if (productId && !card.querySelector('a')) {
+			if (productUrl && !card.classList.contains('dewit-product-card-click-ready')) {
+				card.classList.add('dewit-product-card-click-ready');
 				card.setAttribute('role', 'link');
 				card.tabIndex = 0;
-				card.addEventListener('click', function () {
-					window.location.href = '/?post_type=product&p=' + productId;
+				card.addEventListener('click', function (event) {
+					if (isInteractiveCardTarget(event.target)) {
+						return;
+					}
+
+					window.location.href = productUrl;
 				});
 				card.addEventListener('keydown', function (event) {
 					if (event.key === 'Enter' || event.key === ' ') {
 						event.preventDefault();
-						window.location.href = '/?post_type=product&p=' + productId;
+						window.location.href = productUrl;
 					}
 				});
 			}
@@ -392,10 +397,30 @@
 		});
 	}
 
+	function getProductUrlFromCard(card) {
+		const productLink = Array.from(card.querySelectorAll('a[href]'))
+			.find(function (link) {
+				const href = link.getAttribute('href') || '';
+
+				return href && href !== '#' && href.indexOf('elementor-action') === -1;
+			});
+		const productId = getProductIdFromCard(card);
+
+		if (productLink) {
+			return productLink.href;
+		}
+
+		return productId ? '/?post_type=product&p=' + productId : '';
+	}
+
 	function getProductIdFromCard(card) {
 		const match = String(card.className).match(/(?:^|\s)post-(\d+)(?:\s|$)/);
 
 		return match ? match[1] : '';
+	}
+
+	function isInteractiveCardTarget(target) {
+		return Boolean(target.closest('a, button, input, select, textarea, label'));
 	}
 
 	function watchProductGrid() {
