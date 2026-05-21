@@ -280,6 +280,7 @@
 	window.addEventListener('elementor/frontend/init', enhanceShopNavigation);
 	window.addEventListener('load', enhanceShopNavigation);
 	window.addEventListener('dewit/categories-ready', updateShopContext);
+	window.addEventListener('dewit/close-mobile-categories', closeMobileCategories);
 	window.addEventListener('dewit/products-updated', updateShopContext);
 }());
 
@@ -505,6 +506,8 @@
 		item.textContent = category.name;
 
 		item.addEventListener('click', function () {
+			closeMobileCategoryDrawer();
+
 			const url = new URL(window.location.href);
 			url.searchParams.set(filterParamName, category.slug);
 			url.searchParams.delete('product-page');
@@ -512,6 +515,19 @@
 		});
 
 		return item;
+	}
+
+	function closeMobileCategoryDrawer() {
+		window.dispatchEvent(new CustomEvent('dewit/close-mobile-categories'));
+	}
+
+	function closeDrawerOnFilterClick(item) {
+		if (item.classList.contains('dewit-close-drawer-ready')) {
+			return;
+		}
+
+		item.classList.add('dewit-close-drawer-ready');
+		item.addEventListener('click', closeMobileCategoryDrawer);
 	}
 
 	function isItemActive(item) {
@@ -560,6 +576,7 @@
 			allProducts.className = 'dewit-all-products';
 			allProducts.href = getCleanCategoryUrl();
 			allProducts.textContent = 'Alle producten';
+			allProducts.addEventListener('click', closeMobileCategoryDrawer);
 			fragment.appendChild(allProducts);
 
 			groups.forEach(function (group, index) {
@@ -600,6 +617,7 @@
 				matchingItems.forEach(function (item) {
 					groupedItems.add(item);
 					item.classList.add('dewit-category-child');
+					closeDrawerOnFilterClick(item);
 					panel.appendChild(item);
 				});
 
@@ -619,6 +637,7 @@
 			});
 
 			ungroupedItems.forEach(function (item) {
+				closeDrawerOnFilterClick(item);
 				fragment.appendChild(item);
 			});
 
