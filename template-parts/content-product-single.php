@@ -54,7 +54,9 @@ defined( 'ABSPATH' ) || exit;
 						<?php woocommerce_template_single_excerpt(); ?>
 
 						<div class="dewit-product-actions">
-							<?php woocommerce_template_single_add_to_cart(); ?>
+							<button class="dewit-product-disabled-cart" type="button" disabled>
+								<?php esc_html_e( 'Bestellen tijdelijk uitgeschakeld', 'dewit-theme-woocommerce' ); ?>
+							</button>
 							<a class="dewit-product-phone" href="tel:+31412634969"><?php esc_html_e( 'Bel 0412 - 63 49 69', 'dewit-theme-woocommerce' ); ?></a>
 						</div>
 					</div>

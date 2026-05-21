@@ -512,9 +512,11 @@ body.single-product.woocommerce div.product div.summary {
 }
 
 .dewit-product-summary .single_add_to_cart_button,
+.dewit-product-disabled-cart,
 .dewit-product-phone {
 	align-items: center;
 	border-radius: 14px;
+	border: 0;
 	display: inline-flex;
 	font-family: var(--font-body);
 	font-size: 14px;
@@ -523,6 +525,13 @@ body.single-product.woocommerce div.product div.summary {
 	min-height: 48px;
 	padding: 0 18px;
 	text-decoration: none;
+}
+
+.dewit-product-disabled-cart {
+	background: #d8dde2;
+	color: #66717d;
+	cursor: not-allowed;
+	width: 100%;
 }
 
 .dewit-product-summary .single_add_to_cart_button {

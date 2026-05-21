@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.32' );
+define( 'DEWIT_THEME_VERSION', '0.2.33' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -161,3 +161,11 @@ function dewit_theme_products_per_page(): int {
 	return 12;
 }
 add_filter( 'loop_shop_per_page', 'dewit_theme_products_per_page' );
+
+/**
+ * Temporarily disable purchasing while the catalog is being prepared.
+ */
+function dewit_theme_disable_product_purchases(): bool {
+	return false;
+}
+add_filter( 'woocommerce_is_purchasable', 'dewit_theme_disable_product_purchases' );
