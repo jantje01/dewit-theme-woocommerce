@@ -1218,6 +1218,15 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-t
 	gap: 4px;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter .e-filter:not(.dewit-category-dropdowns-ready) {
+	min-height: 240px;
+	visibility: hidden;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter .e-filter.dewit-category-dropdowns-ready {
+	visibility: visible;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar,
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-heading-title,
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter,

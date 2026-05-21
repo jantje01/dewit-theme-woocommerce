@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.33' );
+define( 'DEWIT_THEME_VERSION', '0.2.34' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
