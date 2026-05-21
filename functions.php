@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.37' );
+define( 'DEWIT_THEME_VERSION', '0.2.38' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -114,7 +114,7 @@ function dewit_theme_scripts(): void {
 		) );
 
 		if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
-			$categories = array_map(
+			$categories = array_values( array_map(
 				static function ( WP_Term $term ): array {
 					return array(
 						'id'     => $term->term_id,
@@ -125,7 +125,7 @@ function dewit_theme_scripts(): void {
 					);
 				},
 				$terms
-			);
+			) );
 
 			wp_add_inline_script(
 				'dewit-theme-woocommerce-script',

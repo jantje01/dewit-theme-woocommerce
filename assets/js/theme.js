@@ -469,11 +469,15 @@
 	}
 
 	function getInlineCategoryGroups() {
-		if (!Array.isArray(window.dewitProductCategories)) {
+		const categories = Array.isArray(window.dewitProductCategories)
+			? window.dewitProductCategories
+			: Object.values(window.dewitProductCategories || {});
+
+		if (!categories.length) {
 			return [];
 		}
 
-		return buildGroupsFromCategories(window.dewitProductCategories);
+		return buildGroupsFromCategories(categories);
 	}
 
 	function fetchCategoryTree() {
