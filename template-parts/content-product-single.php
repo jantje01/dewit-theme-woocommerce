@@ -60,9 +60,15 @@ defined( 'ABSPATH' ) || exit;
 					</div>
 				</section>
 
-				<section class="dewit-product-details">
-					<?php woocommerce_output_product_data_tabs(); ?>
-				</section>
+				<?php
+				$product_tabs = apply_filters( 'woocommerce_product_tabs', array() );
+
+				if ( ! empty( $product_tabs ) ) :
+					?>
+					<section class="dewit-product-details">
+						<?php woocommerce_output_product_data_tabs(); ?>
+					</section>
+				<?php endif; ?>
 
 				<?php
 				woocommerce_output_related_products(
