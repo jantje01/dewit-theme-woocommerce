@@ -440,13 +440,48 @@
 
 (function () {
 	let categoryTreePromise = null;
+	const categoryCacheKey = 'dewitProductCategories';
+	const categoryCacheMaxAge = 12 * 60 * 60 * 1000;
+
+	function getCachedCategoryGroups() {
+		try {
+			const cached = JSON.parse(window.localStorage.getItem(categoryCacheKey) || 'null');
+
+			if (!cached || !Array.isArray(cached.categories) || Date.now() - cached.timestamp > categoryCacheMaxAge) {
+				return [];
+			}
+
+			return buildGroupsFromCategories(cached.categories);
+		} catch (error) {
+			return [];
+		}
+	}
+
+	function cacheCategories(categories) {
+		try {
+			window.localStorage.setItem(categoryCacheKey, JSON.stringify({
+				categories: categories,
+				timestamp: Date.now(),
+			}));
+		} catch (error) {
+			// Storage can be unavailable in private browsing; the live API remains the fallback.
+		}
+	}
+
+	function getInlineCategoryGroups() {
+		if (!Array.isArray(window.dewitProductCategories)) {
+			return [];
+		}
+
+		return buildGroupsFromCategories(window.dewitProductCategories);
+	}
 
 	function fetchCategoryTree() {
 		if (categoryTreePromise) {
 			return categoryTreePromise;
 		}
 
-		categoryTreePromise = fetch('/wp-json/wc/store/v1/products/categories', {
+		categoryTreePromise = fetch('/wp-json/wc/store/v1/products/categories?per_page=100', {
 			credentials: 'same-origin',
 			headers: {
 				Accept: 'application/json',
@@ -460,6 +495,7 @@
 				return response.json();
 			})
 			.then(function (categories) {
+				cacheCategories(categories);
 				return buildGroupsFromCategories(categories);
 			})
 			.catch(function () {
@@ -597,19 +633,10 @@
 		return Array.from(url.searchParams.values()).includes(slug);
 	}
 
-	function buildCategoryDropdowns() {
+	function renderCategoryFilters(groups) {
 		const filters = document.querySelectorAll('.elementor-widget-taxonomy-filter .e-filter');
 
-		if (!filters.length) {
-			return;
-		}
-
-		fetchCategoryTree().then(function (groups) {
-			if (!groups.length) {
-				return;
-			}
-
-			filters.forEach(function (filter) {
+		filters.forEach(function (filter) {
 			if (filter.classList.contains('dewit-category-dropdowns-ready')) {
 				return;
 			}
@@ -705,6 +732,30 @@
 			filter.classList.add('dewit-category-dropdowns-ready');
 			window.dispatchEvent(new CustomEvent('dewit/categories-ready'));
 		});
+	}
+
+	function buildCategoryDropdowns() {
+		const filters = document.querySelectorAll('.elementor-widget-taxonomy-filter .e-filter');
+
+		if (!filters.length) {
+			return;
+		}
+
+		const cachedGroups = getCachedCategoryGroups();
+		const inlineGroups = getInlineCategoryGroups();
+
+		if (inlineGroups.length) {
+			renderCategoryFilters(inlineGroups);
+		} else if (cachedGroups.length) {
+			renderCategoryFilters(cachedGroups);
+		}
+
+		fetchCategoryTree().then(function (groups) {
+			if (!groups.length || inlineGroups.length || cachedGroups.length) {
+				return;
+			}
+
+			renderCategoryFilters(groups);
 		});
 	}
 

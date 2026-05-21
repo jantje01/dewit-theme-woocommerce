@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.34' );
+define( 'DEWIT_THEME_VERSION', '0.2.36' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -105,6 +105,35 @@ function dewit_theme_scripts(): void {
 		DEWIT_THEME_VERSION,
 		true
 	);
+
+	if ( taxonomy_exists( 'product_cat' ) ) {
+		$terms = get_terms( array(
+			'taxonomy'   => 'product_cat',
+			'hide_empty' => false,
+			'number'     => 100,
+		) );
+
+		if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+			$categories = array_map(
+				static function ( WP_Term $term ): array {
+					return array(
+						'id'     => $term->term_id,
+						'name'   => $term->name,
+						'slug'   => $term->slug,
+						'parent' => $term->parent,
+						'count'  => $term->count,
+					);
+				},
+				$terms
+			);
+
+			wp_add_inline_script(
+				'dewit-theme-woocommerce-script',
+				'window.dewitProductCategories = ' . wp_json_encode( $categories ) . ';',
+				'before'
+			);
+		}
+	}
 }
 add_action( 'wp_enqueue_scripts', 'dewit_theme_scripts' );
 
