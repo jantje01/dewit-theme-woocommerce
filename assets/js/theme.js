@@ -86,11 +86,23 @@
 }());
 
 (function () {
+	let categoryLookupPromise = null;
+
 	function getActiveFilterParamNames() {
 		return Array.from(new URL(window.location.href).searchParams.keys())
 			.filter(function (key) {
 				return key.indexOf('e-filter-') === 0 || key === 'product_cat';
 			});
+	}
+
+	function getActiveCategorySlug() {
+		const url = new URL(window.location.href);
+		const activeParam = Array.from(url.searchParams.entries())
+			.find(function (entry) {
+				return (entry[0].indexOf('e-filter-') === 0 || entry[0] === 'product_cat') && entry[1];
+			});
+
+		return activeParam ? activeParam[1] : '';
 	}
 
 	function getCleanShopUrl() {
@@ -108,15 +120,11 @@
 	}
 
 	function getActiveCategoryLabel() {
-		const url = new URL(window.location.href);
-		const activeSlug = Array.from(url.searchParams.entries())
-			.find(function (entry) {
-				return (entry[0].indexOf('e-filter-') === 0 || entry[0] === 'product_cat') && entry[1];
-			});
+		const activeSlug = getActiveCategorySlug();
 		const active = activeSlug
 			? Array.from(document.querySelectorAll('#catalog-sidebar .e-filter-item'))
 				.find(function (item) {
-					return item.getAttribute('data-filter') === activeSlug[1];
+					return item.getAttribute('data-filter') === activeSlug;
 				})
 			: document.querySelector('#catalog-sidebar .e-filter-item[aria-pressed="true"]');
 
@@ -125,6 +133,37 @@
 		}
 
 		return 'Alle producten';
+	}
+
+	function fetchCategoryLookup() {
+		if (categoryLookupPromise) {
+			return categoryLookupPromise;
+		}
+
+		categoryLookupPromise = fetch('/wp-json/wc/store/v1/products/categories', {
+			credentials: 'same-origin',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(function (response) {
+				if (!response.ok) {
+					throw new Error('Could not load product categories.');
+				}
+
+				return response.json();
+			})
+			.then(function (categories) {
+				return categories.reduce(function (lookup, category) {
+					lookup[category.slug] = category.name;
+					return lookup;
+				}, {});
+			})
+			.catch(function () {
+				return {};
+			});
+
+		return categoryLookupPromise;
 	}
 
 	function updateShopContext() {
@@ -145,6 +184,16 @@
 		if (reset) {
 			reset.href = getCleanShopUrl();
 			reset.hidden = !getActiveFilterParamNames().length;
+		}
+
+		const activeSlug = getActiveCategorySlug();
+
+		if (title && activeSlug) {
+			fetchCategoryLookup().then(function (lookup) {
+				if (lookup[activeSlug]) {
+					title.textContent = lookup[activeSlug];
+				}
+			});
 		}
 	}
 

@@ -810,8 +810,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar
 	align-items: center;
 	display: grid;
 	gap: 12px;
-	grid-template-columns: minmax(0, 1fr) auto auto;
-	margin: 0 0 16px;
+	grid-template-columns: minmax(0, 1fr) auto;
+	margin: 0 0 12px;
 	width: 100%;
 }
 
@@ -894,7 +894,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context
 	display: flex;
 	gap: 12px;
 	justify-content: space-between;
-	margin: -4px 0 14px;
+	margin: 0 0 12px;
 	min-height: 28px;
 	width: 100%;
 }
