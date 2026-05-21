@@ -105,6 +105,16 @@
 		return activeParam ? activeParam[1] : '';
 	}
 
+	function formatCategorySlug(slug) {
+		return slug
+			.split('-')
+			.filter(Boolean)
+			.map(function (part) {
+				return part.charAt(0).toUpperCase() + part.slice(1);
+			})
+			.join(' ');
+	}
+
 	function getCleanShopUrl() {
 		const url = new URL(window.location.href);
 
@@ -132,6 +142,10 @@
 			return active.textContent.trim();
 		}
 
+		if (activeSlug) {
+			return formatCategorySlug(activeSlug);
+		}
+
 		return 'Alle producten';
 	}
 
@@ -140,7 +154,7 @@
 			return categoryLookupPromise;
 		}
 
-		categoryLookupPromise = fetch('/wp-json/wc/store/v1/products/categories', {
+		categoryLookupPromise = fetch('/wp-json/wc/store/v1/products/categories?per_page=100', {
 			credentials: 'same-origin',
 			headers: {
 				Accept: 'application/json',
