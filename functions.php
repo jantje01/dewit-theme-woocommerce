@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.36' );
+define( 'DEWIT_THEME_VERSION', '0.2.37' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -109,7 +109,7 @@ function dewit_theme_scripts(): void {
 	if ( taxonomy_exists( 'product_cat' ) ) {
 		$terms = get_terms( array(
 			'taxonomy'   => 'product_cat',
-			'hide_empty' => false,
+			'hide_empty' => true,
 			'number'     => 100,
 		) );
 

@@ -440,7 +440,7 @@
 
 (function () {
 	let categoryTreePromise = null;
-	const categoryCacheKey = 'dewitProductCategories';
+	const categoryCacheKey = 'dewitProductCategoriesWithProducts';
 	const categoryCacheMaxAge = 12 * 60 * 60 * 1000;
 
 	function getCachedCategoryGroups() {
@@ -506,10 +506,11 @@
 	}
 
 	function buildGroupsFromCategories(categories) {
+		const categoriesWithProducts = getCategoriesWithProducts(categories);
 		const childrenByParent = new Map();
 		const categoryBySlug = new Map();
 
-		categories.forEach(function (category) {
+		categoriesWithProducts.forEach(function (category) {
 			categoryBySlug.set(category.slug, category);
 
 			if (!childrenByParent.has(category.parent)) {
@@ -537,6 +538,26 @@
 			.filter(function (group) {
 				return group.slugs.length;
 			});
+	}
+
+	function getCategoriesWithProducts(categories) {
+		const childrenByParent = new Map();
+
+		categories.forEach(function (category) {
+			if (!childrenByParent.has(category.parent)) {
+				childrenByParent.set(category.parent, []);
+			}
+
+			childrenByParent.get(category.parent).push(category);
+		});
+
+		function hasProducts(category) {
+			const children = childrenByParent.get(category.id) || [];
+
+			return Number(category.count) > 0 || children.some(hasProducts);
+		}
+
+		return categories.filter(hasProducts);
 	}
 
 	function getDescendantSlugs(parentId, childrenByParent) {
