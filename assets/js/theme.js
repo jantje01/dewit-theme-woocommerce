@@ -328,6 +328,8 @@
 }());
 
 (function () {
+	let productCardClickDelegationReady = false;
+
 	function markImageLoaded(card, image) {
 		function setLoaded() {
 			card.classList.add('dewit-product-image-loaded');
@@ -370,17 +372,10 @@
 				card.classList.add('dewit-product-card-click-ready');
 				card.setAttribute('role', 'link');
 				card.tabIndex = 0;
-				card.addEventListener('click', function (event) {
-					if (isInteractiveCardTarget(event.target)) {
-						return;
-					}
-
-					window.location.href = productUrl;
-				});
 				card.addEventListener('keydown', function (event) {
 					if (event.key === 'Enter' || event.key === ' ') {
 						event.preventDefault();
-						window.location.href = productUrl;
+						window.location.href = getProductUrlFromCard(card);
 					}
 				});
 			}
@@ -413,6 +408,12 @@
 		return productId ? '/?post_type=product&p=' + productId : '';
 	}
 
+	function getClosestProductCard(target) {
+		const element = target && target.nodeType === Node.ELEMENT_NODE ? target : target.parentElement;
+
+		return element ? element.closest('.elementor-widget-loop-grid .e-loop-item.product') : null;
+	}
+
 	function getProductIdFromCard(card) {
 		const match = String(card.className).match(/(?:^|\s)post-(\d+)(?:\s|$)/);
 
@@ -420,12 +421,39 @@
 	}
 
 	function isInteractiveCardTarget(target) {
-		return Boolean(target.closest('a, button, input, select, textarea, label'));
+		const element = target && target.nodeType === Node.ELEMENT_NODE ? target : target.parentElement;
+
+		return Boolean(element && element.closest('a, button, input, select, textarea, label'));
+	}
+
+	function installProductCardClickDelegation() {
+		if (productCardClickDelegationReady) {
+			return;
+		}
+
+		productCardClickDelegationReady = true;
+		document.addEventListener('click', function (event) {
+			const card = getClosestProductCard(event.target);
+
+			if (!card || isInteractiveCardTarget(event.target)) {
+				return;
+			}
+
+			const productUrl = getProductUrlFromCard(card);
+
+			if (!productUrl) {
+				return;
+			}
+
+			event.preventDefault();
+			window.location.href = productUrl;
+		}, true);
 	}
 
 	function watchProductGrid() {
 		const containers = document.querySelectorAll('.elementor-widget-loop-grid .elementor-loop-container');
 
+		installProductCardClickDelegation();
 		prepareProductCards(document);
 
 		containers.forEach(function (container) {
