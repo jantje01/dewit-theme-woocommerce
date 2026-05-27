@@ -848,7 +848,28 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+	scrollbar-color: #c7cbd0 transparent;
+	scrollbar-width: thin;
 	width: 100% !important;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid::-webkit-scrollbar {
+	width: 8px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid::-webkit-scrollbar-track {
+	background: transparent;
+	margin: 4px 0 calc(20px + env(safe-area-inset-bottom, 0px));
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid::-webkit-scrollbar-thumb {
+	background: #c7cbd0;
+	border: 2px solid #f4f5f6;
+	border-radius: 999px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid:hover::-webkit-scrollbar-thumb {
+	background: #aeb4bb;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid > .elementor-widget-container {
