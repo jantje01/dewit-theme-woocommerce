@@ -394,6 +394,20 @@
 		return container;
 	}
 
+	function disableGroupedElementorLoadMore() {
+		const widget = getProductGridWidget();
+
+		if (!widget) {
+			return;
+		}
+
+		widget.classList.add('dewit-grouped-widget');
+		widget.querySelectorAll('.e-load-more-anchor, .e-load-more-spinner, .e-load-more-message')
+			.forEach(function (element) {
+				element.remove();
+			});
+	}
+
 	function updateGroupedCategoryUrl(slug) {
 		const url = new URL(window.location.href);
 
@@ -437,6 +451,7 @@
 		container.classList.add('dewit-grouped-mode');
 		container.style.display = 'block';
 		view.style.display = 'grid';
+		disableGroupedElementorLoadMore();
 
 		return view;
 	}
@@ -514,6 +529,10 @@
 			heading.textContent = group.name;
 			grid.className = 'dewit-grouped-products__grid';
 
+			if ((group.products || []).length === 1) {
+				grid.classList.add('is-single');
+			}
+
 			(group.products || []).forEach(function (product) {
 				grid.appendChild(renderGroupedProductCard(product));
 			});
@@ -543,6 +562,7 @@
 		container.classList.add('dewit-grouped-mode');
 		container.style.display = 'block';
 		container.innerHTML = grouped.html;
+		disableGroupedElementorLoadMore();
 		setShopContextCategory(grouped.label || '', grouped.slug || '');
 		window.dispatchEvent(new CustomEvent('dewit/products-updated'));
 	}
@@ -564,6 +584,8 @@
 		if (container) {
 			container.classList.add('dewit-grouped-mode');
 		}
+
+		disableGroupedElementorLoadMore();
 
 		setShopContextCategory(group.label, group.parentSlug);
 		updateGroupedCategoryUrl(group.parentSlug);

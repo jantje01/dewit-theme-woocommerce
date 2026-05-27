@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.66' );
+define( 'DEWIT_THEME_VERSION', '0.2.67' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -686,7 +686,7 @@ function dewit_theme_render_grouped_category_products_html( string $slug ): stri
 			<?php foreach ( $groups as $group ) : ?>
 				<section class="dewit-grouped-products__section">
 					<h2 class="dewit-grouped-products__heading"><?php echo esc_html( $group['name'] ); ?></h2>
-					<div class="dewit-grouped-products__grid">
+					<div class="dewit-grouped-products__grid<?php echo 1 === count( $group['products'] ) ? ' is-single' : ''; ?>">
 						<?php foreach ( $group['products'] as $product ) : ?>
 							<a class="dewit-grouped-product-card" href="<?php echo esc_url( $product['url'] ); ?>">
 								<span class="dewit-grouped-product-card__image">
