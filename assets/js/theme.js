@@ -396,17 +396,17 @@
 
 	function getGroupedProductsView() {
 		const container = getProductLoopContainer();
-		const parent = container ? container.parentElement : null;
-		let view = parent ? parent.querySelector(':scope > .dewit-grouped-products') : null;
+		let view = container ? container.querySelector('.dewit-grouped-products') : null;
 
-		if (!parent) {
+		if (!container) {
 			return null;
 		}
 
 		if (!view) {
 			view = document.createElement('div');
 			view.className = 'dewit-grouped-products';
-			parent.insertBefore(view, container.nextSibling);
+			container.innerHTML = '';
+			container.appendChild(view);
 		}
 
 		return view;
@@ -464,7 +464,7 @@
 		view.innerHTML = '';
 
 		if (container) {
-			container.classList.add('dewit-loop-container-hidden');
+			container.classList.add('dewit-grouped-mode');
 		}
 
 		if (!groups.length) {
@@ -508,7 +508,7 @@
 		}
 
 		if (container) {
-			container.classList.add('dewit-loop-container-hidden');
+			container.classList.add('dewit-grouped-mode');
 		}
 
 		setShopContextCategory(group.label, group.parentSlug);

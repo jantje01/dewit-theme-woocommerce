@@ -1050,8 +1050,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 	width: 100% !important;
 }
 
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.dewit-loop-container-hidden {
-	display: none !important;
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.dewit-grouped-mode {
+	display: block !important;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products {
