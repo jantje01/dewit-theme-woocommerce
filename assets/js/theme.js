@@ -1082,7 +1082,10 @@
 				return;
 			}
 
-			const items = Array.from(filter.querySelectorAll(':scope > .e-filter-item'))
+			const items = Array.from(filter.children)
+				.filter(function (item) {
+					return item.classList && item.classList.contains('e-filter-item');
+				})
 				.filter(function (item) {
 					const slug = item.getAttribute('data-filter') || '';
 					const label = item.textContent.trim().toLowerCase();
@@ -1098,18 +1101,10 @@
 			const fragment = document.createDocumentFragment();
 
 			groups.forEach(function (group) {
-				const matchingItems = group.slugs.map(function (slug) {
-					if (itemsBySlug.has(slug)) {
-						return itemsBySlug.get(slug);
-					}
-
-					const category = group.categoriesBySlug.get(slug);
-					return category ? createGeneratedFilterItem(category, filter) : null;
-				}).filter(Boolean);
-
 				const groupElement = document.createElement('div');
 				const trigger = document.createElement('a');
-				const startsOpen = matchingItems.some(isItemActive);
+				const activeSlug = getActiveCategorySlug();
+				const startsOpen = getActiveParentCategorySlug() === group.parentSlug || group.slugs.indexOf(activeSlug) > -1;
 
 				groupElement.className = 'dewit-category-group';
 				groupElement.classList.toggle('is-open', startsOpen);
