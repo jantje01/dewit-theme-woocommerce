@@ -1031,10 +1031,6 @@
 					return slug !== '__all' && slug !== '*' && label !== 'alle' && label !== 'alle producten';
 				});
 
-			if (!items.length) {
-				return;
-			}
-
 			const itemsBySlug = new Map();
 			items.forEach(function (item) {
 				itemsBySlug.set(item.getAttribute('data-filter'), item);
