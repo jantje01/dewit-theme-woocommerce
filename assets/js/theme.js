@@ -11,6 +11,135 @@
 }());
 
 (function () {
+	let searchRequestController = null;
+	let searchDebounceTimer = null;
+
+	function getActiveToolbarCategory() {
+		const url = new URL(window.location.href);
+		const activeParam = Array.from(url.searchParams.entries())
+			.find(function (entry) {
+				return (entry[0].indexOf('e-filter-') === 0 || entry[0] === 'product_cat') && entry[1];
+			});
+
+		return activeParam ? activeParam[1] : '';
+	}
+
+	function getActiveToolbarCategoryParam() {
+		const url = new URL(window.location.href);
+
+		return Array.from(url.searchParams.entries())
+			.find(function (entry) {
+				return (entry[0].indexOf('e-filter-') === 0 || entry[0] === 'product_cat') && entry[1];
+			});
+	}
+
+	function clearLiveSearchResults(results) {
+		results.classList.remove('is-visible', 'is-loading');
+		results.innerHTML = '';
+	}
+
+	function renderLiveSearchResults(results, items, searchTerm) {
+		results.classList.remove('is-loading');
+		results.innerHTML = '';
+
+		if (!items.length) {
+			const empty = document.createElement('div');
+			empty.className = 'dewit-shop-search-results__empty';
+			empty.textContent = 'Geen directe resultaten gevonden';
+			results.appendChild(empty);
+			results.classList.add('is-visible');
+			return;
+		}
+
+		items.forEach(function (item) {
+			const link = document.createElement('a');
+			const image = document.createElement('span');
+			const content = document.createElement('span');
+			const title = document.createElement('span');
+			const meta = document.createElement('span');
+
+			link.className = 'dewit-shop-search-result';
+			link.href = item.url;
+
+			image.className = 'dewit-shop-search-result__image';
+
+			if (item.image) {
+				const img = document.createElement('img');
+				img.alt = '';
+				img.loading = 'lazy';
+				img.src = item.image;
+				image.appendChild(img);
+			}
+
+			content.className = 'dewit-shop-search-result__content';
+			title.className = 'dewit-shop-search-result__title';
+			title.textContent = item.title || searchTerm;
+			meta.className = 'dewit-shop-search-result__meta';
+			meta.textContent = [item.sku, item.categories].filter(Boolean).join(' | ');
+
+			content.appendChild(title);
+
+			if (meta.textContent) {
+				content.appendChild(meta);
+			}
+
+			link.appendChild(image);
+			link.appendChild(content);
+			results.appendChild(link);
+		});
+
+		results.classList.add('is-visible');
+	}
+
+	function updateLiveSearch(input, results) {
+		const searchTerm = input.value.trim();
+		const config = window.dewitTheme || {};
+
+		window.clearTimeout(searchDebounceTimer);
+
+		if (searchRequestController) {
+			searchRequestController.abort();
+			searchRequestController = null;
+		}
+
+		if (searchTerm.length < 2 || !config.ajaxUrl) {
+			clearLiveSearchResults(results);
+			return;
+		}
+
+		searchDebounceTimer = window.setTimeout(function () {
+			const url = new URL(config.ajaxUrl);
+			url.searchParams.set('action', 'dewit_product_search');
+			url.searchParams.set('term', searchTerm);
+
+			const category = getActiveToolbarCategory();
+
+			if (category) {
+				url.searchParams.set('category', category);
+			}
+
+			searchRequestController = new AbortController();
+			results.classList.add('is-visible', 'is-loading');
+			results.innerHTML = '<div class="dewit-shop-search-results__empty">Zoeken...</div>';
+
+			window.fetch(url.toString(), {
+				credentials: 'same-origin',
+				signal: searchRequestController.signal,
+			})
+				.then(function (response) {
+					return response.json();
+				})
+				.then(function (payload) {
+					renderLiveSearchResults(results, payload && payload.data ? payload.data : [], searchTerm);
+				})
+				.catch(function (error) {
+					if (error.name !== 'AbortError') {
+						clearLiveSearchResults(results);
+					}
+				});
+		}, 180);
+	}
+
 	function injectShopToolbar() {
 		const content = document.querySelector('.elementor-element-5c7860e');
 		const grid = content ? content.querySelector('.elementor-widget-loop-grid') : null;
@@ -24,6 +153,7 @@
 		const label = document.createElement('span');
 		const input = document.createElement('input');
 		const button = document.createElement('button');
+		const results = document.createElement('div');
 		const categoryToggle = document.createElement('button');
 		const phone = document.createElement('a');
 		const params = new URL(window.location.href).searchParams;
@@ -45,8 +175,29 @@
 		button.type = 'submit';
 		button.textContent = 'Zoeken';
 
+		results.className = 'dewit-shop-search-results';
+		results.setAttribute('role', 'listbox');
+
+		input.setAttribute('autocomplete', 'off');
+		input.setAttribute('aria-autocomplete', 'list');
+
+		input.addEventListener('input', function () {
+			updateLiveSearch(input, results);
+		});
+
+		input.addEventListener('focus', function () {
+			updateLiveSearch(input, results);
+		});
+
+		document.addEventListener('click', function (event) {
+			if (!form.contains(event.target)) {
+				clearLiveSearchResults(results);
+			}
+		});
+
 		form.addEventListener('submit', function () {
 			const postType = form.querySelector('input[name="post_type"]');
+			const categoryParam = getActiveToolbarCategoryParam();
 
 			if (!postType) {
 				const hidden = document.createElement('input');
@@ -54,6 +205,20 @@
 				hidden.name = 'post_type';
 				hidden.value = 'product';
 				form.appendChild(hidden);
+			}
+
+			Array.from(form.querySelectorAll('input[data-dewit-category-param="true"]'))
+				.forEach(function (hidden) {
+					hidden.remove();
+				});
+
+			if (categoryParam) {
+				const hiddenCategory = document.createElement('input');
+				hiddenCategory.type = 'hidden';
+				hiddenCategory.name = categoryParam[0];
+				hiddenCategory.value = categoryParam[1];
+				hiddenCategory.setAttribute('data-dewit-category-param', 'true');
+				form.appendChild(hiddenCategory);
 			}
 		});
 
@@ -70,6 +235,7 @@
 		form.appendChild(label);
 		form.appendChild(input);
 		form.appendChild(button);
+		form.appendChild(results);
 		toolbar.appendChild(form);
 		toolbar.appendChild(categoryToggle);
 		toolbar.appendChild(phone);

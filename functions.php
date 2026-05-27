@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.42' );
+define( 'DEWIT_THEME_VERSION', '0.2.43' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -106,6 +106,14 @@ function dewit_theme_scripts(): void {
 		true
 	);
 
+	wp_localize_script(
+		'dewit-theme-woocommerce-script',
+		'dewitTheme',
+		array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+		)
+	);
+
 	if ( taxonomy_exists( 'product_cat' ) ) {
 		$terms = get_terms( array(
 			'taxonomy'   => 'product_cat',
@@ -190,6 +198,218 @@ function dewit_theme_products_per_page(): int {
 	return 12;
 }
 add_filter( 'loop_shop_per_page', 'dewit_theme_products_per_page' );
+
+/**
+ * Match product searches against title, content, SKU, product categories, and product tags.
+ *
+ * @param string   $search Existing SQL search fragment.
+ * @param WP_Query $query  Current query.
+ * @return string
+ */
+function dewit_theme_expand_product_search_sql( string $search, WP_Query $query ): string {
+	if ( is_admin() || ! $query->is_search() ) {
+		return $search;
+	}
+
+	$post_type = $query->get( 'post_type' );
+
+	if ( 'product' !== $post_type && ! ( is_array( $post_type ) && in_array( 'product', $post_type, true ) ) ) {
+		return $search;
+	}
+
+	$term = trim( (string) $query->get( 's' ) );
+
+	if ( '' === $term ) {
+		return $search;
+	}
+
+	global $wpdb;
+
+	$like        = '%' . $wpdb->esc_like( $term ) . '%';
+	$product_ids = dewit_theme_get_product_ids_for_term_matches( $term, 80 );
+	$id_sql      = '';
+
+	if ( ! empty( $product_ids ) ) {
+		$id_sql = ' OR ' . $wpdb->posts . '.ID IN (' . implode( ',', array_map( 'absint', $product_ids ) ) . ')';
+	}
+
+	return $wpdb->prepare(
+		" AND (
+			({$wpdb->posts}.post_title LIKE %s)
+			OR ({$wpdb->posts}.post_excerpt LIKE %s)
+			OR ({$wpdb->posts}.post_content LIKE %s)
+			OR EXISTS (
+				SELECT 1
+				FROM {$wpdb->postmeta} dewit_sku_search
+				WHERE dewit_sku_search.post_id = {$wpdb->posts}.ID
+				AND dewit_sku_search.meta_key = '_sku'
+				AND dewit_sku_search.meta_value LIKE %s
+			)
+			{$id_sql}
+		)",
+		$like,
+		$like,
+		$like,
+		$like
+	);
+}
+add_filter( 'posts_search', 'dewit_theme_expand_product_search_sql', 10, 2 );
+
+/**
+ * Get product IDs connected to matching product categories or tags.
+ *
+ * @param string $term Search term.
+ * @param int    $limit Max product IDs.
+ * @return array<int>
+ */
+function dewit_theme_get_product_ids_for_term_matches( string $term, int $limit = 20 ): array {
+	$taxonomies = array_filter( array( 'product_cat', 'product_tag' ), 'taxonomy_exists' );
+
+	if ( empty( $taxonomies ) ) {
+		return array();
+	}
+
+	$terms = get_terms( array(
+		'taxonomy'   => $taxonomies,
+		'hide_empty' => true,
+		'number'     => 20,
+		'search'     => $term,
+	) );
+
+	if ( is_wp_error( $terms ) || empty( $terms ) ) {
+		return array();
+	}
+
+	$terms_by_taxonomy = array();
+
+	foreach ( $terms as $matched_term ) {
+		if ( $matched_term instanceof WP_Term ) {
+			$terms_by_taxonomy[ $matched_term->taxonomy ][] = absint( $matched_term->term_id );
+		}
+	}
+
+	if ( empty( $terms_by_taxonomy ) ) {
+		return array();
+	}
+
+	$tax_query = array( 'relation' => 'OR' );
+
+	foreach ( $terms_by_taxonomy as $taxonomy => $term_ids ) {
+		$tax_query[] = array(
+			'taxonomy' => $taxonomy,
+			'field'    => 'term_id',
+			'terms'    => array_values( array_unique( $term_ids ) ),
+			'operator' => 'IN',
+		);
+	}
+
+	$products = get_posts( array(
+		'post_type'              => 'product',
+		'post_status'            => 'publish',
+		'fields'                 => 'ids',
+		'posts_per_page'         => $limit,
+		'no_found_rows'          => true,
+		'update_post_meta_cache' => false,
+		'update_post_term_cache' => false,
+		'tax_query'              => $tax_query,
+	) );
+
+	return array_map( 'absint', $products );
+}
+
+/**
+ * Return live product search suggestions for the custom toolbar.
+ */
+function dewit_theme_ajax_product_search(): void {
+	$term     = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
+	$category = isset( $_GET['category'] ) ? sanitize_title( wp_unslash( $_GET['category'] ) ) : '';
+
+	if ( strlen( $term ) < 2 ) {
+		wp_send_json_success( array() );
+	}
+
+	$product_ids = array();
+
+	$title_query = new WP_Query( array(
+		'post_type'              => 'product',
+		'post_status'            => 'publish',
+		's'                      => $term,
+		'fields'                 => 'ids',
+		'posts_per_page'         => 8,
+		'no_found_rows'          => true,
+		'update_post_meta_cache' => false,
+		'update_post_term_cache' => false,
+	) );
+
+	$product_ids = array_merge( $product_ids, array_map( 'absint', $title_query->posts ) );
+
+	$sku_products = get_posts( array(
+		'post_type'              => 'product',
+		'post_status'            => 'publish',
+		'fields'                 => 'ids',
+		'posts_per_page'         => 8,
+		'no_found_rows'          => true,
+		'update_post_term_cache' => false,
+		'meta_query'             => array(
+			array(
+				'key'     => '_sku',
+				'value'   => $term,
+				'compare' => 'LIKE',
+			),
+		),
+	) );
+
+	$product_ids = array_merge( $product_ids, array_map( 'absint', $sku_products ) );
+	$product_ids = array_merge( $product_ids, dewit_theme_get_product_ids_for_term_matches( $term, 8 ) );
+	$product_ids = array_values( array_unique( array_filter( $product_ids ) ) );
+
+	if ( empty( $product_ids ) ) {
+		wp_send_json_success( array() );
+	}
+
+	$args = array(
+		'post_type'              => 'product',
+		'post_status'            => 'publish',
+		'post__in'               => $product_ids,
+		'orderby'                => 'post__in',
+		'posts_per_page'         => 6,
+		'no_found_rows'          => true,
+		'update_post_term_cache' => true,
+	);
+
+	if ( $category && taxonomy_exists( 'product_cat' ) ) {
+		$args['tax_query'] = array(
+			array(
+				'taxonomy' => 'product_cat',
+				'field'    => 'slug',
+				'terms'    => $category,
+			),
+		);
+	}
+
+	$results = array();
+	$products = new WP_Query( $args );
+
+	foreach ( $products->posts as $post_id ) {
+		$product = wc_get_product( $post_id );
+
+		if ( ! $product instanceof WC_Product ) {
+			continue;
+		}
+
+		$results[] = array(
+			'title'      => get_the_title( $post_id ),
+			'url'        => get_permalink( $post_id ),
+			'sku'        => $product->get_sku(),
+			'image'      => get_the_post_thumbnail_url( $post_id, 'woocommerce_thumbnail' ),
+			'categories' => wp_strip_all_tags( wc_get_product_category_list( $post_id, ', ' ) ),
+		);
+	}
+
+	wp_send_json_success( $results );
+}
+add_action( 'wp_ajax_dewit_product_search', 'dewit_theme_ajax_product_search' );
+add_action( 'wp_ajax_nopriv_dewit_product_search', 'dewit_theme_ajax_product_search' );
 
 /**
  * Temporarily disable purchasing while the catalog is being prepared.

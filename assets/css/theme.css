@@ -835,7 +835,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search 
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto;
 	min-height: 48px;
-	overflow: hidden;
+	position: relative;
 	width: 100%;
 }
 
@@ -868,6 +868,101 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search 
 	font-weight: 700;
 	height: 100%;
 	padding: 0 16px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-results {
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	border-radius: 14px;
+	box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+	display: none;
+	left: 0;
+	max-height: min(420px, 68vh);
+	overflow: auto;
+	padding: 6px;
+	position: absolute;
+	right: 0;
+	top: calc(100% + 6px);
+	z-index: 80;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-results.is-visible {
+	display: grid;
+	gap: 4px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-results__empty {
+	color: #777;
+	font-family: var(--font-body);
+	font-size: 13px;
+	font-weight: 700;
+	padding: 12px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-results.is-loading {
+	opacity: 0.9;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-result {
+	align-items: center;
+	border-radius: 10px;
+	color: var(--color-ink);
+	display: grid;
+	gap: 10px;
+	grid-template-columns: 48px minmax(0, 1fr);
+	padding: 8px;
+	text-decoration: none;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-result:hover,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-result:focus {
+	background: #f4f5f6;
+	outline: 0;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-result__image {
+	align-items: center;
+	background: #f4f5f6;
+	border-radius: 8px;
+	display: flex;
+	height: 48px;
+	justify-content: center;
+	overflow: hidden;
+	width: 48px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-result__image img {
+	height: 100%;
+	object-fit: contain;
+	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-result__content {
+	display: grid;
+	gap: 2px;
+	min-width: 0;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-result__title {
+	color: #151515;
+	font-family: var(--font-body);
+	font-size: 13px;
+	font-weight: 800;
+	line-height: 1.25;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-result__meta {
+	color: #8a8a8a;
+	font-family: var(--font-body);
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.25;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
