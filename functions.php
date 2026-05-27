@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.56' );
+define( 'DEWIT_THEME_VERSION', '0.2.57' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -176,6 +176,129 @@ function dewit_theme_body_classes( array $classes ): array {
 	return $classes;
 }
 add_filter( 'body_class', 'dewit_theme_body_classes' );
+
+/**
+ * Print a small independent sidebar renderer so Elementor's default "Alle" item
+ * can never be the only visible category navigation.
+ */
+function dewit_theme_print_sidebar_category_fallback(): void {
+	if ( ! taxonomy_exists( 'product_cat' ) ) {
+		return;
+	}
+
+	$terms = get_terms( array(
+		'taxonomy'   => 'product_cat',
+		'hide_empty' => true,
+		'number'     => 100,
+	) );
+
+	if ( is_wp_error( $terms ) || empty( $terms ) ) {
+		return;
+	}
+
+	$categories = array_values( array_map(
+		static function ( WP_Term $term ): array {
+			return array(
+				'id'     => $term->term_id,
+				'name'   => $term->name,
+				'slug'   => $term->slug,
+				'parent' => $term->parent,
+				'count'  => $term->count,
+			);
+		},
+		$terms
+	) );
+	?>
+	<script>
+	(function () {
+		const categories = <?php echo wp_json_encode( $categories ); ?>;
+
+		function isVisibleCategory(category) {
+			return category && category.slug !== 'alle' && String(category.name || '').trim().toLowerCase() !== 'alle';
+		}
+
+		function hasProducts(category, childrenByParent) {
+			const children = childrenByParent.get(category.id) || [];
+			return Number(category.count) > 0 || children.some(function (child) {
+				return hasProducts(child, childrenByParent);
+			});
+		}
+
+		function getUrl(slug) {
+			const url = new URL(window.location.href);
+
+			Array.from(url.searchParams.keys()).forEach(function (key) {
+				if (key.indexOf('e-filter-') === 0 || key === 'product_cat' || key === 'dewit_parent_cat') {
+					url.searchParams.delete(key);
+				}
+			});
+
+			url.searchParams.delete('product-page');
+			url.searchParams.set('dewit_parent_cat', slug);
+			return url.toString();
+		}
+
+		function render() {
+			const filter = document.querySelector('#catalog-sidebar .elementor-widget-taxonomy-filter .e-filter');
+
+			if (!filter || !Array.isArray(categories) || !categories.length) {
+				return;
+			}
+
+			const childrenByParent = new Map();
+
+			categories.filter(isVisibleCategory).forEach(function (category) {
+				if (!childrenByParent.has(category.parent)) {
+					childrenByParent.set(category.parent, []);
+				}
+
+				childrenByParent.get(category.parent).push(category);
+			});
+
+			const parents = (childrenByParent.get(0) || [])
+				.filter(function (category) {
+					return hasProducts(category, childrenByParent);
+				})
+				.sort(function (a, b) {
+					return a.name.localeCompare(b.name, 'nl');
+				});
+
+			if (!parents.length) {
+				return;
+			}
+
+			const activeParent = new URL(window.location.href).searchParams.get('dewit_parent_cat') || '';
+			filter.innerHTML = '';
+
+			parents.forEach(function (category) {
+				const group = document.createElement('div');
+				const link = document.createElement('a');
+
+				group.className = 'dewit-category-group';
+				group.classList.toggle('is-open', activeParent === category.slug);
+				link.className = 'dewit-category-trigger';
+				link.href = getUrl(category.slug);
+				link.setAttribute('aria-pressed', activeParent === category.slug ? 'true' : 'false');
+				link.textContent = category.name;
+				group.appendChild(link);
+				filter.appendChild(group);
+			});
+
+			filter.classList.add('dewit-category-dropdowns-ready');
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', render);
+		} else {
+			render();
+		}
+
+		window.addEventListener('load', render);
+	}());
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'dewit_theme_print_sidebar_category_fallback', 99 );
 
 /**
  * Customize WooCommerce wrappers to match the theme layout.
