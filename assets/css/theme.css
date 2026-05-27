@@ -821,6 +821,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-
 	border: 0 !important;
 	border-radius: 14px;
 	box-shadow: none !important;
+	height: auto !important;
+	min-height: 0 !important;
 	overflow: visible;
 	padding-left: 12px !important;
 	padding-right: 12px !important;
