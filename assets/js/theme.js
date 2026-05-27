@@ -542,7 +542,7 @@
 
 		container.classList.add('dewit-grouped-mode');
 		container.style.display = 'block';
-		view.outerHTML = grouped.html;
+		container.innerHTML = grouped.html;
 		setShopContextCategory(grouped.label || '', grouped.slug || '');
 		window.dispatchEvent(new CustomEvent('dewit/products-updated'));
 	}
