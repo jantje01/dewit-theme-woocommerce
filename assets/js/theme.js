@@ -379,7 +379,19 @@
 	function getProductLoopContainer() {
 		const widget = getProductGridWidget();
 
-		return widget ? widget.querySelector('.elementor-loop-container') : null;
+		if (!widget) {
+			return null;
+		}
+
+		let container = widget.querySelector('.elementor-loop-container');
+
+		if (!container) {
+			container = document.createElement('div');
+			container.className = 'elementor-loop-container elementor-grid dewit-generated-loop-container';
+			widget.appendChild(container);
+		}
+
+		return container;
 	}
 
 	function updateGroupedCategoryUrl(slug) {
@@ -409,11 +421,16 @@
 			container.appendChild(view);
 		}
 
+		container.classList.add('dewit-grouped-mode');
+		container.style.display = 'block';
+		view.style.display = 'grid';
+
 		return view;
 	}
 
 	function setGroupedProductsLoading(view) {
 		view.classList.add('is-visible', 'is-loading');
+		view.style.display = 'grid';
 		view.innerHTML = '<div class="dewit-grouped-products__status">Producten laden...</div>';
 	}
 
@@ -461,6 +478,8 @@
 		}
 
 		view.classList.remove('is-loading');
+		view.classList.add('is-visible');
+		view.style.display = 'grid';
 		view.innerHTML = '';
 
 		if (container) {
@@ -498,8 +517,9 @@
 		const config = window.dewitTheme || {};
 		const view = getGroupedProductsView();
 		const container = getProductLoopContainer();
+		const ajaxUrl = config.ajaxUrl || (window.location.origin + '/wp-admin/admin-ajax.php');
 
-		if (!config.ajaxUrl || !view) {
+		if (!view) {
 			return;
 		}
 
@@ -515,7 +535,7 @@
 		updateGroupedCategoryUrl(group.parentSlug);
 		setGroupedProductsLoading(view);
 
-		const url = new URL(config.ajaxUrl);
+		const url = new URL(ajaxUrl);
 		url.searchParams.set('action', 'dewit_category_grouped_products');
 		url.searchParams.set('category', group.parentSlug);
 
