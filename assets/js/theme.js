@@ -1037,9 +1037,8 @@
 			});
 
 			const fragment = document.createDocumentFragment();
-			const groupedItems = new Set();
 
-			groups.forEach(function (group, index) {
+			groups.forEach(function (group) {
 				const matchingItems = group.slugs
 					.map(function (slug) {
 						if (itemsBySlug.has(slug)) {
@@ -1057,8 +1056,6 @@
 
 				const groupElement = document.createElement('div');
 				const trigger = document.createElement('button');
-				const panel = document.createElement('div');
-				const panelId = 'dewit-category-panel-' + index;
 				const startsOpen = matchingItems.some(isItemActive);
 
 				groupElement.className = 'dewit-category-group';
@@ -1066,30 +1063,25 @@
 
 				trigger.className = 'dewit-category-trigger';
 				trigger.type = 'button';
-				trigger.setAttribute('aria-expanded', startsOpen ? 'true' : 'false');
-				trigger.setAttribute('aria-controls', panelId);
+				trigger.setAttribute('aria-pressed', startsOpen ? 'true' : 'false');
 				trigger.textContent = group.label;
 
-				panel.className = 'dewit-category-panel';
-				panel.id = panelId;
-				panel.hidden = !startsOpen;
-
-				matchingItems.forEach(function (item) {
-					groupedItems.add(item);
-					item.classList.add('dewit-category-child');
-					closeDrawerOnFilterClick(item);
-					panel.appendChild(item);
-				});
-
 				trigger.addEventListener('click', function () {
-					const isOpen = groupElement.classList.toggle('is-open');
-					trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-					panel.hidden = !isOpen;
+					filter.querySelectorAll('.dewit-category-group.is-open').forEach(function (openGroup) {
+						openGroup.classList.remove('is-open');
+						const openTrigger = openGroup.querySelector('.dewit-category-trigger');
+
+						if (openTrigger) {
+							openTrigger.setAttribute('aria-pressed', 'false');
+						}
+					});
+
+					groupElement.classList.add('is-open');
+					trigger.setAttribute('aria-pressed', 'true');
 					loadGroupedCategoryProducts(group);
 				});
 
 				groupElement.appendChild(trigger);
-				groupElement.appendChild(panel);
 				fragment.appendChild(groupElement);
 			});
 

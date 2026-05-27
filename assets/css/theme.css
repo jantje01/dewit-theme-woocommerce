@@ -1498,18 +1498,17 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-gro
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-trigger::before {
-	border-bottom: 2px solid currentColor;
-	border-right: 2px solid currentColor;
 	content: "";
 	display: block;
 	height: 7px;
-	transform: rotate(45deg);
-	transition: transform 160ms ease;
+	border-radius: 999px;
+	background: currentColor;
+	opacity: 0.58;
 	width: 7px;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-group.is-open .dewit-category-trigger::before {
-	transform: rotate(225deg);
+	opacity: 1;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-panel {
