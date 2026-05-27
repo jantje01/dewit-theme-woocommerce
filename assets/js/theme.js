@@ -395,17 +395,18 @@
 	}
 
 	function getGroupedProductsView() {
-		const widget = getProductGridWidget();
-		let view = widget ? widget.querySelector('.dewit-grouped-products') : null;
+		const container = getProductLoopContainer();
+		const parent = container ? container.parentElement : null;
+		let view = parent ? parent.querySelector(':scope > .dewit-grouped-products') : null;
 
-		if (!widget) {
+		if (!parent) {
 			return null;
 		}
 
 		if (!view) {
 			view = document.createElement('div');
 			view.className = 'dewit-grouped-products';
-			widget.appendChild(view);
+			parent.insertBefore(view, container.nextSibling);
 		}
 
 		return view;
@@ -463,7 +464,7 @@
 		view.innerHTML = '';
 
 		if (container) {
-			container.hidden = true;
+			container.classList.add('dewit-loop-container-hidden');
 		}
 
 		if (!groups.length) {
@@ -507,7 +508,7 @@
 		}
 
 		if (container) {
-			container.hidden = true;
+			container.classList.add('dewit-loop-container-hidden');
 		}
 
 		setShopContextCategory(group.label, group.parentSlug);
