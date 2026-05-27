@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.47' );
+define( 'DEWIT_THEME_VERSION', '0.2.48' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -474,6 +474,7 @@ function dewit_theme_ajax_grouped_category_products(): void {
 		$products = new WP_Query( array(
 			'post_type'              => 'product',
 			'post_status'            => 'publish',
+			'fields'                 => 'ids',
 			'posts_per_page'         => -1,
 			'no_found_rows'          => true,
 			'update_post_term_cache' => false,

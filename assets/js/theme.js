@@ -864,7 +864,10 @@
 	}
 
 	function buildGroupsFromCategories(categories) {
-		const categoriesWithProducts = getCategoriesWithProducts(categories);
+		const categoriesWithProducts = getCategoriesWithProducts(categories)
+			.filter(function (category) {
+				return category.slug !== 'alle' && String(category.name || '').trim().toLowerCase() !== 'alle';
+			});
 		const childrenByParent = new Map();
 		const categoryBySlug = new Map();
 
