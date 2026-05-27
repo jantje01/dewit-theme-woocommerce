@@ -845,7 +845,13 @@
 				return;
 			}
 
-			const items = Array.from(filter.querySelectorAll(':scope > .e-filter-item'));
+			const items = Array.from(filter.querySelectorAll(':scope > .e-filter-item'))
+				.filter(function (item) {
+					const slug = item.getAttribute('data-filter') || '';
+					const label = item.textContent.trim().toLowerCase();
+
+					return slug !== '__all' && slug !== '*' && label !== 'alle' && label !== 'alle producten';
+				});
 
 			if (!items.length) {
 				return;
@@ -858,16 +864,6 @@
 
 			const fragment = document.createDocumentFragment();
 			const groupedItems = new Set();
-			const allProducts = document.createElement('a');
-
-			allProducts.className = 'dewit-all-products';
-			allProducts.href = getCleanCategoryUrl();
-			allProducts.textContent = 'Alle producten';
-			allProducts.addEventListener('click', function () {
-				updateSelectedCategoryContext('', 'Alle producten');
-				closeMobileCategoryDrawer();
-			});
-			fragment.appendChild(allProducts);
 
 			groups.forEach(function (group, index) {
 				const matchingItems = group.slugs
@@ -920,15 +916,6 @@
 				groupElement.appendChild(trigger);
 				groupElement.appendChild(panel);
 				fragment.appendChild(groupElement);
-			});
-
-			const ungroupedItems = items.filter(function (item) {
-				return !groupedItems.has(item);
-			});
-
-			ungroupedItems.forEach(function (item) {
-				closeDrawerOnFilterClick(item);
-				fragment.appendChild(item);
 			});
 
 			filter.innerHTML = '';
