@@ -463,7 +463,7 @@
 			const image = document.createElement('img');
 			image.alt = '';
 			image.decoding = 'async';
-			image.loading = 'lazy';
+			image.loading = 'eager';
 			image.src = product.image;
 			imageWrap.appendChild(image);
 		}

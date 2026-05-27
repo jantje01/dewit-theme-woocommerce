@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.61' );
+define( 'DEWIT_THEME_VERSION', '0.2.62' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -691,7 +691,7 @@ function dewit_theme_render_grouped_category_products_html( string $slug ): stri
 							<a class="dewit-grouped-product-card" href="<?php echo esc_url( $product['url'] ); ?>">
 								<span class="dewit-grouped-product-card__image">
 									<?php if ( $product['image'] ) : ?>
-										<img src="<?php echo esc_url( $product['image'] ); ?>" alt="" loading="lazy" decoding="async">
+										<img src="<?php echo esc_url( $product['image'] ); ?>" alt="" loading="eager" decoding="async">
 									<?php endif; ?>
 								</span>
 								<span class="dewit-grouped-product-card__body">
