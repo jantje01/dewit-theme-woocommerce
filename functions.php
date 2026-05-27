@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.44' );
+define( 'DEWIT_THEME_VERSION', '0.2.45' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -200,6 +200,42 @@ function dewit_theme_products_per_page(): int {
 add_filter( 'loop_shop_per_page', 'dewit_theme_products_per_page' );
 
 /**
+ * Product searches should always be global, even if a stale frontend still submits category filters.
+ */
+function dewit_theme_strip_category_filters_from_product_search(): void {
+	if ( is_admin() || ! is_search() || 'product' !== get_query_var( 'post_type' ) ) {
+		return;
+	}
+
+	$has_filter = false;
+	$url        = home_url( '/' );
+	$params     = array();
+
+	foreach ( $_GET as $key => $value ) {
+		$clean_key = sanitize_key( wp_unslash( $key ) );
+
+		if ( 'product_cat' === $clean_key || str_starts_with( $clean_key, 'e-filter-' ) ) {
+			$has_filter = true;
+			continue;
+		}
+
+		if ( ! is_scalar( $value ) ) {
+			continue;
+		}
+
+		$params[ $clean_key ] = sanitize_text_field( wp_unslash( $value ) );
+	}
+
+	if ( ! $has_filter ) {
+		return;
+	}
+
+	wp_safe_redirect( add_query_arg( $params, $url ) );
+	exit;
+}
+add_action( 'template_redirect', 'dewit_theme_strip_category_filters_from_product_search' );
+
+/**
  * Match product searches against title, content, SKU, product categories, and product tags.
  *
  * @param string   $search Existing SQL search fragment.
@@ -321,8 +357,7 @@ function dewit_theme_get_product_ids_for_term_matches( string $term, int $limit 
  * Return live product search suggestions for the custom toolbar.
  */
 function dewit_theme_ajax_product_search(): void {
-	$term     = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
-	$category = isset( $_GET['category'] ) ? sanitize_title( wp_unslash( $_GET['category'] ) ) : '';
+	$term = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
 
 	if ( strlen( $term ) < 2 ) {
 		wp_send_json_success( array() );
@@ -376,16 +411,6 @@ function dewit_theme_ajax_product_search(): void {
 		'no_found_rows'          => true,
 		'update_post_term_cache' => true,
 	);
-
-	if ( $category && taxonomy_exists( 'product_cat' ) ) {
-		$args['tax_query'] = array(
-			array(
-				'taxonomy' => 'product_cat',
-				'field'    => 'slug',
-				'terms'    => $category,
-			),
-		);
-	}
 
 	$results = array();
 	$products = new WP_Query( $args );
