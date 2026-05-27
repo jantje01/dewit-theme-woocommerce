@@ -14,25 +14,6 @@
 	let searchRequestController = null;
 	let searchDebounceTimer = null;
 
-	function getActiveToolbarCategory() {
-		const url = new URL(window.location.href);
-		const activeParam = Array.from(url.searchParams.entries())
-			.find(function (entry) {
-				return (entry[0].indexOf('e-filter-') === 0 || entry[0] === 'product_cat') && entry[1];
-			});
-
-		return activeParam ? activeParam[1] : '';
-	}
-
-	function getActiveToolbarCategoryParam() {
-		const url = new URL(window.location.href);
-
-		return Array.from(url.searchParams.entries())
-			.find(function (entry) {
-				return (entry[0].indexOf('e-filter-') === 0 || entry[0] === 'product_cat') && entry[1];
-			});
-	}
-
 	function clearLiveSearchResults(results) {
 		results.classList.remove('is-visible', 'is-loading');
 		results.innerHTML = '';
@@ -111,12 +92,6 @@
 			const url = new URL(config.ajaxUrl);
 			url.searchParams.set('action', 'dewit_product_search');
 			url.searchParams.set('term', searchTerm);
-
-			const category = getActiveToolbarCategory();
-
-			if (category) {
-				url.searchParams.set('category', category);
-			}
 
 			searchRequestController = new AbortController();
 			results.classList.add('is-visible', 'is-loading');
@@ -197,7 +172,6 @@
 
 		form.addEventListener('submit', function () {
 			const postType = form.querySelector('input[name="post_type"]');
-			const categoryParam = getActiveToolbarCategoryParam();
 
 			if (!postType) {
 				const hidden = document.createElement('input');
@@ -205,20 +179,6 @@
 				hidden.name = 'post_type';
 				hidden.value = 'product';
 				form.appendChild(hidden);
-			}
-
-			Array.from(form.querySelectorAll('input[data-dewit-category-param="true"]'))
-				.forEach(function (hidden) {
-					hidden.remove();
-				});
-
-			if (categoryParam) {
-				const hiddenCategory = document.createElement('input');
-				hiddenCategory.type = 'hidden';
-				hiddenCategory.name = categoryParam[0];
-				hiddenCategory.value = categoryParam[1];
-				hiddenCategory.setAttribute('data-dewit-category-param', 'true');
-				form.appendChild(hiddenCategory);
 			}
 		});
 
