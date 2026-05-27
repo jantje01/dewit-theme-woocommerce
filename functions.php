@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.53' );
+define( 'DEWIT_THEME_VERSION', '0.2.54' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -113,6 +113,23 @@ function dewit_theme_scripts(): void {
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 		)
 	);
+
+	if ( isset( $_GET['dewit_parent_cat'] ) ) {
+		$parent_slug = sanitize_title( wp_unslash( $_GET['dewit_parent_cat'] ) );
+		$parent_term = get_term_by( 'slug', $parent_slug, 'product_cat' );
+
+		if ( $parent_term instanceof WP_Term ) {
+			wp_add_inline_script(
+				'dewit-theme-woocommerce-script',
+				'window.dewitGroupedCategory = ' . wp_json_encode( array(
+					'label' => $parent_term->name,
+					'slug'  => $parent_slug,
+					'html'  => dewit_theme_render_grouped_category_products_html( $parent_slug ),
+				) ) . ';',
+				'before'
+			);
+		}
+	}
 
 	if ( taxonomy_exists( 'product_cat' ) ) {
 		$terms = get_terms( array(
@@ -437,19 +454,20 @@ add_action( 'wp_ajax_dewit_product_search', 'dewit_theme_ajax_product_search' );
 add_action( 'wp_ajax_nopriv_dewit_product_search', 'dewit_theme_ajax_product_search' );
 
 /**
- * Return products grouped by direct child categories for a selected parent category.
+ * Get products grouped by direct child categories for a selected parent category.
+ *
+ * @param string $slug Parent category slug.
+ * @return array<int, array{name:string, slug:string, products:array<int, array{id:int, title:string, url:string, sku:string, image:string|false}>}>
  */
-function dewit_theme_ajax_grouped_category_products(): void {
-	$slug = isset( $_GET['category'] ) ? sanitize_title( wp_unslash( $_GET['category'] ) ) : '';
-
+function dewit_theme_get_grouped_category_products( string $slug ): array {
 	if ( '' === $slug || ! taxonomy_exists( 'product_cat' ) ) {
-		wp_send_json_success( array() );
+		return array();
 	}
 
 	$parent = get_term_by( 'slug', $slug, 'product_cat' );
 
 	if ( ! $parent instanceof WP_Term ) {
-		wp_send_json_success( array() );
+		return array();
 	}
 
 	$children = get_terms( array(
@@ -505,7 +523,7 @@ function dewit_theme_ajax_grouped_category_products(): void {
 			}
 
 			$items[] = array(
-				'id'    => $post_id,
+				'id'    => absint( $post_id ),
 				'title' => get_the_title( $post_id ),
 				'url'   => get_permalink( $post_id ),
 				'sku'   => $product->get_sku(),
@@ -524,7 +542,56 @@ function dewit_theme_ajax_grouped_category_products(): void {
 		);
 	}
 
-	wp_send_json_success( $groups );
+	return $groups;
+}
+
+/**
+ * Render grouped category products markup.
+ *
+ * @param string $slug Parent category slug.
+ * @return string
+ */
+function dewit_theme_render_grouped_category_products_html( string $slug ): string {
+	$groups = dewit_theme_get_grouped_category_products( $slug );
+
+	ob_start();
+	?>
+	<div class="dewit-grouped-products is-visible" style="display: grid;">
+		<?php if ( empty( $groups ) ) : ?>
+			<div class="dewit-grouped-products__status"><?php esc_html_e( 'Geen producten gevonden', 'dewit-theme-woocommerce' ); ?></div>
+		<?php else : ?>
+			<?php foreach ( $groups as $group ) : ?>
+				<section class="dewit-grouped-products__section">
+					<h2 class="dewit-grouped-products__heading"><?php echo esc_html( $group['name'] ); ?></h2>
+					<div class="dewit-grouped-products__grid">
+						<?php foreach ( $group['products'] as $product ) : ?>
+							<a class="dewit-grouped-product-card" href="<?php echo esc_url( $product['url'] ); ?>">
+								<span class="dewit-grouped-product-card__image">
+									<?php if ( $product['image'] ) : ?>
+										<img src="<?php echo esc_url( $product['image'] ); ?>" alt="" loading="lazy" decoding="async">
+									<?php endif; ?>
+								</span>
+								<span class="dewit-grouped-product-card__body">
+									<span class="dewit-grouped-product-card__sku"><?php echo esc_html( $product['sku'] ); ?></span>
+									<span class="dewit-grouped-product-card__title"><?php echo esc_html( $product['title'] ); ?></span>
+								</span>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				</section>
+			<?php endforeach; ?>
+		<?php endif; ?>
+	</div>
+	<?php
+	return trim( ob_get_clean() );
+}
+
+/**
+ * Return products grouped by direct child categories for a selected parent category.
+ */
+function dewit_theme_ajax_grouped_category_products(): void {
+	$slug = isset( $_GET['category'] ) ? sanitize_title( wp_unslash( $_GET['category'] ) ) : '';
+	wp_send_json_success( dewit_theme_get_grouped_category_products( $slug ) );
 }
 add_action( 'wp_ajax_dewit_category_grouped_products', 'dewit_theme_ajax_grouped_category_products' );
 add_action( 'wp_ajax_nopriv_dewit_category_grouped_products', 'dewit_theme_ajax_grouped_category_products' );
