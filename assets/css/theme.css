@@ -1050,6 +1050,112 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 	width: 100% !important;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container[hidden] {
+	display: none !important;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products {
+	display: none;
+	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products.is-visible {
+	display: grid;
+	gap: 18px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products__section {
+	display: grid;
+	gap: 10px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products__heading {
+	color: #151515;
+	font-family: var(--font-body);
+	font-size: 15px;
+	font-weight: 800;
+	line-height: 1.2;
+	margin: 4px 0 0;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products__grid {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products__status {
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	border-radius: 14px;
+	color: #777;
+	font-family: var(--font-body);
+	font-size: 13px;
+	font-weight: 700;
+	padding: 16px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-product-card {
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	border-radius: 14px;
+	color: #151515;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-width: 0;
+	overflow: hidden;
+	padding: 12px;
+	text-decoration: none;
+	transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-product-card:hover {
+	border-color: #cacaca;
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-product-card__image {
+	align-items: center;
+	aspect-ratio: 1 / 1;
+	background: #fff;
+	border-radius: 14px;
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
+	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-product-card__image img {
+	height: 100%;
+	object-fit: contain;
+	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-product-card__body {
+	display: grid;
+	gap: 4px;
+	padding-top: 10px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-product-card__sku {
+	color: #9c9c9c;
+	font-family: var(--font-body);
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.3;
+	min-height: 16px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-product-card__title {
+	color: #151515;
+	font-family: var(--font-body);
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.22;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product {
 	background: #fff;
 	border: 1px solid #e5e5e5;
@@ -1282,6 +1388,19 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 		grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
 	}
 
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products {
+		gap: 14px;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products__grid {
+		gap: 8px;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-product-card {
+		padding: 10px;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .e-loop-item.product .elementor-element-4169925 {
 		gap: 8px;
 		padding: 10px !important;
@@ -1320,6 +1439,12 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .e
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter .e-filter.dewit-category-dropdowns-ready {
 	visibility: visible;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter .e-filter-item[data-filter=""],
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter .e-filter-item[data-filter="*"],
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter .e-filter-item[data-filter="__all"] {
+	display: none !important;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar,
