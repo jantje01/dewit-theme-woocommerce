@@ -827,6 +827,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-
 	box-shadow: none !important;
 	display: flex !important;
 	flex-direction: column !important;
+	flex-wrap: nowrap !important;
 	height: calc(100dvh - 20px) !important;
 	min-width: 0 !important;
 	min-height: 0 !important;
@@ -1383,6 +1384,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-5c7860e {
 		flex: 0 0 auto !important;
+		height: calc(100dvh - 60px) !important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
 		max-width: 100% !important;
