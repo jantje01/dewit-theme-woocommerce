@@ -1098,20 +1098,14 @@
 			const fragment = document.createDocumentFragment();
 
 			groups.forEach(function (group) {
-				const matchingItems = group.slugs
-					.map(function (slug) {
-						if (itemsBySlug.has(slug)) {
-							return itemsBySlug.get(slug);
-						}
+				const matchingItems = group.slugs.map(function (slug) {
+					if (itemsBySlug.has(slug)) {
+						return itemsBySlug.get(slug);
+					}
 
-						const category = group.categoriesBySlug.get(slug);
-						return category ? createGeneratedFilterItem(category, filter) : null;
-					})
-					.filter(Boolean);
-
-				if (!matchingItems.length) {
-					return;
-				}
+					const category = group.categoriesBySlug.get(slug);
+					return category ? createGeneratedFilterItem(category, filter) : null;
+				}).filter(Boolean);
 
 				const groupElement = document.createElement('div');
 				const trigger = document.createElement('a');
@@ -1163,6 +1157,13 @@
 		});
 	}
 
+	function revealCategoryFilters() {
+		document.querySelectorAll('#catalog-sidebar .elementor-widget-taxonomy-filter .e-filter')
+			.forEach(function (filter) {
+				filter.classList.add('dewit-category-dropdowns-ready');
+			});
+	}
+
 	function buildCategoryDropdowns() {
 		const filters = document.querySelectorAll('.elementor-widget-taxonomy-filter .e-filter');
 
@@ -1204,9 +1205,14 @@
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', buildCategoryDropdowns);
+		document.addEventListener('DOMContentLoaded', function () {
+			window.setTimeout(revealCategoryFilters, 700);
+		});
 	} else {
 		buildCategoryDropdowns();
+		window.setTimeout(revealCategoryFilters, 700);
 	}
 
 	window.addEventListener('elementor/frontend/init', buildCategoryDropdowns);
+	window.addEventListener('load', revealCategoryFilters);
 }());

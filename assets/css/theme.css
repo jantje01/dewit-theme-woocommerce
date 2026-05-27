@@ -1433,8 +1433,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-t
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter .e-filter:not(.dewit-category-dropdowns-ready) {
-	min-height: 240px;
-	visibility: hidden;
+	min-height: 48px;
+	visibility: visible;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter .e-filter.dewit-category-dropdowns-ready {
