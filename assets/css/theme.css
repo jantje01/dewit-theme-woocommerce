@@ -1080,6 +1080,28 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 	color: #fff;
 }
 
+@media (max-width: 768px) {
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email {
+		grid-column: 1 / -1;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email {
+		display: inline-flex !important;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		width: 100%;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
+		width: 100%;
+	}
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-toggle {
 	align-items: center;
 	background: #003965;
@@ -1434,21 +1456,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 		z-index: 1;
 	}
 
-	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search {
-		grid-column: 1 / -1;
-	}
-
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-toggle {
 		display: inline-flex;
-		width: 100%;
-	}
-
-	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email {
-		grid-column: 1 / -1;
-		width: 100%;
-	}
-
-	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 		width: 100%;
 	}
 
