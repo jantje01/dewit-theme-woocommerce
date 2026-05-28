@@ -1085,16 +1085,12 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 		grid-template-columns: 1fr 1fr;
 	}
 
-	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search,
-	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email {
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search {
 		grid-column: 1 / -1;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email {
-		display: inline-flex !important;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		width: 100%;
+		display: none !important;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
