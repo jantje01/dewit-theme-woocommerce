@@ -130,6 +130,7 @@
 		const button = document.createElement('button');
 		const results = document.createElement('div');
 		const categoryToggle = document.createElement('button');
+		const email = document.createElement('a');
 		const phone = document.createElement('a');
 		const params = new URL(window.location.href).searchParams;
 
@@ -183,6 +184,10 @@
 			}
 		});
 
+		email.className = 'dewit-shop-email';
+		email.href = 'mailto:info@dewitbouwmachines.nl';
+		email.textContent = 'info@dewitbouwmachines.nl';
+
 		phone.className = 'dewit-shop-phone';
 		phone.href = 'tel:+31412634969';
 		phone.textContent = '0412 - 63 49 69';
@@ -198,6 +203,7 @@
 		form.appendChild(button);
 		form.appendChild(results);
 		toolbar.appendChild(form);
+		toolbar.appendChild(email);
 		toolbar.appendChild(categoryToggle);
 		toolbar.appendChild(phone);
 		content.insertBefore(toolbar, grid);

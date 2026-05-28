@@ -903,7 +903,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar
 	align-items: center;
 	display: grid;
 	gap: 12px;
-	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-columns: minmax(0, 1fr) auto auto;
 	margin: 0 0 12px;
 	width: 100%;
 }
@@ -1052,19 +1052,31 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search-
 	white-space: nowrap;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email,
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 	align-items: center;
-	background: #f5a710;
 	border-radius: 14px;
-	color: #fff;
 	display: inline-flex;
 	font-family: var(--font-body);
 	font-size: 14px;
 	font-weight: 800;
+	justify-content: center;
 	min-height: 48px;
 	padding: 0 20px;
 	text-decoration: none;
 	white-space: nowrap;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email {
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	color: #003965;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
+	background: #f5a710;
+	border: 1px solid #f5a710;
+	color: #fff;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-toggle {
@@ -1430,8 +1442,12 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 		width: 100%;
 	}
 
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email {
+		grid-column: 1 / -1;
+		width: 100%;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
-		justify-content: center;
 		width: 100%;
 	}
 
