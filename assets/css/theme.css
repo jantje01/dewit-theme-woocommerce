@@ -814,10 +814,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
 	background: #003965 !important;
 	border-radius: 14px;
 	box-sizing: border-box;
-	flex: 0 0 280px !important;
+	flex: 0 0 260px !important;
 	overflow: hidden;
 	padding: 16px !important;
-	width: 280px !important;
+	width: 260px !important;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-5c7860e {
@@ -1572,6 +1572,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-tri
 	cursor: pointer;
 	display: block;
 	font: inherit;
+	font-size: 15px;
 	font-weight: 750;
 	line-height: 1.2;
 	min-height: 36px;
