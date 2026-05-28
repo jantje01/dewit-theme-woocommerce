@@ -629,19 +629,15 @@
 		const main = document.createElement('div');
 		const title = document.createElement('strong');
 		const count = document.createElement('span');
-		const reset = document.createElement('a');
 
 		context.className = 'dewit-shop-context';
 		main.className = 'dewit-shop-context__main';
 		title.className = 'dewit-shop-context__title';
 		count.className = 'dewit-shop-context__count';
-		reset.className = 'dewit-shop-context__reset';
-		reset.textContent = 'Alle producten';
 
 		main.appendChild(title);
 		main.appendChild(count);
 		context.appendChild(main);
-		context.appendChild(reset);
 		content.insertBefore(context, grid);
 		updateShopContext();
 	}

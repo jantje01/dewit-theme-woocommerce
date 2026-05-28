@@ -1100,6 +1100,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context__reset {
 	color: #003965;
+	display: none !important;
 	font-family: var(--font-body);
 	font-size: 13px;
 	font-weight: 800;
