@@ -1006,6 +1006,66 @@
 		});
 	}
 
+	const categoryIconKeywords = [
+		{ icon: 'plug', terms: ['elektra', 'elektrisch', 'kabel', 'stroom', 'verdeel', 'haspel'] },
+		{ icon: 'shield', terms: ['pbm', 'veiligheid', 'helm', 'bescherming', 'bril', 'handschoen'] },
+		{ icon: 'layers', terms: ['steiger', 'vloeren', 'planken', 'doeken'] },
+		{ icon: 'panel', terms: ['hek', 'hekken', 'bouwhek', 'pallet', 'opslag', 'stapel'] },
+		{ icon: 'seal', terms: ['voeg', 'afdichting', 'kimband', 'tape', 'band'] },
+		{ icon: 'support', terms: ['ondersteuning', 'ondersteuningsmateriaal', 'afstandhouder', 'stel', 'ribben'] },
+		{ icon: 'pipe', terms: ['buis', 'buizen', 'konus', 'konussen', 'pe'] },
+		{ icon: 'tool', terms: ['bouwmachine', 'machines', 'gereedschap', 'mixer', 'betonmolen'] },
+	];
+
+	const categoryIconSvgs = {
+		plug: '<path d="M9 7V2"/><path d="M15 7V2"/><path d="M6 7h12v5a6 6 0 0 1-12 0Z"/><path d="M12 18v4"/>',
+		shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-5"/>',
+		layers: '<path d="m12 2 9 5-9 5-9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>',
+		panel: '<path d="M4 4v16"/><path d="M20 4v16"/><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/>',
+		seal: '<path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/><path d="m8 4-4 16"/><path d="m16 4 4 16"/>',
+		support: '<path d="M6 20V8"/><path d="M18 20V8"/><path d="M4 8h16"/><path d="M8 4h8"/><path d="M9 20h6"/><path d="m6 14 12-6"/><path d="m18 14-12-6"/>',
+		pipe: '<path d="M4 8c0-2.2 3.6-4 8-4s8 1.8 8 4-3.6 4-8 4-8-1.8-8-4Z"/><path d="M4 8v8c0 2.2 3.6 4 8 4s8-1.8 8-4V8"/><path d="M8 10v8"/><path d="M16 10v8"/>',
+		tool: '<path d="m14.7 6.3 3-3a2.8 2.8 0 0 1 3.2 3.2l-3 3"/><path d="m13 8 3 3"/><path d="M3 21l9.5-9.5"/><path d="m7 17 3 3"/>',
+		box: '<path d="m7.5 4.3 9 5.2"/><path d="M21 8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+	};
+
+	function getCategoryIconName(category) {
+		const value = [category.parentSlug, category.slug, category.label, category.name]
+			.filter(Boolean)
+			.join(' ')
+			.toLowerCase();
+		const match = categoryIconKeywords.find(function (entry) {
+			return entry.terms.some(function (term) {
+				return value.indexOf(term) > -1;
+			});
+		});
+
+		return match ? match.icon : 'box';
+	}
+
+	function appendCategoryTriggerContent(trigger, group) {
+		const icon = document.createElement('span');
+		const label = document.createElement('span');
+		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+		icon.className = 'dewit-category-icon';
+		icon.setAttribute('aria-hidden', 'true');
+		svg.setAttribute('viewBox', '0 0 24 24');
+		svg.setAttribute('fill', 'none');
+		svg.setAttribute('stroke', 'currentColor');
+		svg.setAttribute('stroke-width', '2');
+		svg.setAttribute('stroke-linecap', 'round');
+		svg.setAttribute('stroke-linejoin', 'round');
+		svg.innerHTML = categoryIconSvgs[getCategoryIconName(group)] || categoryIconSvgs.box;
+		icon.appendChild(svg);
+
+		label.className = 'dewit-category-label';
+		label.textContent = group.label || group.name || '';
+
+		trigger.appendChild(icon);
+		trigger.appendChild(label);
+	}
+
 	function getFilterParamName(filter) {
 		const widget = filter.closest('.elementor-widget-taxonomy-filter');
 		let loopId = '';
@@ -1130,7 +1190,7 @@
 				trigger.className = 'dewit-category-trigger';
 				trigger.href = getGroupedCategoryUrl(group.parentSlug);
 				trigger.setAttribute('aria-pressed', startsOpen ? 'true' : 'false');
-				trigger.textContent = group.label;
+				appendCategoryTriggerContent(trigger, group);
 
 				trigger.addEventListener('click', function (event) {
 					event.preventDefault();
