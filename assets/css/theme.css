@@ -1111,14 +1111,6 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context
 	white-space: nowrap;
 }
 
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context__count {
-	color: #777;
-	font-family: var(--font-body);
-	font-size: 12px;
-	font-weight: 600;
-	white-space: nowrap;
-}
-
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-context__reset {
 	color: #003965;
 	display: none !important;

@@ -317,21 +317,12 @@
 	function updateShopContext() {
 		const context = document.querySelector('.dewit-shop-context');
 		const title = context ? context.querySelector('.dewit-shop-context__title') : null;
-		const count = context ? context.querySelector('.dewit-shop-context__count') : null;
 		const reset = context ? context.querySelector('.dewit-shop-context__reset') : null;
-		const groupedView = document.querySelector('.dewit-grouped-products.is-visible');
-		const visibleCards = groupedView
-			? groupedView.querySelectorAll('.dewit-grouped-product-card').length
-			: document.querySelectorAll('.elementor-widget-loop-grid .e-loop-item.product').length;
 
 		if (title) {
 			title.textContent = selectedCategoryContext
 				? selectedCategoryContext.label
 				: getActiveCategoryLabel();
-		}
-
-		if (count) {
-			count.textContent = visibleCards ? visibleCards + ' producten getoond' : 'Producten';
 		}
 
 		if (reset) {
@@ -629,15 +620,12 @@
 		const context = document.createElement('div');
 		const main = document.createElement('div');
 		const title = document.createElement('strong');
-		const count = document.createElement('span');
 
 		context.className = 'dewit-shop-context';
 		main.className = 'dewit-shop-context__main';
 		title.className = 'dewit-shop-context__title';
-		count.className = 'dewit-shop-context__count';
 
 		main.appendChild(title);
-		main.appendChild(count);
 		context.appendChild(main);
 		content.insertBefore(context, grid);
 		updateShopContext();
