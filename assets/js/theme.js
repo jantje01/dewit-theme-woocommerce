@@ -191,7 +191,7 @@
 		categoryToggle.type = 'button';
 		categoryToggle.setAttribute('aria-expanded', 'false');
 		categoryToggle.setAttribute('aria-controls', 'catalog-sidebar');
-		categoryToggle.textContent = 'Categorieen';
+		categoryToggle.textContent = 'Categorieën';
 
 		form.appendChild(label);
 		form.appendChild(input);
@@ -651,7 +651,7 @@
 			overlay = document.createElement('button');
 			overlay.className = 'dewit-category-overlay';
 			overlay.type = 'button';
-			overlay.setAttribute('aria-label', 'Categorieen sluiten');
+			overlay.setAttribute('aria-label', 'Categorieën sluiten');
 			document.body.appendChild(overlay);
 		}
 
