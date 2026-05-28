@@ -38,6 +38,12 @@
 			const content = document.createElement('span');
 			const title = document.createElement('span');
 			const meta = document.createElement('span');
+			const metaParts = [
+				{ label: item.sku, type: 'sku' },
+				{ label: item.categories, type: 'category' },
+			].filter(function (part) {
+				return part.label;
+			});
 
 			link.className = 'dewit-shop-search-result';
 			link.href = item.url;
@@ -56,11 +62,17 @@
 			title.className = 'dewit-shop-search-result__title';
 			title.textContent = item.title || searchTerm;
 			meta.className = 'dewit-shop-search-result__meta';
-			meta.textContent = [item.sku, item.categories].filter(Boolean).join(' | ');
+
+			metaParts.forEach(function (part) {
+				const itemElement = document.createElement('span');
+				itemElement.className = 'dewit-shop-search-result__meta-item is-' + part.type;
+				itemElement.textContent = part.label;
+				meta.appendChild(itemElement);
+			});
 
 			content.appendChild(title);
 
-			if (meta.textContent) {
+			if (metaParts.length) {
 				content.appendChild(meta);
 			}
 
