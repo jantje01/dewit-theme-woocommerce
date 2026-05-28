@@ -820,6 +820,14 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
 	width: 260px !important;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-element-aad6506 {
+	padding: 16px 10px 10px !important;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-element-cdaf430 {
+	padding: 0 10px 10px !important;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-5c7860e {
 	background: #f4f5f6 !important;
 	border: 0 !important;
