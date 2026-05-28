@@ -198,17 +198,17 @@
 
 		email.className = 'dewit-shop-email';
 		email.href = 'mailto:info@dewitbouwmachines.nl';
-		email.textContent = 'info@dewitbouwmachines.nl';
+		email.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg><span>info@dewitbouwmachines.nl</span>';
 
 		phone.className = 'dewit-shop-phone';
 		phone.href = 'tel:+31412634969';
-		phone.textContent = '0412 - 63 49 69';
+		phone.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.32 1.77.59 2.61a2 2 0 0 1-.45 2.11L8 9.69a16 16 0 0 0 6.31 6.31l1.25-1.25a2 2 0 0 1 2.11-.45c.84.27 1.71.47 2.61.59A2 2 0 0 1 22 16.92Z"></path></svg><span>0412 - 63 49 69</span>';
 
 		categoryToggle.className = 'dewit-category-toggle';
 		categoryToggle.type = 'button';
 		categoryToggle.setAttribute('aria-expanded', 'false');
 		categoryToggle.setAttribute('aria-controls', 'catalog-sidebar');
-		categoryToggle.textContent = 'Categorieën';
+		categoryToggle.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M7 12h10"></path><path d="M10 18h4"></path></svg><span>Categorieën</span>';
 
 		form.appendChild(label);
 		form.appendChild(input);
