@@ -792,9 +792,11 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-location
 	background: #f4f5f6;
 	box-sizing: border-box;
 	height: 100dvh !important;
+	margin: 0 !important;
 	max-width: none;
 	min-height: 0;
 	overflow: hidden !important;
+	padding: 0 !important;
 	width: 100%;
 }
 
@@ -804,9 +806,11 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-
 	box-sizing: border-box;
 	gap: 0 !important;
 	height: 100dvh !important;
+	margin: 0 !important;
 	max-width: 100% !important;
 	min-height: 0 !important;
 	overflow: hidden !important;
+	padding: 0 !important;
 	width: 100% !important;
 }
 
@@ -817,7 +821,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
 	flex: 0 0 260px !important;
 	margin: 0 !important;
 	overflow: hidden;
-	padding: 0 16px 0 0 !important;
+	padding: 0 !important;
 	width: 260px !important;
 }
 
@@ -837,7 +841,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-
 	display: flex !important;
 	flex-direction: column !important;
 	flex-wrap: nowrap !important;
-	height: calc(100dvh - 20px) !important;
+	height: 100dvh !important;
 	min-width: 0 !important;
 	min-height: 0 !important;
 	overflow: hidden;
