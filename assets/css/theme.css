@@ -815,8 +815,9 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
 	border-radius: 0;
 	box-sizing: border-box;
 	flex: 0 0 260px !important;
+	margin: 0 !important;
 	overflow: hidden;
-	padding: 16px !important;
+	padding: 0 16px 0 0 !important;
 	width: 260px !important;
 }
 
