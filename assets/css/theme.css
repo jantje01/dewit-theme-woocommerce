@@ -846,6 +846,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid {
 	background: transparent !important;
+	border-radius: 14px;
 	border: 0 !important;
 	box-shadow: none !important;
 	flex: 1 1 auto;
@@ -881,6 +882,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid > .elementor-widget-container {
+	border-radius: 14px;
 	max-width: 100%;
 	min-width: 0;
 	width: 100%;
