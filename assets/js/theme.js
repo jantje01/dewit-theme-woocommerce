@@ -251,7 +251,8 @@
 	}
 
 	function getActiveParentCategorySlug() {
-		return new URL(window.location.href).searchParams.get('dewit_parent_cat') || '';
+		return new URL(window.location.href).searchParams.get('dewit_parent_cat') ||
+			((window.dewitTheme && window.dewitTheme.defaultParentCategory) || '');
 	}
 
 	function getProductGridWidget() {

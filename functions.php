@@ -9,7 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.92' );
+define( 'DEWIT_THEME_VERSION', '0.2.93' );
+define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -110,12 +111,14 @@ function dewit_theme_scripts(): void {
 		'dewit-theme-woocommerce-script',
 		'dewitTheme',
 		array(
-			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
+			'defaultParentCategory' => dewit_theme_get_default_parent_category_slug(),
 		)
 	);
 
-	if ( isset( $_GET['dewit_parent_cat'] ) ) {
-		$parent_slug = sanitize_title( wp_unslash( $_GET['dewit_parent_cat'] ) );
+	$parent_slug = dewit_theme_get_current_parent_category_slug();
+
+	if ( '' !== $parent_slug ) {
 		$parent_term = get_term_by( 'slug', $parent_slug, 'product_cat' );
 
 		if ( $parent_term instanceof WP_Term ) {
@@ -161,6 +164,53 @@ function dewit_theme_scripts(): void {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'dewit_theme_scripts' );
+
+/**
+ * Return the configured default parent category for the shop landing page.
+ */
+function dewit_theme_get_default_parent_category_slug(): string {
+	if ( ! dewit_theme_should_use_default_parent_category() ) {
+		return '';
+	}
+
+	return DEWIT_DEFAULT_PARENT_CATEGORY_SLUG;
+}
+
+/**
+ * Return the requested or default parent category slug.
+ */
+function dewit_theme_get_current_parent_category_slug(): string {
+	if ( isset( $_GET['dewit_parent_cat'] ) ) {
+		return sanitize_title( wp_unslash( $_GET['dewit_parent_cat'] ) );
+	}
+
+	return dewit_theme_get_default_parent_category_slug();
+}
+
+/**
+ * Decide whether the shop landing page should open with a default category.
+ */
+function dewit_theme_should_use_default_parent_category(): bool {
+	$is_product_page     = function_exists( 'is_product' ) && is_product();
+	$is_product_taxonomy = function_exists( 'is_product_taxonomy' ) && is_product_taxonomy();
+	$is_shop_page        = function_exists( 'is_shop' ) && is_shop();
+
+	if ( is_admin() || is_search() || $is_product_page || $is_product_taxonomy ) {
+		return false;
+	}
+
+	if ( ! ( $is_shop_page || is_post_type_archive( 'product' ) || is_front_page() || is_home() ) ) {
+		return false;
+	}
+
+	foreach ( array_keys( $_GET ) as $key ) {
+		if ( 'dewit_parent_cat' === $key || 'product_cat' === $key || str_starts_with( (string) $key, 'e-filter-' ) ) {
+			return false;
+		}
+	}
+
+	return true;
+}
 
 /**
  * Add WooCommerce body classes.
