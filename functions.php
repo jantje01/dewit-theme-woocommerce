@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.93' );
+define( 'DEWIT_THEME_VERSION', '0.2.94' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -114,6 +114,11 @@ function dewit_theme_scripts(): void {
 			'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
 			'defaultParentCategory' => dewit_theme_get_default_parent_category_slug(),
 		)
+	);
+	wp_add_inline_script(
+		'dewit-theme-woocommerce-script',
+		'window.dewitTheme = window.dewitTheme || (typeof dewitTheme !== "undefined" ? dewitTheme : {});',
+		'before'
 	);
 
 	$parent_slug = dewit_theme_get_current_parent_category_slug();

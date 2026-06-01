@@ -14,6 +14,10 @@
 	let searchRequestController = null;
 	let searchDebounceTimer = null;
 
+	function getThemeConfig() {
+		return window.dewitTheme || (typeof dewitTheme !== 'undefined' ? dewitTheme : {});
+	}
+
 	function clearLiveSearchResults(results) {
 		results.classList.remove('is-visible', 'is-loading');
 		results.innerHTML = '';
@@ -86,7 +90,7 @@
 
 	function updateLiveSearch(input, results) {
 		const searchTerm = input.value.trim();
-		const config = window.dewitTheme || {};
+		const config = getThemeConfig();
 
 		window.clearTimeout(searchDebounceTimer);
 
@@ -233,6 +237,10 @@
 (function () {
 	let groupedProductsController = null;
 
+	function getThemeConfig() {
+		return window.dewitTheme || (typeof dewitTheme !== 'undefined' ? dewitTheme : {});
+	}
+
 	function getActiveFilterParamNames() {
 		return Array.from(new URL(window.location.href).searchParams.keys())
 			.filter(function (key) {
@@ -252,7 +260,7 @@
 
 	function getActiveParentCategorySlug() {
 		return new URL(window.location.href).searchParams.get('dewit_parent_cat') ||
-			((window.dewitTheme && window.dewitTheme.defaultParentCategory) || '');
+			(getThemeConfig().defaultParentCategory || '');
 	}
 
 	function getProductGridWidget() {
@@ -450,7 +458,7 @@
 	}
 
 	function loadGroupedCategoryProducts(group) {
-		const config = window.dewitTheme || {};
+		const config = getThemeConfig();
 		const view = getGroupedProductsView();
 		const container = getProductLoopContainer();
 		const ajaxUrl = config.ajaxUrl || (window.location.origin + '/wp-admin/admin-ajax.php');
