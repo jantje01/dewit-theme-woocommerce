@@ -1449,6 +1449,46 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 }
 
 @media (max-width: 560px) {
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header {
+		background: #003965;
+		border-bottom: 0;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header__inner {
+		grid-template-columns: 42px minmax(0, 1fr);
+		min-height: 60px;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .site-branding {
+		justify-content: flex-start;
+		order: 2;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .site-branding .custom-logo {
+		max-height: 38px;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .header-cart {
+		display: none !important;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .menu-toggle.dewit-header-category-toggle {
+		align-items: center;
+		background: transparent;
+		border: 0;
+		display: inline-flex !important;
+		height: 42px;
+		justify-content: center;
+		order: 1;
+		width: 42px;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .menu-toggle.dewit-header-category-toggle .menu-toggle__bar,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .menu-toggle.dewit-header-category-toggle .menu-toggle__bar::before,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .menu-toggle.dewit-header-category-toggle .menu-toggle__bar::after {
+		background: #fff;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-mobile-filter-open {
 		overflow: hidden;
 	}
@@ -1508,8 +1548,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-toggle {
-		display: inline-flex;
-		width: 100%;
+		display: none !important;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.elementor-grid {

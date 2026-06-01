@@ -2,6 +2,10 @@
 	const toggle = document.querySelector('.menu-toggle');
 	const nav = document.querySelector('.main-navigation');
 
+	if (toggle && document.body.classList.contains('elementor-template-canvas') && document.getElementById('catalog-sidebar')) {
+		return;
+	}
+
 	if (toggle && nav) {
 		toggle.addEventListener('click', function () {
 			const isOpen = nav.classList.toggle('is-open');
@@ -522,15 +526,30 @@
 
 	function closeMobileCategories() {
 		document.body.classList.remove('dewit-mobile-filter-open');
-		document.querySelectorAll('.dewit-category-toggle').forEach(function (button) {
+		document.querySelectorAll('.dewit-category-toggle, .dewit-header-category-toggle').forEach(function (button) {
 			button.setAttribute('aria-expanded', 'false');
 		});
 	}
 
-	function injectMobileCategoryControls() {
-		const toggle = document.querySelector('.dewit-category-toggle');
+	function getMobileCategoryToggleButtons() {
+		const buttons = Array.from(document.querySelectorAll('.dewit-category-toggle'));
+		const headerToggle = document.querySelector('.site-header .menu-toggle');
 
-		if (!toggle || toggle.classList.contains('dewit-category-toggle-ready')) {
+		if (headerToggle && document.getElementById('catalog-sidebar')) {
+			headerToggle.classList.add('dewit-header-category-toggle');
+			headerToggle.setAttribute('aria-controls', 'catalog-sidebar');
+			headerToggle.setAttribute('aria-expanded', String(document.body.classList.contains('dewit-mobile-filter-open')));
+			headerToggle.setAttribute('aria-label', 'Categorieën openen');
+			buttons.push(headerToggle);
+		}
+
+		return buttons;
+	}
+
+	function injectMobileCategoryControls() {
+		const toggles = getMobileCategoryToggleButtons();
+
+		if (!toggles.length) {
 			return;
 		}
 
@@ -544,18 +563,30 @@
 			document.body.appendChild(overlay);
 		}
 
-		toggle.classList.add('dewit-category-toggle-ready');
-		toggle.addEventListener('click', function () {
-			const isOpen = document.body.classList.toggle('dewit-mobile-filter-open');
-			toggle.setAttribute('aria-expanded', String(isOpen));
+		toggles.forEach(function (toggle) {
+			if (toggle.classList.contains('dewit-category-toggle-ready')) {
+				return;
+			}
+
+			toggle.classList.add('dewit-category-toggle-ready');
+			toggle.addEventListener('click', function () {
+				const isOpen = document.body.classList.toggle('dewit-mobile-filter-open');
+
+				getMobileCategoryToggleButtons().forEach(function (button) {
+					button.setAttribute('aria-expanded', String(isOpen));
+				});
+			});
 		});
 
-		overlay.addEventListener('click', closeMobileCategories);
-		document.addEventListener('keydown', function (event) {
-			if (event.key === 'Escape') {
-				closeMobileCategories();
-			}
-		});
+		if (!overlay.classList.contains('dewit-category-overlay-ready')) {
+			overlay.classList.add('dewit-category-overlay-ready');
+			overlay.addEventListener('click', closeMobileCategories);
+			document.addEventListener('keydown', function (event) {
+				if (event.key === 'Escape') {
+					closeMobileCategories();
+				}
+			});
+		}
 	}
 
 	function enhanceShopNavigation() {
