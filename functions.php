@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.2.95' );
+define( 'DEWIT_THEME_VERSION', '0.2.96' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -169,6 +169,19 @@ function dewit_theme_scripts(): void {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'dewit_theme_scripts' );
+
+/**
+ * Clean product text from ERP/WooCommerce before it is printed or sent to JavaScript.
+ *
+ * Some imported titles contain malformed numeric entities such as "&8221;"
+ * instead of "&#8221;". Normalize those first, then decode valid entities.
+ */
+function dewit_theme_clean_product_text( string $text ): string {
+	$text = wp_strip_all_tags( $text );
+	$text = preg_replace( '/&(\d{2,6});/', '&#$1;', $text ) ?? $text;
+
+	return html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, get_bloginfo( 'charset' ) ?: 'UTF-8' );
+}
 
 /**
  * Return the configured default parent category for the shop landing page.
@@ -675,11 +688,11 @@ function dewit_theme_ajax_product_search(): void {
 		}
 
 		$results[] = array(
-			'title'      => get_the_title( $post_id ),
+			'title'      => dewit_theme_clean_product_text( get_the_title( $post_id ) ),
 			'url'        => get_permalink( $post_id ),
-			'sku'        => $product->get_sku(),
+			'sku'        => dewit_theme_clean_product_text( $product->get_sku() ),
 			'image'      => get_the_post_thumbnail_url( $post_id, 'woocommerce_thumbnail' ),
-			'categories' => wp_strip_all_tags( wc_get_product_category_list( $post_id, ', ' ) ),
+			'categories' => dewit_theme_clean_product_text( wp_strip_all_tags( wc_get_product_category_list( $post_id, ', ' ) ) ),
 		);
 	}
 
@@ -759,9 +772,9 @@ function dewit_theme_get_grouped_category_products( string $slug ): array {
 
 			$items[] = array(
 				'id'    => absint( $post_id ),
-				'title' => get_the_title( $post_id ),
+				'title' => dewit_theme_clean_product_text( get_the_title( $post_id ) ),
 				'url'   => get_permalink( $post_id ),
-				'sku'   => $product->get_sku(),
+				'sku'   => dewit_theme_clean_product_text( $product->get_sku() ),
 				'image' => get_the_post_thumbnail_url( $post_id, 'woocommerce_thumbnail' ),
 			);
 		}
@@ -771,7 +784,7 @@ function dewit_theme_get_grouped_category_products( string $slug ): array {
 		}
 
 		$groups[] = array(
-			'name'     => $child->name,
+			'name'     => dewit_theme_clean_product_text( $child->name ),
 			'slug'     => $child->slug,
 			'products' => $items,
 		);

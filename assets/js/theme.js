@@ -18,6 +18,14 @@
 		return window.dewitTheme || (typeof dewitTheme !== 'undefined' ? dewitTheme : {});
 	}
 
+	function normalizeDisplayText(value) {
+		const normalized = String(value || '').replace(/&(\d{2,6});/g, '&#$1;');
+		const parser = document.createElement('textarea');
+		parser.innerHTML = normalized;
+
+		return parser.value;
+	}
+
 	function clearLiveSearchResults(results) {
 		results.classList.remove('is-visible', 'is-loading');
 		results.innerHTML = '';
@@ -64,13 +72,13 @@
 
 			content.className = 'dewit-shop-search-result__content';
 			title.className = 'dewit-shop-search-result__title';
-			title.textContent = item.title || searchTerm;
+			title.textContent = normalizeDisplayText(item.title || searchTerm);
 			meta.className = 'dewit-shop-search-result__meta';
 
 			metaParts.forEach(function (part) {
 				const itemElement = document.createElement('span');
 				itemElement.className = 'dewit-shop-search-result__meta-item is-' + part.type;
-				itemElement.textContent = part.label;
+				itemElement.textContent = normalizeDisplayText(part.label);
 				meta.appendChild(itemElement);
 			});
 
@@ -241,6 +249,14 @@
 		return window.dewitTheme || (typeof dewitTheme !== 'undefined' ? dewitTheme : {});
 	}
 
+	function normalizeDisplayText(value) {
+		const normalized = String(value || '').replace(/&(\d{2,6});/g, '&#$1;');
+		const parser = document.createElement('textarea');
+		parser.innerHTML = normalized;
+
+		return parser.value;
+	}
+
 	function getActiveFilterParamNames() {
 		return Array.from(new URL(window.location.href).searchParams.keys())
 			.filter(function (key) {
@@ -376,9 +392,9 @@
 
 		body.className = 'dewit-grouped-product-card__body';
 		sku.className = 'dewit-grouped-product-card__sku';
-		sku.textContent = product.sku || '';
+		sku.textContent = normalizeDisplayText(product.sku || '');
 		title.className = 'dewit-grouped-product-card__title';
-		title.textContent = product.title || '';
+		title.textContent = normalizeDisplayText(product.title || '');
 
 		body.appendChild(sku);
 		body.appendChild(title);
@@ -417,7 +433,7 @@
 
 			section.className = 'dewit-grouped-products__section';
 			heading.className = 'dewit-grouped-products__heading';
-			heading.textContent = group.name;
+			heading.textContent = normalizeDisplayText(group.name);
 			grid.className = 'dewit-grouped-products__grid';
 
 			if ((group.products || []).length === 1) {
