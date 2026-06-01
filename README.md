@@ -19,3 +19,7 @@ A custom WordPress theme with WooCommerce integration.
 ## Development
 
 The main theme setup lives in `functions.php`. Frontend CSS and JavaScript live in `assets/`.
+
+## ERP product sync
+
+For bundling separate ERP articles into WooCommerce variable products, see [`docs/erp-variable-products.md`](docs/erp-variable-products.md).
