@@ -533,7 +533,18 @@
 
 	function getMobileCategoryToggleButtons() {
 		const buttons = Array.from(document.querySelectorAll('.dewit-category-toggle'));
-		const headerToggle = document.querySelector('.site-header .menu-toggle');
+		let headerToggle = document.querySelector('.dewit-header-category-toggle');
+		const headerHost = document.querySelector('.elementor-element-c385f59.elementor-sticky--active:not(.elementor-sticky__spacer)') ||
+			document.querySelector('.elementor-element-c385f59:not(.elementor-sticky__spacer)') ||
+			document.querySelector('.site-header');
+
+		if (!headerToggle && headerHost) {
+			headerToggle = document.createElement('button');
+			headerToggle.className = 'menu-toggle dewit-header-category-toggle';
+			headerToggle.type = 'button';
+			headerToggle.innerHTML = '<span class="menu-toggle__bar"></span><span class="screen-reader-text">Categorieën openen</span>';
+			headerHost.insertBefore(headerToggle, headerHost.firstChild);
+		}
 
 		if (headerToggle && document.getElementById('catalog-sidebar')) {
 			headerToggle.classList.add('dewit-header-category-toggle');

@@ -1483,9 +1483,34 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 		width: 42px;
 	}
 
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59 {
+		position: relative;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59:not(.elementor-sticky__spacer) .dewit-header-category-toggle {
+		align-items: center;
+		background: transparent;
+		border: 0;
+		display: inline-flex !important;
+		height: 42px;
+		justify-content: center;
+		left: 8px;
+		position: absolute;
+		top: 9px;
+		width: 42px;
+		z-index: 3;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59:not(.elementor-sticky__spacer) .elementor-widget-theme-site-logo {
+		margin-left: 48px;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .menu-toggle.dewit-header-category-toggle .menu-toggle__bar,
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .menu-toggle.dewit-header-category-toggle .menu-toggle__bar::before,
-	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .menu-toggle.dewit-header-category-toggle .menu-toggle__bar::after {
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header .menu-toggle.dewit-header-category-toggle .menu-toggle__bar::after,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59 .dewit-header-category-toggle .menu-toggle__bar,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59 .dewit-header-category-toggle .menu-toggle__bar::before,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59 .dewit-header-category-toggle .menu-toggle__bar::after {
 		background: #fff;
 	}
 
