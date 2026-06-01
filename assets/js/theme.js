@@ -555,6 +555,10 @@
 	window.addEventListener('elementor/frontend/init', enhanceShopNavigation);
 	window.addEventListener('load', enhanceShopNavigation);
 	window.addEventListener('load', renderServerGroupedProducts);
+	window.dewitGetActiveCategorySlug = getActiveCategorySlug;
+	window.dewitGetActiveParentCategorySlug = getActiveParentCategorySlug;
+	window.dewitGetGroupedCategoryUrl = getGroupedCategoryUrl;
+	window.dewitLoadGroupedCategoryProducts = loadGroupedCategoryProducts;
 	if (document.readyState === 'complete') {
 		renderServerGroupedProducts();
 	}
@@ -920,6 +924,47 @@
 
 		trigger.appendChild(icon);
 		trigger.appendChild(label);
+	}
+
+	function getActiveCategorySlug() {
+		if (window.dewitGetActiveCategorySlug) {
+			return window.dewitGetActiveCategorySlug();
+		}
+
+		const url = new URL(window.location.href);
+		const activeParam = Array.from(url.searchParams.entries())
+			.find(function (entry) {
+				return (entry[0].indexOf('e-filter-') === 0 || entry[0] === 'product_cat') && entry[1];
+			});
+
+		return activeParam ? activeParam[1] : '';
+	}
+
+	function getActiveParentCategorySlug() {
+		if (window.dewitGetActiveParentCategorySlug) {
+			return window.dewitGetActiveParentCategorySlug();
+		}
+
+		return new URL(window.location.href).searchParams.get('dewit_parent_cat') ||
+			((window.dewitTheme && window.dewitTheme.defaultParentCategory) || '');
+	}
+
+	function getGroupedCategoryUrl(slug) {
+		if (window.dewitGetGroupedCategoryUrl) {
+			return window.dewitGetGroupedCategoryUrl(slug);
+		}
+
+		const url = new URL(window.location.href);
+		url.searchParams.delete('product-page');
+		url.searchParams.set('dewit_parent_cat', slug);
+
+		return url.toString();
+	}
+
+	function loadGroupedCategoryProducts(group) {
+		if (window.dewitLoadGroupedCategoryProducts) {
+			window.dewitLoadGroupedCategoryProducts(group);
+		}
 	}
 
 	function getFilterParamName(filter) {
