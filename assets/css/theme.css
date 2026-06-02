@@ -1861,7 +1861,12 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-pan
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item {
+	background: transparent;
+	border: 0;
 	color: rgba(255, 255, 255, 0.82);
+	cursor: pointer;
+	display: block;
+	font-family: var(--font-body);
 	border-radius: 9px;
 	font-size: 12px;
 	font-weight: 600;

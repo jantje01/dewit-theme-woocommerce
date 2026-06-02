@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.3' );
+define( 'DEWIT_THEME_VERSION', '0.3.4' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -306,6 +306,23 @@ function dewit_theme_print_sidebar_category_fallback(): void {
 			return url.toString();
 		}
 
+		function getCategorySectionId(slug) {
+			return 'dewit-cat-' + String(slug || '').replace(/[^a-z0-9_-]/gi, '-');
+		}
+
+		function scrollToCategorySection(slug) {
+			const section = document.getElementById(getCategorySectionId(slug));
+
+			if (!section) {
+				return;
+			}
+
+			section.scrollIntoView({
+				block: 'start',
+				behavior: 'smooth',
+			});
+		}
+
 		const categoryIconKeywords = [
 			{ icon: 'plug', terms: ['elektra', 'elektrisch', 'kabel', 'stroom', 'verdeel', 'haspel'] },
 			{ icon: 'shield', terms: ['pbm', 'veiligheid', 'helm', 'bescherming', 'bril', 'handschoen'] },
@@ -398,6 +415,13 @@ function dewit_theme_print_sidebar_category_fallback(): void {
 			parents.forEach(function (category) {
 				const group = document.createElement('div');
 				const link = document.createElement('a');
+				const children = (childrenByParent.get(category.id) || [])
+					.filter(function (child) {
+						return hasProducts(child, childrenByParent);
+					})
+					.sort(function (a, b) {
+						return a.name.localeCompare(b.name, 'nl');
+					});
 
 				group.className = 'dewit-category-group';
 				group.classList.toggle('is-open', activeParent === category.slug);
@@ -406,6 +430,32 @@ function dewit_theme_print_sidebar_category_fallback(): void {
 				link.setAttribute('aria-pressed', activeParent === category.slug ? 'true' : 'false');
 				appendCategoryTriggerContent(link, category);
 				group.appendChild(link);
+
+				if (children.length) {
+					const panel = document.createElement('div');
+					panel.className = 'dewit-category-panel';
+					panel.hidden = activeParent !== category.slug;
+
+					children.forEach(function (child) {
+						const childLink = document.createElement('a');
+						childLink.className = 'e-filter-item dewit-category-child';
+						childLink.href = getUrl(category.slug) + '#' + getCategorySectionId(child.slug);
+						childLink.setAttribute('data-filter', child.slug);
+						childLink.textContent = child.name || '';
+						childLink.addEventListener('click', function (event) {
+							if (activeParent !== category.slug) {
+								return;
+							}
+
+							event.preventDefault();
+							scrollToCategorySection(child.slug);
+						});
+						panel.appendChild(childLink);
+					});
+
+					group.appendChild(panel);
+				}
+
 				filter.appendChild(group);
 			});
 
@@ -809,7 +859,7 @@ function dewit_theme_render_grouped_category_products_html( string $slug ): stri
 			<div class="dewit-grouped-products__status"><?php esc_html_e( 'Geen producten gevonden', 'dewit-theme-woocommerce' ); ?></div>
 		<?php else : ?>
 			<?php foreach ( $groups as $group ) : ?>
-				<section class="dewit-grouped-products__section">
+				<section class="dewit-grouped-products__section" id="<?php echo esc_attr( 'dewit-cat-' . sanitize_html_class( $group['slug'] ) ); ?>" data-category-slug="<?php echo esc_attr( $group['slug'] ); ?>">
 					<h2 class="dewit-grouped-products__heading"><?php echo esc_html( $group['name'] ); ?></h2>
 					<div class="dewit-grouped-products__grid<?php echo 1 === count( $group['products'] ) ? ' is-single' : ''; ?>">
 						<?php foreach ( $group['products'] as $product ) : ?>

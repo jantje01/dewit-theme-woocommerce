@@ -455,6 +455,25 @@
 		return url.toString();
 	}
 
+	function getCategorySectionId(slug) {
+		return 'dewit-cat-' + String(slug || '').replace(/[^a-z0-9_-]/gi, '-');
+	}
+
+	function scrollToCategorySection(slug) {
+		const section = document.getElementById(getCategorySectionId(slug));
+
+		if (!section) {
+			return false;
+		}
+
+		section.scrollIntoView({
+			block: 'start',
+			behavior: 'smooth',
+		});
+
+		return true;
+	}
+
 	function getGroupedProductsView() {
 		const container = getProductLoopContainer();
 		let view = container ? container.querySelector('.dewit-grouped-products') : null;
@@ -547,6 +566,8 @@
 			const grid = document.createElement('div');
 
 			section.className = 'dewit-grouped-products__section';
+			section.id = getCategorySectionId(group.slug);
+			section.setAttribute('data-category-slug', group.slug || '');
 			heading.className = 'dewit-grouped-products__heading';
 			heading.textContent = normalizeDisplayText(group.name);
 			grid.className = 'dewit-grouped-products__grid';
@@ -995,10 +1016,21 @@
 
 		return (childrenByParent.get(0) || [])
 			.map(function (parent) {
+				const children = (childrenByParent.get(parent.id) || []).filter(function (child) {
+					return child.slug !== 'alle' && String(child.name || '').trim().toLowerCase() !== 'alle';
+				});
+
 				return {
 					label: parent.name,
 					parentSlug: parent.slug,
 					slugs: getDescendantSlugs(parent.id, childrenByParent),
+					children: children.map(function (child) {
+						return {
+							name: child.name,
+							slug: child.slug,
+							count: child.count,
+						};
+					}),
 					categoriesBySlug: categoryBySlug,
 				};
 			})
@@ -1130,6 +1162,25 @@
 		return url.toString();
 	}
 
+	function getCategorySectionId(slug) {
+		return 'dewit-cat-' + String(slug || '').replace(/[^a-z0-9_-]/gi, '-');
+	}
+
+	function scrollToCategorySection(slug) {
+		const section = document.getElementById(getCategorySectionId(slug));
+
+		if (!section) {
+			return false;
+		}
+
+		section.scrollIntoView({
+			block: 'start',
+			behavior: 'smooth',
+		});
+
+		return true;
+	}
+
 	function loadGroupedCategoryProducts(group) {
 		if (window.dewitLoadGroupedCategoryProducts) {
 			window.dewitLoadGroupedCategoryProducts(group);
@@ -1181,6 +1232,31 @@
 			url.searchParams.set(filterParamName, category.slug);
 			url.searchParams.delete('product-page');
 			window.location.href = url.toString();
+		});
+
+		return item;
+	}
+
+	function createCategoryChildItem(category, group) {
+		const item = document.createElement('button');
+
+		item.className = 'e-filter-item dewit-category-child';
+		item.type = 'button';
+		item.setAttribute('data-filter', category.slug);
+		item.setAttribute('aria-pressed', 'false');
+		item.textContent = normalizeDisplayText(category.name);
+
+		item.addEventListener('click', function () {
+			closeMobileCategoryDrawer();
+
+			if (getActiveParentCategorySlug() === group.parentSlug && scrollToCategorySection(category.slug)) {
+				return;
+			}
+
+			window.addEventListener('dewit/products-updated', function () {
+				scrollToCategorySection(category.slug);
+			}, { once: true });
+			loadGroupedCategoryProducts(group);
 		});
 
 		return item;
@@ -1279,6 +1355,19 @@
 				});
 
 				groupElement.appendChild(trigger);
+
+				if (Array.isArray(group.children) && group.children.length) {
+					const panel = document.createElement('div');
+					panel.className = 'dewit-category-panel';
+					panel.hidden = !startsOpen;
+
+					group.children.forEach(function (child) {
+						panel.appendChild(createCategoryChildItem(child, group));
+					});
+
+					groupElement.appendChild(panel);
+				}
+
 				fragment.appendChild(groupElement);
 			});
 
