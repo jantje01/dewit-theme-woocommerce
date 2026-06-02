@@ -605,6 +605,7 @@
 		container.classList.add('dewit-grouped-mode');
 		container.style.display = 'block';
 		container.innerHTML = grouped.html;
+		updateGroupedCategoryUrl(grouped.slug);
 		disableGroupedElementorLoadMore();
 		window.dispatchEvent(new CustomEvent('dewit/products-updated'));
 	}
