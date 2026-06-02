@@ -56,18 +56,60 @@
 		}
 	}
 
+	function getActiveParentCategorySlugForLabel() {
+		const url = new URL(window.location.href);
+		const config = getThemeConfig();
+
+		return url.searchParams.get('dewit_parent_cat') || config.defaultParentCategory || '';
+	}
+
+	function getActiveParentCategoryLabel() {
+		const activeSlug = getActiveParentCategorySlugForLabel();
+		const categories = window.dewitProductCategories || [];
+		const match = categories.find(function (category) {
+			return category && category.slug === activeSlug;
+		});
+		const activeTrigger = document.querySelector('.dewit-category-trigger[aria-pressed="true"] .dewit-category-label');
+
+		if (match && match.name) {
+			return normalizeDisplayText(match.name);
+		}
+
+		if (activeTrigger && activeTrigger.textContent.trim()) {
+			return normalizeDisplayText(activeTrigger.textContent.trim());
+		}
+
+		return 'Alle producten';
+	}
+
+	function updateProductViewSwitchLabel() {
+		const label = document.querySelector('.dewit-product-view-switch__label');
+
+		if (label) {
+			label.textContent = getActiveParentCategoryLabel();
+		}
+	}
+
 	function injectProductViewSwitch(content, grid) {
 		if (content.querySelector('.dewit-product-view-switch')) {
+			updateProductViewSwitchLabel();
 			setProductCardViewMode(getProductCardViewMode());
 			return;
 		}
 
 		const switcher = document.createElement('div');
+		const label = document.createElement('span');
+		const controls = document.createElement('span');
 		const gridButton = document.createElement('button');
 		const horizontalButton = document.createElement('button');
 
 		switcher.className = 'dewit-product-view-switch';
 		switcher.setAttribute('aria-label', 'Productweergave');
+
+		label.className = 'dewit-product-view-switch__label';
+		label.textContent = getActiveParentCategoryLabel();
+
+		controls.className = 'dewit-product-view-switch__controls';
 
 		gridButton.className = 'dewit-product-view-switch__button';
 		gridButton.type = 'button';
@@ -85,9 +127,11 @@
 			button.addEventListener('click', function () {
 				setProductCardViewMode(button.getAttribute('data-view'));
 			});
-			switcher.appendChild(button);
+			controls.appendChild(button);
 		});
 
+		switcher.appendChild(label);
+		switcher.appendChild(controls);
 		content.insertBefore(switcher, grid);
 		setProductCardViewMode(getProductCardViewMode());
 	}
@@ -308,6 +352,7 @@
 
 	window.addEventListener('elementor/frontend/init', injectShopToolbar);
 	window.addEventListener('dewit/products-updated', function () {
+		updateProductViewSwitchLabel();
 		setProductCardViewMode(getProductCardViewMode());
 	});
 }());
