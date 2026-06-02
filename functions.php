@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.7' );
+define( 'DEWIT_THEME_VERSION', '0.3.8' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -438,16 +438,23 @@ function dewit_theme_print_sidebar_category_fallback(): void {
 
 					children.forEach(function (child) {
 						const childLink = document.createElement('a');
-						childLink.className = 'e-filter-item dewit-category-child';
+						childLink.className = 'dewit-category-child';
 						childLink.href = getUrl(category.slug) + '#' + getCategorySectionId(child.slug);
 						childLink.setAttribute('data-filter', child.slug);
 						childLink.textContent = child.name || '';
 						childLink.addEventListener('click', function (event) {
+							event.preventDefault();
+							event.stopPropagation();
+
 							if (activeParent !== category.slug) {
+								window.location.href = childLink.href;
 								return;
 							}
 
-							event.preventDefault();
+							document.querySelectorAll('.dewit-category-child[aria-pressed="true"]').forEach(function (item) {
+								item.setAttribute('aria-pressed', 'false');
+							});
+							childLink.setAttribute('aria-pressed', 'true');
 							scrollToCategorySection(child.slug);
 						});
 						panel.appendChild(childLink);

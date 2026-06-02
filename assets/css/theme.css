@@ -1890,7 +1890,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-pan
 	display: none;
 }
 
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item {
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child {
 	background: transparent;
 	border: 0;
 	color: rgba(255, 255, 255, 0.82);
@@ -1909,14 +1909,14 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-t
 	width: 100%;
 }
 
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item:hover,
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item[aria-pressed="true"] {
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child:hover,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child[aria-pressed="true"] {
 	background: rgba(255, 255, 255, 0.1);
 	color: #fff;
 	opacity: 1;
 }
 
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child.e-filter-item::before {
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-taxonomy-filter .dewit-category-child::before {
 	background: currentColor;
 	content: "";
 	height: 1px;

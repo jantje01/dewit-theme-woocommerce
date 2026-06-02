@@ -474,6 +474,12 @@
 		return true;
 	}
 
+	function setActiveSidebarChild(slug) {
+		document.querySelectorAll('.dewit-category-child[data-filter]').forEach(function (item) {
+			item.setAttribute('aria-pressed', String(item.getAttribute('data-filter') === slug));
+		});
+	}
+
 	function getGroupedProductsView() {
 		const container = getProductLoopContainer();
 		let view = container ? container.querySelector('.dewit-grouped-products') : null;
@@ -1182,6 +1188,12 @@
 		return true;
 	}
 
+	function setActiveSidebarChild(slug) {
+		document.querySelectorAll('.dewit-category-child[data-filter]').forEach(function (item) {
+			item.setAttribute('aria-pressed', String(item.getAttribute('data-filter') === slug));
+		});
+	}
+
 	function loadGroupedCategoryProducts(group) {
 		if (window.dewitLoadGroupedCategoryProducts) {
 			window.dewitLoadGroupedCategoryProducts(group);
@@ -1241,14 +1253,17 @@
 	function createCategoryChildItem(category, group) {
 		const item = document.createElement('button');
 
-		item.className = 'e-filter-item dewit-category-child';
+		item.className = 'dewit-category-child';
 		item.type = 'button';
 		item.setAttribute('data-filter', category.slug);
 		item.setAttribute('aria-pressed', 'false');
 		item.textContent = normalizeDisplayText(category.name);
 
-		item.addEventListener('click', function () {
+		item.addEventListener('click', function (event) {
+			event.preventDefault();
+			event.stopPropagation();
 			closeMobileCategoryDrawer();
+			setActiveSidebarChild(category.slug);
 
 			if (getActiveParentCategorySlug() === group.parentSlug && scrollToCategorySection(category.slug)) {
 				return;
