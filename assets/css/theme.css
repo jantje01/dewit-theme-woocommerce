@@ -917,10 +917,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-product-view
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-product-view-switch__label {
-	color: #151515;
+	color: #003965;
 	font-family: var(--font-body);
-	font-size: 17px;
-	font-weight: 800;
+	font-size: 20px;
+	font-weight: 850;
 	line-height: 1.2;
 	min-width: 0;
 	overflow: hidden;
@@ -1674,7 +1674,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-product-view-switch__label {
-		font-size: 16px;
+		font-size: 18px;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-toggle {
