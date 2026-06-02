@@ -26,6 +26,21 @@ body {
 	line-height: 1.6;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas {
+	touch-action: manipulation;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas a,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas button,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas input,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas select,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas textarea,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas [role="button"],
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid {
+	touch-action: manipulation;
+}
+
 a {
 	color: var(--color-brand-dark);
 	text-decoration-thickness: 1px;
