@@ -1130,7 +1130,15 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email {
-		display: none !important;
+		width: 100%;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email span {
+		display: none;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-email::after {
+		content: "Mail";
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
