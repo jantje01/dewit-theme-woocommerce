@@ -17,6 +17,7 @@
 (function () {
 	let searchRequestController = null;
 	let searchDebounceTimer = null;
+	const productCardViewStorageKey = 'dewitProductCardView';
 
 	function getThemeConfig() {
 		return window.dewitTheme || (typeof dewitTheme !== 'undefined' ? dewitTheme : {});
@@ -28,6 +29,67 @@
 		parser.innerHTML = normalized;
 
 		return parser.value;
+	}
+
+	function getProductCardViewMode() {
+		try {
+			return window.localStorage.getItem(productCardViewStorageKey) === 'horizontal' ? 'horizontal' : 'grid';
+		} catch (error) {
+			return 'grid';
+		}
+	}
+
+	function setProductCardViewMode(mode) {
+		const nextMode = mode === 'horizontal' ? 'horizontal' : 'grid';
+
+		document.body.classList.toggle('dewit-horizontal-product-cards', nextMode === 'horizontal');
+		document.querySelectorAll('.dewit-product-view-switch__button').forEach(function (button) {
+			const isActive = button.getAttribute('data-view') === nextMode;
+			button.classList.toggle('is-active', isActive);
+			button.setAttribute('aria-pressed', String(isActive));
+		});
+
+		try {
+			window.localStorage.setItem(productCardViewStorageKey, nextMode);
+		} catch (error) {
+			// localStorage can be disabled in some browser privacy modes.
+		}
+	}
+
+	function injectProductViewSwitch(content, grid) {
+		if (content.querySelector('.dewit-product-view-switch')) {
+			setProductCardViewMode(getProductCardViewMode());
+			return;
+		}
+
+		const switcher = document.createElement('div');
+		const gridButton = document.createElement('button');
+		const horizontalButton = document.createElement('button');
+
+		switcher.className = 'dewit-product-view-switch';
+		switcher.setAttribute('aria-label', 'Productweergave');
+
+		gridButton.className = 'dewit-product-view-switch__button';
+		gridButton.type = 'button';
+		gridButton.setAttribute('data-view', 'grid');
+		gridButton.setAttribute('aria-label', 'Gridweergave');
+		gridButton.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect></svg>';
+
+		horizontalButton.className = 'dewit-product-view-switch__button';
+		horizontalButton.type = 'button';
+		horizontalButton.setAttribute('data-view', 'horizontal');
+		horizontalButton.setAttribute('aria-label', 'Horizontale productcards');
+		horizontalButton.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="5" x="3" y="4" rx="1"></rect><rect width="18" height="5" x="3" y="15" rx="1"></rect></svg>';
+
+		[gridButton, horizontalButton].forEach(function (button) {
+			button.addEventListener('click', function () {
+				setProductCardViewMode(button.getAttribute('data-view'));
+			});
+			switcher.appendChild(button);
+		});
+
+		content.insertBefore(switcher, grid);
+		setProductCardViewMode(getProductCardViewMode());
 	}
 
 	function clearLiveSearchResults(results) {
@@ -235,6 +297,7 @@
 		toolbar.appendChild(categoryToggle);
 		toolbar.appendChild(phone);
 		content.insertBefore(toolbar, grid);
+		injectProductViewSwitch(content, grid);
 	}
 
 	if (document.readyState === 'loading') {
@@ -244,6 +307,9 @@
 	}
 
 	window.addEventListener('elementor/frontend/init', injectShopToolbar);
+	window.addEventListener('dewit/products-updated', function () {
+		setProductCardViewMode(getProductCardViewMode());
+	});
 }());
 
 (function () {
