@@ -55,6 +55,7 @@ defined( 'ABSPATH' ) || exit;
 
 						<div class="dewit-product-actions">
 							<a class="dewit-product-phone" href="tel:+31412634969"><?php esc_html_e( 'Bel 0412 - 63 49 69', 'dewit-theme-woocommerce' ); ?></a>
+							<a class="dewit-product-mail" href="mailto:info@dewitbouwmachines.nl"><?php esc_html_e( 'Mail ons', 'dewit-theme-woocommerce' ); ?></a>
 						</div>
 					</div>
 				</section>

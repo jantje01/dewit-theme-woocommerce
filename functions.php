@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.10' );
+define( 'DEWIT_THEME_VERSION', '0.3.11' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -908,3 +908,11 @@ function dewit_theme_disable_product_purchases(): bool {
 	return false;
 }
 add_filter( 'woocommerce_is_purchasable', 'dewit_theme_disable_product_purchases' );
+
+/**
+ * Use Dutch copy for the related products section.
+ */
+function dewit_theme_related_products_heading(): string {
+	return __( 'Gerelateerde producten', 'dewit-theme-woocommerce' );
+}
+add_filter( 'woocommerce_product_related_products_heading', 'dewit_theme_related_products_heading' );
