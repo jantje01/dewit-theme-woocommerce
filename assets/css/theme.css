@@ -449,6 +449,10 @@ body.single-product.woocommerce div.product div.summary {
 	overflow: hidden;
 }
 
+.dewit-product-gallery .woocommerce-product-gallery__trigger {
+	display: none !important;
+}
+
 .dewit-product-gallery .woocommerce-product-gallery__image img {
 	aspect-ratio: 1 / 1;
 	max-height: 390px;
