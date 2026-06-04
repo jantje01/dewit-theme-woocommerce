@@ -509,12 +509,14 @@
 		view.innerHTML = '<div class="dewit-grouped-products__status">Producten laden...</div>';
 	}
 
-	function renderGroupedProductCard(product) {
+	function renderGroupedProductCard(product, index) {
 		const card = document.createElement('a');
 		const imageWrap = document.createElement('span');
 		const body = document.createElement('span');
 		const sku = document.createElement('span');
 		const title = document.createElement('span');
+		const isPriorityImage = index < 4;
+		const isLcpCandidate = index < 2;
 
 		card.className = 'dewit-grouped-product-card';
 		card.href = product.url;
@@ -525,7 +527,10 @@
 			const image = document.createElement('img');
 			image.alt = '';
 			image.decoding = 'async';
-			image.loading = 'eager';
+			image.loading = isPriorityImage ? 'eager' : 'lazy';
+			image.fetchPriority = isLcpCandidate ? 'high' : 'low';
+			image.width = product.image_width || 300;
+			image.height = product.image_height || 300;
 			image.src = product.image;
 			imageWrap.appendChild(image);
 		}
@@ -566,6 +571,8 @@
 			return;
 		}
 
+		let productIndex = 0;
+
 		groups.forEach(function (group) {
 			const section = document.createElement('section');
 			const heading = document.createElement('h2');
@@ -583,7 +590,8 @@
 			}
 
 			(group.products || []).forEach(function (product) {
-				grid.appendChild(renderGroupedProductCard(product));
+				grid.appendChild(renderGroupedProductCard(product, productIndex));
+				productIndex += 1;
 			});
 
 			section.appendChild(heading);
@@ -886,6 +894,10 @@
 	}
 
 	function watchProductGrid() {
+		if (document.querySelector('.dewit-grouped-products.is-visible')) {
+			return;
+		}
+
 		const containers = document.querySelectorAll('.elementor-widget-loop-grid .elementor-loop-container');
 
 		installProductCardClickDelegation();
@@ -1227,6 +1239,18 @@
 		}
 	}
 
+	function hasServerGroupedProductsForActiveParent(group) {
+		const grouped = window.dewitGroupedCategory;
+
+		return Boolean(
+			group &&
+			grouped &&
+			grouped.html &&
+			grouped.slug &&
+			grouped.slug === group.parentSlug
+		);
+	}
+
 	function getFilterParamName(filter) {
 		const widget = filter.closest('.elementor-widget-taxonomy-filter');
 		let loopId = '';
@@ -1427,6 +1451,14 @@
 				: null;
 
 			if (activeParentGroup) {
+				if (hasServerGroupedProductsForActiveParent(activeParentGroup)) {
+					if (window.dewitLoadGroupedCategoryProducts) {
+						window.dispatchEvent(new CustomEvent('dewit/products-updated'));
+					}
+
+					return;
+				}
+
 				loadGroupedCategoryProducts(activeParentGroup);
 			}
 		});
@@ -1455,13 +1487,15 @@
 			renderCategoryFilters(cachedGroups);
 		}
 
-		fetchCategoryTree().then(function (groups) {
-			if (!groups.length || inlineGroups.length || cachedGroups.length) {
-				return;
-			}
+		if (!inlineGroups.length && !cachedGroups.length) {
+			fetchCategoryTree().then(function (groups) {
+				if (!groups.length) {
+					return;
+				}
 
-			renderCategoryFilters(groups);
-		});
+				renderCategoryFilters(groups);
+			});
+		}
 	}
 
 	function getCleanCategoryUrl() {

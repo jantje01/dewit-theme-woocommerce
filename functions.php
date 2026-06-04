@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.15' );
+define( 'DEWIT_THEME_VERSION', '0.3.18' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -169,6 +169,44 @@ function dewit_theme_scripts(): void {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'dewit_theme_scripts' );
+
+/**
+ * Preload the first catalog product images so mobile LCP can start earlier.
+ */
+function dewit_theme_preload_shop_lcp_images(): void {
+	if ( is_admin() || is_search() || ( function_exists( 'is_product' ) && is_product() ) ) {
+		return;
+	}
+
+	$parent_slug = dewit_theme_get_current_parent_category_slug();
+
+	if ( '' === $parent_slug ) {
+		return;
+	}
+
+	$groups          = dewit_theme_get_grouped_category_products( $parent_slug );
+	$preloaded_count = 0;
+
+	foreach ( $groups as $group ) {
+		foreach ( $group['products'] as $product ) {
+			if ( empty( $product['image'] ) ) {
+				continue;
+			}
+
+			printf(
+				'<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n",
+				esc_url( $product['image'] )
+			);
+
+			$preloaded_count++;
+
+			if ( $preloaded_count >= 2 ) {
+				return;
+			}
+		}
+	}
+}
+add_action( 'wp_head', 'dewit_theme_preload_shop_lcp_images', 1 );
 
 /**
  * Clean product text from ERP/WooCommerce before it is printed or sent to JavaScript.
@@ -889,11 +927,17 @@ add_action( 'wp_ajax_nopriv_dewit_product_search', 'dewit_theme_ajax_product_sea
  * Get products grouped by direct child categories for a selected parent category.
  *
  * @param string $slug Parent category slug.
- * @return array<int, array{name:string, slug:string, products:array<int, array{id:int, title:string, url:string, sku:string, image:string|false}>}>
+ * @return array<int, array{name:string, slug:string, products:array<int, array{id:int, title:string, url:string, sku:string, image:string|false, image_width:int, image_height:int}>}>
  */
 function dewit_theme_get_grouped_category_products( string $slug ): array {
+	static $grouped_products_cache = array();
+
 	if ( '' === $slug || ! taxonomy_exists( 'product_cat' ) ) {
 		return array();
+	}
+
+	if ( isset( $grouped_products_cache[ $slug ] ) ) {
+		return $grouped_products_cache[ $slug ];
 	}
 
 	$parent = get_term_by( 'slug', $slug, 'product_cat' );
@@ -954,12 +998,17 @@ function dewit_theme_get_grouped_category_products( string $slug ): array {
 				continue;
 			}
 
+			$image_id   = get_post_thumbnail_id( $post_id );
+			$image_data = $image_id ? wp_get_attachment_image_src( $image_id, 'woocommerce_thumbnail' ) : false;
+
 			$items[] = array(
-				'id'    => absint( $post_id ),
-				'title' => dewit_theme_clean_product_text( get_the_title( $post_id ) ),
-				'url'   => add_query_arg( 'dewit_parent_cat', $parent->slug, get_permalink( $post_id ) ),
-				'sku'   => dewit_theme_clean_product_text( $product->get_sku() ),
-				'image' => get_the_post_thumbnail_url( $post_id, 'woocommerce_thumbnail' ),
+				'id'           => absint( $post_id ),
+				'title'        => dewit_theme_clean_product_text( get_the_title( $post_id ) ),
+				'url'          => add_query_arg( 'dewit_parent_cat', $parent->slug, get_permalink( $post_id ) ),
+				'sku'          => dewit_theme_clean_product_text( $product->get_sku() ),
+				'image'        => $image_data ? $image_data[0] : false,
+				'image_width'  => $image_data ? absint( $image_data[1] ) : 300,
+				'image_height' => $image_data ? absint( $image_data[2] ) : 300,
 			);
 		}
 
@@ -973,6 +1022,8 @@ function dewit_theme_get_grouped_category_products( string $slug ): array {
 			'products' => $items,
 		);
 	}
+
+	$grouped_products_cache[ $slug ] = $groups;
 
 	return $groups;
 }
@@ -992,15 +1043,29 @@ function dewit_theme_render_grouped_category_products_html( string $slug ): stri
 		<?php if ( empty( $groups ) ) : ?>
 			<div class="dewit-grouped-products__status"><?php esc_html_e( 'Geen producten gevonden', 'dewit-theme-woocommerce' ); ?></div>
 		<?php else : ?>
+			<?php $product_index = 0; ?>
 			<?php foreach ( $groups as $group ) : ?>
 				<section class="dewit-grouped-products__section" id="<?php echo esc_attr( 'dewit-cat-' . sanitize_html_class( $group['slug'] ) ); ?>" data-category-slug="<?php echo esc_attr( $group['slug'] ); ?>">
 					<h2 class="dewit-grouped-products__heading"><?php echo esc_html( $group['name'] ); ?></h2>
 					<div class="dewit-grouped-products__grid<?php echo 1 === count( $group['products'] ) ? ' is-single' : ''; ?>">
 						<?php foreach ( $group['products'] as $product ) : ?>
+							<?php
+							$is_priority_image = $product_index < 4;
+							$is_lcp_candidate  = $product_index < 2;
+							$product_index++;
+							?>
 							<a class="dewit-grouped-product-card" href="<?php echo esc_url( $product['url'] ); ?>">
 								<span class="dewit-grouped-product-card__image">
 									<?php if ( $product['image'] ) : ?>
-										<img src="<?php echo esc_url( $product['image'] ); ?>" alt="" loading="eager" decoding="async">
+										<img
+											src="<?php echo esc_url( $product['image'] ); ?>"
+											alt=""
+											width="<?php echo esc_attr( $product['image_width'] ); ?>"
+											height="<?php echo esc_attr( $product['image_height'] ); ?>"
+											loading="<?php echo esc_attr( $is_priority_image ? 'eager' : 'lazy' ); ?>"
+											decoding="async"
+											fetchpriority="<?php echo esc_attr( $is_lcp_candidate ? 'high' : 'low' ); ?>"
+										>
 									<?php endif; ?>
 								</span>
 								<span class="dewit-grouped-product-card__body">
