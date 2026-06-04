@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.13' );
+define( 'DEWIT_THEME_VERSION', '0.3.14' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -228,6 +228,64 @@ function dewit_theme_should_use_default_parent_category(): bool {
 	}
 
 	return true;
+}
+
+/**
+ * Build a shop URL for a selected parent category.
+ */
+function dewit_theme_get_parent_category_shop_url( string $slug ): string {
+	return add_query_arg( 'dewit_parent_cat', sanitize_title( $slug ), home_url( '/' ) );
+}
+
+/**
+ * Return product page back-link data with category context when possible.
+ *
+ * @return array{url:string,label:string}
+ */
+function dewit_theme_get_product_back_link( ?WC_Product $product = null ): array {
+	$shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/?post_type=product' );
+	$back_link = array(
+		'url'   => $shop_url,
+		'label' => __( 'Terug naar assortiment', 'dewit-theme-woocommerce' ),
+	);
+	$parent_slug = isset( $_GET['dewit_parent_cat'] ) ? sanitize_title( wp_unslash( $_GET['dewit_parent_cat'] ) ) : '';
+
+	if ( '' === $parent_slug && $product instanceof WC_Product ) {
+		$terms = get_the_terms( $product->get_id(), 'product_cat' );
+
+		if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+			$term = reset( $terms );
+
+			while ( $term instanceof WP_Term && $term->parent ) {
+				$parent = get_term( $term->parent, 'product_cat' );
+
+				if ( ! $parent instanceof WP_Term || is_wp_error( $parent ) ) {
+					break;
+				}
+
+				$term = $parent;
+			}
+
+			if ( $term instanceof WP_Term ) {
+				$parent_slug = $term->slug;
+			}
+		}
+	}
+
+	if ( '' !== $parent_slug ) {
+		$parent_term = get_term_by( 'slug', $parent_slug, 'product_cat' );
+
+		if ( $parent_term instanceof WP_Term ) {
+			$back_link['url'] = dewit_theme_get_parent_category_shop_url( $parent_slug );
+			$back_link['label'] = sprintf(
+				/* translators: %s: product category name. */
+				__( 'Terug naar %s', 'dewit-theme-woocommerce' ),
+				dewit_theme_clean_product_text( $parent_term->name )
+			);
+		}
+	}
+
+	return $back_link;
 }
 
 /**
@@ -830,7 +888,7 @@ function dewit_theme_get_grouped_category_products( string $slug ): array {
 			$items[] = array(
 				'id'    => absint( $post_id ),
 				'title' => dewit_theme_clean_product_text( get_the_title( $post_id ) ),
-				'url'   => get_permalink( $post_id ),
+				'url'   => add_query_arg( 'dewit_parent_cat', $parent->slug, get_permalink( $post_id ) ),
 				'sku'   => dewit_theme_clean_product_text( $product->get_sku() ),
 				'image' => get_the_post_thumbnail_url( $post_id, 'woocommerce_thumbnail' ),
 			);
@@ -913,6 +971,6 @@ add_filter( 'woocommerce_is_purchasable', 'dewit_theme_disable_product_purchases
  * Use Dutch copy for the related products section.
  */
 function dewit_theme_related_products_heading(): string {
-	return __( 'Gerelateerde producten', 'dewit-theme-woocommerce' );
+	return __( 'Meer uit deze categorie', 'dewit-theme-woocommerce' );
 }
 add_filter( 'woocommerce_product_related_products_heading', 'dewit_theme_related_products_heading' );

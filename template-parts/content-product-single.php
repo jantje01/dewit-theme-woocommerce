@@ -20,11 +20,11 @@ defined( 'ABSPATH' ) || exit;
 				$product = wc_get_product( get_the_ID() );
 			}
 
-			$shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/?post_type=product' );
+			$back_link = dewit_theme_get_product_back_link( $product );
 			?>
 
 			<nav class="dewit-product-breadcrumb" aria-label="<?php esc_attr_e( 'Product navigatie', 'dewit-theme-woocommerce' ); ?>">
-				<a href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Terug naar assortiment', 'dewit-theme-woocommerce' ); ?></a>
+				<a href="<?php echo esc_url( $back_link['url'] ); ?>"><?php echo esc_html( $back_link['label'] ); ?></a>
 			</nav>
 
 			<?php wc_print_notices(); ?>

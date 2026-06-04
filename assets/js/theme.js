@@ -927,6 +927,33 @@
 }());
 
 (function () {
+	function preserveProductCategoryContext() {
+		const parentSlug = new URL(window.location.href).searchParams.get('dewit_parent_cat');
+
+		if (!parentSlug) {
+			return;
+		}
+
+		document.querySelectorAll('body.single-product .related.products a[href*="/product/"]').forEach(function (link) {
+			try {
+				const url = new URL(link.href);
+
+				url.searchParams.set('dewit_parent_cat', parentSlug);
+				link.href = url.toString();
+			} catch (error) {
+				// Ignore malformed links from third-party markup.
+			}
+		});
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', preserveProductCategoryContext);
+	} else {
+		preserveProductCategoryContext();
+	}
+}());
+
+(function () {
 	let categoryTreePromise = null;
 	const categoryCacheKey = 'dewitProductCategoriesWithProducts';
 	const categoryCacheMaxAge = 12 * 60 * 60 * 1000;
