@@ -1480,7 +1480,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-prod
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-horizontal-product-cards .dewit-grouped-products__grid,
 body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-horizontal-product-cards .dewit-grouped-products__grid.is-single {
-	grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-horizontal-product-cards .dewit-grouped-products__grid.is-single .dewit-grouped-product-card {
