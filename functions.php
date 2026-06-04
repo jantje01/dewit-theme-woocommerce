@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.14' );
+define( 'DEWIT_THEME_VERSION', '0.3.15' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -286,6 +286,75 @@ function dewit_theme_get_product_back_link( ?WC_Product $product = null ): array
 	}
 
 	return $back_link;
+}
+
+/**
+ * Return the first non-empty product meta value from a list of possible ERP keys.
+ *
+ * @param array<int, string> $keys Product meta keys.
+ */
+function dewit_theme_get_first_product_meta_value( int $product_id, array $keys ): string {
+	foreach ( $keys as $key ) {
+		$value = get_post_meta( $product_id, $key, true );
+
+		if ( is_scalar( $value ) && '' !== trim( (string) $value ) ) {
+			return trim( (string) $value );
+		}
+	}
+
+	return '';
+}
+
+/**
+ * Return optional ERP-driven product resource links.
+ *
+ * @return array<int, array{label:string,url:string,type:string}>
+ */
+function dewit_theme_get_product_resources( ?WC_Product $product = null ): array {
+	if ( ! $product instanceof WC_Product ) {
+		return array();
+	}
+
+	$product_id = $product->get_id();
+	$resources = array(
+		array(
+			'label' => __( 'Video', 'dewit-theme-woocommerce' ),
+			'type'  => 'video',
+			'url'   => dewit_theme_get_first_product_meta_value( $product_id, array(
+				'WB-videourl',
+				'WB.videourl',
+				'videourl',
+				'_dewit_video_url',
+			) ),
+		),
+		array(
+			'label' => __( 'Handleiding', 'dewit-theme-woocommerce' ),
+			'type'  => 'manual',
+			'url'   => dewit_theme_get_first_product_meta_value( $product_id, array(
+				'WB-handleidingurl',
+				'WB.handleidingurl',
+				'handleidingurl',
+				'_dewit_manual_url',
+			) ),
+		),
+		array(
+			'label' => __( 'Tech specs', 'dewit-theme-woocommerce' ),
+			'type'  => 'specs',
+			'url'   => dewit_theme_get_first_product_meta_value( $product_id, array(
+				'WB-techspecsurl',
+				'WB.techspecsurl',
+				'techspecsurl',
+				'_dewit_tech_specs_url',
+			) ),
+		),
+	);
+
+	return array_values( array_filter(
+		$resources,
+		static function ( array $resource ): bool {
+			return '' !== $resource['url'] && false !== filter_var( $resource['url'], FILTER_VALIDATE_URL );
+		}
+	) );
 }
 
 /**

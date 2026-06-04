@@ -530,6 +530,40 @@ body.single-product.woocommerce div.product div.summary {
 	margin: 0 0 20px;
 }
 
+.dewit-product-resources {
+	border-top: 1px solid #e5e5e5;
+	margin-top: 2px;
+	padding-top: 16px;
+}
+
+.dewit-product-resources p {
+	color: #777;
+	font-size: 12px;
+	font-weight: 800;
+	line-height: 1.2;
+	margin: 0 0 10px;
+	text-transform: uppercase;
+}
+
+.dewit-product-resources__links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.dewit-product-resource {
+	align-items: center;
+	background: #f4f5f6;
+	border-radius: 12px;
+	color: #003965;
+	display: inline-flex;
+	font-size: 13px;
+	font-weight: 800;
+	min-height: 38px;
+	padding: 0 12px;
+	text-decoration: none;
+}
+
 .dewit-product-actions {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));

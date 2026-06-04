@@ -21,6 +21,7 @@ defined( 'ABSPATH' ) || exit;
 			}
 
 			$back_link = dewit_theme_get_product_back_link( $product );
+			$product_resources = dewit_theme_get_product_resources( $product );
 			?>
 
 			<nav class="dewit-product-breadcrumb" aria-label="<?php esc_attr_e( 'Product navigatie', 'dewit-theme-woocommerce' ); ?>">
@@ -52,6 +53,19 @@ defined( 'ABSPATH' ) || exit;
 						<?php endif; ?>
 
 						<?php woocommerce_template_single_excerpt(); ?>
+
+						<?php if ( ! empty( $product_resources ) ) : ?>
+							<div class="dewit-product-resources" aria-label="<?php esc_attr_e( 'Productinformatie', 'dewit-theme-woocommerce' ); ?>">
+								<p><?php esc_html_e( 'Productinformatie', 'dewit-theme-woocommerce' ); ?></p>
+								<div class="dewit-product-resources__links">
+									<?php foreach ( $product_resources as $resource ) : ?>
+										<a class="dewit-product-resource dewit-product-resource--<?php echo esc_attr( $resource['type'] ); ?>" href="<?php echo esc_url( $resource['url'] ); ?>" target="_blank" rel="noopener">
+											<?php echo esc_html( $resource['label'] ); ?>
+										</a>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						<?php endif; ?>
 
 						<div class="dewit-product-actions">
 							<a class="dewit-product-phone" href="tel:+31412634969"><?php esc_html_e( 'Bel 0412 - 63 49 69', 'dewit-theme-woocommerce' ); ?></a>
