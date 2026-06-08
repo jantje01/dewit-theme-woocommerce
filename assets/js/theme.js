@@ -91,13 +91,14 @@
 			return;
 		}
 
-		sidebar.querySelectorAll('.custom-logo-link, .elementor-widget-theme-site-logo a, a:has(img)').forEach(function (link) {
+		sidebar.querySelectorAll('.custom-logo-link, .elementor-widget-theme-site-logo a, .elementor-widget-image a').forEach(function (link) {
 			link.href = homeUrl;
 			link.setAttribute('aria-label', 'Terug naar hoofdcategorieën');
 		});
 
-		sidebar.querySelectorAll('.custom-logo, .elementor-widget-theme-site-logo img').forEach(function (logo) {
+		sidebar.querySelectorAll('.custom-logo, .elementor-widget-theme-site-logo img, .elementor-widget-image img').forEach(function (logo) {
 			if (logo.closest('a')) {
+				logo.closest('a').href = homeUrl;
 				return;
 			}
 
