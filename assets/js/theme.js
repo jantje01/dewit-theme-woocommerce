@@ -82,6 +82,34 @@
 		return 'Alle producten';
 	}
 
+	function routeSidebarLogoToHome() {
+		const config = getThemeConfig();
+		const homeUrl = config.homeUrl || window.location.origin + '/';
+		const sidebar = document.getElementById('catalog-sidebar');
+
+		if (!sidebar) {
+			return;
+		}
+
+		sidebar.querySelectorAll('.custom-logo-link, .elementor-widget-theme-site-logo a, a:has(img)').forEach(function (link) {
+			link.href = homeUrl;
+			link.setAttribute('aria-label', 'Terug naar hoofdcategorieën');
+		});
+
+		sidebar.querySelectorAll('.custom-logo, .elementor-widget-theme-site-logo img').forEach(function (logo) {
+			if (logo.closest('a')) {
+				return;
+			}
+
+			const link = document.createElement('a');
+			link.className = 'dewit-sidebar-logo-link';
+			link.href = homeUrl;
+			link.setAttribute('aria-label', 'Terug naar hoofdcategorieën');
+			logo.parentNode.insertBefore(link, logo);
+			link.appendChild(logo);
+		});
+	}
+
 	function updateProductViewSwitchLabel() {
 		const label = document.querySelector('.dewit-product-view-switch__label');
 
@@ -363,11 +391,15 @@
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', injectShopToolbar);
+		document.addEventListener('DOMContentLoaded', routeSidebarLogoToHome);
 	} else {
 		injectShopToolbar();
+		routeSidebarLogoToHome();
 	}
 
 	window.addEventListener('elementor/frontend/init', injectShopToolbar);
+	window.addEventListener('elementor/frontend/init', routeSidebarLogoToHome);
+	window.addEventListener('load', routeSidebarLogoToHome);
 	window.addEventListener('dewit/products-updated', function () {
 		updateProductViewSwitchLabel();
 		setProductCardViewMode(getProductCardViewMode());
