@@ -9,8 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.33' );
+define( 'DEWIT_THEME_VERSION', '0.3.34' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
+define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
 	/**
@@ -327,6 +328,19 @@ function dewit_theme_is_shop_landing(): bool {
 
 	return true;
 }
+
+/**
+ * Temporarily route the shop landing to a parent category while the landing page is being refined.
+ */
+function dewit_theme_redirect_temporary_shop_landing(): void {
+	if ( ! dewit_theme_is_shop_landing() || '' === DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG ) {
+		return;
+	}
+
+	wp_safe_redirect( dewit_theme_get_parent_category_shop_url( DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG ), 302 );
+	exit;
+}
+add_action( 'template_redirect', 'dewit_theme_redirect_temporary_shop_landing', 5 );
 
 /**
  * Build a shop URL for a selected parent category.
