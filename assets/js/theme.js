@@ -1629,6 +1629,12 @@
 		const filters = document.querySelectorAll('.elementor-widget-taxonomy-filter .e-filter');
 
 		if (!filters.length) {
+			const inlineGroups = getInlineCategoryGroups();
+
+			if (inlineGroups.length) {
+				renderCategoryLanding(inlineGroups);
+			}
+
 			return;
 		}
 
