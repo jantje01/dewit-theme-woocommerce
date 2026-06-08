@@ -968,6 +968,11 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing 
 	padding-right: 16px !important;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing .elementor-widget-loop-grid .elementor-loop-container > .e-loop-item.product,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing .elementor-widget-loop-grid .products > .product {
+	display: none !important;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products::-webkit-scrollbar {
 	width: 8px;
 }

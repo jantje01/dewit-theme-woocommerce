@@ -1276,6 +1276,7 @@
 		landing.appendChild(grid);
 		container.innerHTML = '';
 		container.classList.add('dewit-landing-mode');
+		container.classList.remove('elementor-grid');
 		container.classList.remove('dewit-grouped-mode');
 		container.appendChild(landing);
 	}
