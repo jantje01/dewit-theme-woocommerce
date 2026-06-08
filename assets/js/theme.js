@@ -1280,6 +1280,52 @@
 		container.appendChild(landing);
 	}
 
+	function getRenderedSidebarGroups() {
+		return Array.from(document.querySelectorAll('#catalog-sidebar .dewit-category-group')).map(function (groupElement) {
+			const trigger = groupElement.querySelector('.dewit-category-trigger');
+			const label = trigger ? trigger.querySelector('.dewit-category-label') : null;
+			const href = trigger ? trigger.getAttribute('href') : '';
+			let parentSlug = '';
+
+			try {
+				parentSlug = href ? new URL(href, window.location.href).searchParams.get('dewit_parent_cat') || '' : '';
+			} catch (error) {
+				parentSlug = '';
+			}
+
+			const children = Array.from(groupElement.querySelectorAll('.dewit-category-child[data-filter]')).map(function (child) {
+				return {
+					name: child.textContent.trim(),
+					slug: child.getAttribute('data-filter') || '',
+					count: 0,
+				};
+			}).filter(function (child) {
+				return child.name && child.slug;
+			});
+
+			return {
+				label: label ? label.textContent.trim() : '',
+				parentSlug: parentSlug,
+				count: 0,
+				productCount: 0,
+				slugs: children.map(function (child) {
+					return child.slug;
+				}),
+				children: children,
+			};
+		}).filter(function (group) {
+			return group.label && group.parentSlug;
+		});
+	}
+
+	function renderCategoryLandingFromSidebar() {
+		if (hasCategoryContext() || document.querySelector('.dewit-category-landing-card')) {
+			return;
+		}
+
+		renderCategoryLanding(getRenderedSidebarGroups());
+	}
+
 	function getActiveCategorySlug() {
 		if (window.dewitGetActiveCategorySlug) {
 			return window.dewitGetActiveCategorySlug();
@@ -1626,12 +1672,16 @@
 		document.addEventListener('DOMContentLoaded', buildCategoryDropdowns);
 		document.addEventListener('DOMContentLoaded', function () {
 			window.setTimeout(revealCategoryFilters, 700);
+			window.setTimeout(renderCategoryLandingFromSidebar, 760);
 		});
 	} else {
 		buildCategoryDropdowns();
 		window.setTimeout(revealCategoryFilters, 700);
+		window.setTimeout(renderCategoryLandingFromSidebar, 760);
 	}
 
 	window.addEventListener('elementor/frontend/init', buildCategoryDropdowns);
 	window.addEventListener('load', revealCategoryFilters);
+	window.addEventListener('load', renderCategoryLandingFromSidebar);
+	window.addEventListener('dewit/categories-ready', renderCategoryLandingFromSidebar);
 }());
