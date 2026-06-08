@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.27' );
+define( 'DEWIT_THEME_VERSION', '0.3.28' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -109,6 +109,21 @@ function dewit_theme_get_product_category_image_data( int $term_id ): ?array {
 }
 
 /**
+ * Return the WooCommerce placeholder image data for category cards without an image.
+ *
+ * @return array{src:string,width:int,height:int}
+ */
+function dewit_theme_get_placeholder_image_data(): array {
+	$src = function_exists( 'wc_placeholder_img_src' ) ? wc_placeholder_img_src( 'woocommerce_thumbnail' ) : '';
+
+	return array(
+		'src'    => $src,
+		'width'  => 300,
+		'height' => 300,
+	);
+}
+
+/**
  * Enqueue scripts and styles.
  */
 function dewit_theme_scripts(): void {
@@ -135,6 +150,7 @@ function dewit_theme_scripts(): void {
 			'defaultParentCategory' => dewit_theme_get_default_parent_category_slug(),
 			'logoUrl'               => get_theme_mod( 'custom_logo' ) ? wp_get_attachment_image_url( (int) get_theme_mod( 'custom_logo' ), 'full' ) : '',
 			'homeUrl'               => home_url( '/' ),
+			'placeholderImage'      => dewit_theme_get_placeholder_image_data(),
 		)
 	);
 	wp_add_inline_script(
@@ -533,15 +549,15 @@ function dewit_theme_get_landing_category_groups(): array {
 			continue;
 		}
 
-		$image_data = dewit_theme_get_product_category_image_data( $parent->term_id );
+		$image_data = dewit_theme_get_product_category_image_data( $parent->term_id ) ?? dewit_theme_get_placeholder_image_data();
 
 		$groups[] = array(
 			'label'        => dewit_theme_clean_product_text( $parent->name ),
 			'parentSlug'   => $parent->slug,
 			'productCount' => $product_count,
-			'image'        => $image_data ? $image_data['src'] : false,
-			'imageWidth'   => $image_data ? $image_data['width'] : 300,
-			'imageHeight'  => $image_data ? $image_data['height'] : 300,
+			'image'        => $image_data['src'],
+			'imageWidth'   => $image_data['width'],
+			'imageHeight'  => $image_data['height'],
 			'children'     => $child_items,
 		);
 	}
@@ -568,18 +584,16 @@ function dewit_theme_render_category_landing_html(): string {
 				$children      = array_slice( $group['children'], 0, 3 );
 				$child_names   = wp_list_pluck( $children, 'name' );
 				?>
-				<a class="dewit-category-landing-card<?php echo $group['image'] ? '' : ' is-missing-image'; ?>" href="<?php echo esc_url( dewit_theme_get_parent_category_shop_url( $group['parentSlug'] ) ); ?>">
+				<a class="dewit-category-landing-card" href="<?php echo esc_url( dewit_theme_get_parent_category_shop_url( $group['parentSlug'] ) ); ?>">
 					<span class="dewit-category-landing-card__header">
-						<?php if ( $group['image'] ) : ?>
-							<img
-								src="<?php echo esc_url( $group['image'] ); ?>"
-								alt=""
-								width="<?php echo esc_attr( $group['imageWidth'] ); ?>"
-								height="<?php echo esc_attr( $group['imageHeight'] ); ?>"
-								loading="lazy"
-								decoding="async"
-							>
-						<?php endif; ?>
+						<img
+							src="<?php echo esc_url( $group['image'] ); ?>"
+							alt=""
+							width="<?php echo esc_attr( $group['imageWidth'] ); ?>"
+							height="<?php echo esc_attr( $group['imageHeight'] ); ?>"
+							loading="lazy"
+							decoding="async"
+						>
 					</span>
 					<span class="dewit-category-landing-card__content">
 						<span class="dewit-category-landing-card__title"><?php echo esc_html( $group['label'] ); ?></span>

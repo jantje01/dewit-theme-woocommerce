@@ -1129,9 +1129,10 @@
 
 	function getCategoryImage(category) {
 		const image = category ? category.image : null;
+		const placeholder = (window.dewitTheme && window.dewitTheme.placeholderImage) || null;
 
 		if (!image) {
-			return null;
+			return placeholder;
 		}
 
 		if (typeof image === 'string') {
@@ -1143,7 +1144,7 @@
 		}
 
 		return {
-			src: image.src || image.thumbnail || image.url || '',
+			src: image.src || image.thumbnail || image.url || (placeholder ? placeholder.src : ''),
 			width: image.width || 300,
 			height: image.height || 300,
 		};
@@ -1258,7 +1259,6 @@
 		});
 
 		card.className = 'dewit-category-landing-card';
-		card.classList.toggle('is-missing-image', !categoryImage || !categoryImage.src);
 		card.href = getGroupedCategoryUrl(group.parentSlug);
 		header.className = 'dewit-category-landing-card__header';
 		content.className = 'dewit-category-landing-card__content';

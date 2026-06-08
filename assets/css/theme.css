@@ -1500,10 +1500,6 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-lan
 	width: 100%;
 }
 
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-landing-card.is-missing-image .dewit-category-landing-card__header {
-	display: none;
-}
-
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-landing-card__header img {
 	display: block;
 	height: 100%;
