@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.19' );
+define( 'DEWIT_THEME_VERSION', '0.3.20' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -225,11 +225,7 @@ function dewit_theme_clean_product_text( string $text ): string {
  * Return the configured default parent category for the shop landing page.
  */
 function dewit_theme_get_default_parent_category_slug(): string {
-	if ( ! dewit_theme_should_use_default_parent_category() ) {
-		return '';
-	}
-
-	return DEWIT_DEFAULT_PARENT_CATEGORY_SLUG;
+	return '';
 }
 
 /**
@@ -247,6 +243,31 @@ function dewit_theme_get_current_parent_category_slug(): string {
  * Decide whether the shop landing page should open with a default category.
  */
 function dewit_theme_should_use_default_parent_category(): bool {
+	$is_product_page     = function_exists( 'is_product' ) && is_product();
+	$is_product_taxonomy = function_exists( 'is_product_taxonomy' ) && is_product_taxonomy();
+	$is_shop_page        = function_exists( 'is_shop' ) && is_shop();
+
+	if ( is_admin() || is_search() || $is_product_page || $is_product_taxonomy ) {
+		return false;
+	}
+
+	if ( ! ( $is_shop_page || is_post_type_archive( 'product' ) || is_front_page() || is_home() ) ) {
+		return false;
+	}
+
+	foreach ( array_keys( $_GET ) as $key ) {
+		if ( 'dewit_parent_cat' === $key || 'product_cat' === $key || str_starts_with( (string) $key, 'e-filter-' ) ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Determine whether the current shop view should render the category landing.
+ */
+function dewit_theme_is_shop_landing(): bool {
 	$is_product_page     = function_exists( 'is_product' ) && is_product();
 	$is_product_taxonomy = function_exists( 'is_product_taxonomy' ) && is_product_taxonomy();
 	$is_shop_page        = function_exists( 'is_shop' ) && is_shop();
@@ -404,6 +425,10 @@ function dewit_theme_get_product_resources( ?WC_Product $product = null ): array
 function dewit_theme_body_classes( array $classes ): array {
 	if ( class_exists( 'WooCommerce' ) ) {
 		$classes[] = 'has-woocommerce';
+	}
+
+	if ( dewit_theme_is_shop_landing() ) {
+		$classes[] = 'dewit-shop-landing';
 	}
 
 	return $classes;

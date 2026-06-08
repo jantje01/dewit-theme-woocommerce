@@ -1069,6 +1069,10 @@
 				return {
 					label: parent.name,
 					parentSlug: parent.slug,
+					count: parent.count,
+					productCount: children.reduce(function (total, child) {
+						return total + Number(child.count || 0);
+					}, Number(parent.count || 0)),
 					slugs: getDescendantSlugs(parent.id, childrenByParent),
 					children: children.map(function (child) {
 						return {
@@ -1150,9 +1154,8 @@
 		return match ? match.icon : 'box';
 	}
 
-	function appendCategoryTriggerContent(trigger, group) {
+	function createCategoryIcon(group) {
 		const icon = document.createElement('span');
-		const label = document.createElement('span');
 		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
 		icon.className = 'dewit-category-icon';
@@ -1166,11 +1169,115 @@
 		svg.innerHTML = categoryIconSvgs[getCategoryIconName(group)] || categoryIconSvgs.box;
 		icon.appendChild(svg);
 
+		return icon;
+	}
+
+	function appendCategoryTriggerContent(trigger, group) {
+		const label = document.createElement('span');
+
+		trigger.appendChild(createCategoryIcon(group));
 		label.className = 'dewit-category-label';
 		label.textContent = group.label || group.name || '';
 
-		trigger.appendChild(icon);
 		trigger.appendChild(label);
+	}
+
+	function getLandingContainer() {
+		const widget = document.querySelector('.elementor-widget-loop-grid');
+
+		if (!widget) {
+			return null;
+		}
+
+		let container = widget.querySelector('.elementor-loop-container');
+
+		if (!container) {
+			container = document.createElement('div');
+			container.className = 'elementor-loop-container elementor-grid dewit-generated-loop-container';
+			widget.appendChild(container);
+		}
+
+		return container;
+	}
+
+	function hasCategoryContext() {
+		return Array.from(new URL(window.location.href).searchParams.keys()).some(function (key) {
+			return key === 'dewit_parent_cat' || key === 'product_cat' || key.indexOf('e-filter-') === 0;
+		});
+	}
+
+	function createLandingCard(group) {
+		const card = document.createElement('a');
+		const header = document.createElement('span');
+		const content = document.createElement('span');
+		const title = document.createElement('span');
+		const description = document.createElement('span');
+		const meta = document.createElement('span');
+		const childNames = (group.children || []).slice(0, 3).map(function (child) {
+			return normalizeDisplayText(child.name);
+		});
+		const childCount = (group.children || []).length;
+		const productCount = Number(group.productCount || 0);
+
+		card.className = 'dewit-category-landing-card';
+		card.href = getGroupedCategoryUrl(group.parentSlug);
+		header.className = 'dewit-category-landing-card__header';
+		content.className = 'dewit-category-landing-card__content';
+		title.className = 'dewit-category-landing-card__title';
+		description.className = 'dewit-category-landing-card__description';
+		meta.className = 'dewit-category-landing-card__meta';
+
+		title.textContent = normalizeDisplayText(group.label);
+		description.textContent = childNames.length ? childNames.join(', ') : 'Bekijk alle producten in deze hoofdgroep';
+		meta.textContent = [
+			childCount ? childCount + ' subcategorie' + (childCount === 1 ? '' : 'ën') : '',
+			productCount ? productCount + ' producten' : '',
+		].filter(Boolean).join(' · ');
+
+		header.appendChild(createCategoryIcon(group));
+		content.appendChild(title);
+		content.appendChild(description);
+		content.appendChild(meta);
+		card.appendChild(header);
+		card.appendChild(content);
+
+		return card;
+	}
+
+	function renderCategoryLanding(groups) {
+		const hasActiveCategoryContext = hasCategoryContext();
+		const container = getLandingContainer();
+
+		document.body.classList.toggle('dewit-shop-landing', !hasActiveCategoryContext);
+
+		if (hasActiveCategoryContext || !container || !groups.length) {
+			return;
+		}
+
+		const landing = document.createElement('div');
+		const intro = document.createElement('div');
+		const heading = document.createElement('h1');
+		const copy = document.createElement('p');
+		const grid = document.createElement('div');
+
+		landing.className = 'dewit-category-landing';
+		intro.className = 'dewit-category-landing__intro';
+		grid.className = 'dewit-category-landing__grid';
+		heading.textContent = 'Assortiment';
+		copy.textContent = 'Kies een hoofdgroep en navigeer daarna gericht door de subcategorieën.';
+
+		groups.forEach(function (group) {
+			grid.appendChild(createLandingCard(group));
+		});
+
+		intro.appendChild(heading);
+		intro.appendChild(copy);
+		landing.appendChild(intro);
+		landing.appendChild(grid);
+		container.innerHTML = '';
+		container.classList.add('dewit-landing-mode');
+		container.classList.remove('dewit-grouped-mode');
+		container.appendChild(landing);
 	}
 
 	function getActiveCategorySlug() {
@@ -1446,7 +1553,7 @@
 			const activeParentSlug = getActiveParentCategorySlug() || getActiveCategorySlug();
 			const activeParentGroup = activeParentSlug
 				? groups.find(function (group) {
-					return group.parentSlug === activeParentSlug;
+					return group.parentSlug === activeParentSlug || group.slugs.indexOf(activeParentSlug) > -1;
 				})
 				: null;
 
@@ -1483,8 +1590,10 @@
 
 		if (inlineGroups.length) {
 			renderCategoryFilters(inlineGroups);
+			renderCategoryLanding(inlineGroups);
 		} else if (cachedGroups.length) {
 			renderCategoryFilters(cachedGroups);
+			renderCategoryLanding(cachedGroups);
 		}
 
 		if (!inlineGroups.length && !cachedGroups.length) {
@@ -1494,6 +1603,7 @@
 				}
 
 				renderCategoryFilters(groups);
+				renderCategoryLanding(groups);
 			});
 		}
 	}
