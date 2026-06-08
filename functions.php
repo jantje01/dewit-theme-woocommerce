@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.26' );
+define( 'DEWIT_THEME_VERSION', '0.3.27' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -567,20 +567,6 @@ function dewit_theme_render_category_landing_html(): string {
 				<?php
 				$children      = array_slice( $group['children'], 0, 3 );
 				$child_names   = wp_list_pluck( $children, 'name' );
-				$child_count   = count( $group['children'] );
-				$product_count = absint( $group['productCount'] );
-				$meta_parts    = array_filter( array(
-					$child_count ? sprintf(
-						/* translators: %d: number of subcategories. */
-						_n( '%d subcategorie', '%d subcategorieën', $child_count, 'dewit-theme-woocommerce' ),
-						$child_count
-					) : '',
-					$product_count ? sprintf(
-						/* translators: %d: number of products. */
-						_n( '%d product', '%d producten', $product_count, 'dewit-theme-woocommerce' ),
-						$product_count
-					) : '',
-				) );
 				?>
 				<a class="dewit-category-landing-card<?php echo $group['image'] ? '' : ' is-missing-image'; ?>" href="<?php echo esc_url( dewit_theme_get_parent_category_shop_url( $group['parentSlug'] ) ); ?>">
 					<span class="dewit-category-landing-card__header">
@@ -598,7 +584,6 @@ function dewit_theme_render_category_landing_html(): string {
 					<span class="dewit-category-landing-card__content">
 						<span class="dewit-category-landing-card__title"><?php echo esc_html( $group['label'] ); ?></span>
 						<span class="dewit-category-landing-card__description"><?php echo esc_html( $child_names ? implode( ', ', $child_names ) : __( 'Bekijk alle producten in deze hoofdgroep', 'dewit-theme-woocommerce' ) ); ?></span>
-						<span class="dewit-category-landing-card__meta"><?php echo esc_html( implode( ' · ', $meta_parts ) ); ?></span>
 					</span>
 				</a>
 			<?php endforeach; ?>

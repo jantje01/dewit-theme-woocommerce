@@ -1252,13 +1252,10 @@
 		const content = document.createElement('span');
 		const title = document.createElement('span');
 		const description = document.createElement('span');
-		const meta = document.createElement('span');
 		const categoryImage = group.image || null;
 		const childNames = (group.children || []).slice(0, 3).map(function (child) {
 			return normalizeDisplayText(child.name);
 		});
-		const childCount = (group.children || []).length;
-		const productCount = Number(group.productCount || 0);
 
 		card.className = 'dewit-category-landing-card';
 		card.classList.toggle('is-missing-image', !categoryImage || !categoryImage.src);
@@ -1267,14 +1264,9 @@
 		content.className = 'dewit-category-landing-card__content';
 		title.className = 'dewit-category-landing-card__title';
 		description.className = 'dewit-category-landing-card__description';
-		meta.className = 'dewit-category-landing-card__meta';
 
 		title.textContent = normalizeDisplayText(group.label);
 		description.textContent = childNames.length ? childNames.join(', ') : 'Bekijk alle producten in deze hoofdgroep';
-		meta.textContent = [
-			childCount ? childCount + ' subcategorie' + (childCount === 1 ? '' : 'ën') : '',
-			productCount ? productCount + ' producten' : '',
-		].filter(Boolean).join(' · ');
 
 		if (categoryImage && categoryImage.src) {
 			const image = document.createElement('img');
@@ -1289,7 +1281,6 @@
 
 		content.appendChild(title);
 		content.appendChild(description);
-		content.appendChild(meta);
 		card.appendChild(header);
 		card.appendChild(content);
 
