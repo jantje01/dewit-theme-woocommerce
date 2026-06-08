@@ -1036,8 +1036,44 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar
 	display: grid;
 	gap: 12px;
 	grid-template-columns: minmax(0, 1fr) auto auto;
-	margin: 0 0 12px;
+	margin: 0 0 8px;
 	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar-logo {
+	align-items: center;
+	background: #003965;
+	border-radius: 14px;
+	display: none;
+	height: 48px;
+	justify-content: center;
+	overflow: hidden;
+	padding: 7px 12px;
+	text-decoration: none;
+	width: 150px;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar-logo img {
+	display: block;
+	height: 100%;
+	max-width: 100%;
+	object-fit: contain;
+	width: 100%;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-toolbar-logo:not(:has(img)) {
+	color: #fff;
+	font-family: var(--font-body);
+	font-size: 15px;
+	font-weight: 800;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing .dewit-shop-toolbar {
+	grid-template-columns: 150px minmax(0, 1fr) auto auto;
+}
+
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing .dewit-shop-toolbar-logo {
+	display: inline-flex;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-product-view-switch {
@@ -1323,6 +1359,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-phone {
 		grid-template-columns: 1fr 1fr;
 	}
 
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing .dewit-shop-toolbar-logo {
+		display: none;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-shop-search {
 		grid-column: 1 / -1;
 	}
@@ -1386,7 +1426,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-landing {
 	display: grid;
-	gap: 18px;
+	gap: 0;
 	height: 100%;
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -1398,9 +1438,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-lan
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-landing__intro {
-	display: grid;
-	gap: 4px;
-	padding: 2px 2px 0;
+	display: none;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-landing__intro h1 {

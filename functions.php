@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.24' );
+define( 'DEWIT_THEME_VERSION', '0.3.25' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -113,6 +113,8 @@ function dewit_theme_scripts(): void {
 		array(
 			'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
 			'defaultParentCategory' => dewit_theme_get_default_parent_category_slug(),
+			'logoUrl'               => get_theme_mod( 'custom_logo' ) ? wp_get_attachment_image_url( (int) get_theme_mod( 'custom_logo' ), 'full' ) : '',
+			'homeUrl'               => home_url( '/' ),
 		)
 	);
 	wp_add_inline_script(
@@ -534,10 +536,6 @@ function dewit_theme_render_category_landing_html(): string {
 	ob_start();
 	?>
 	<div class="dewit-category-landing">
-		<div class="dewit-category-landing__intro">
-			<h1><?php esc_html_e( 'Assortiment', 'dewit-theme-woocommerce' ); ?></h1>
-			<p><?php esc_html_e( 'Kies een hoofdgroep en navigeer daarna gericht door de subcategorieën.', 'dewit-theme-woocommerce' ); ?></p>
-		</div>
 		<div class="dewit-category-landing__grid">
 			<?php foreach ( $groups as $group ) : ?>
 				<?php

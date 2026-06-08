@@ -258,6 +258,8 @@
 		}
 
 		const toolbar = document.createElement('div');
+		const logo = document.createElement('a');
+		const logoImage = document.createElement('img');
 		const form = document.createElement('form');
 		const label = document.createElement('span');
 		const input = document.createElement('input');
@@ -267,8 +269,22 @@
 		const email = document.createElement('a');
 		const phone = document.createElement('a');
 		const params = new URL(window.location.href).searchParams;
+		const config = getThemeConfig();
 
 		toolbar.className = 'dewit-shop-toolbar';
+
+		logo.className = 'dewit-shop-toolbar-logo';
+		logo.href = config.homeUrl || window.location.origin + '/';
+		logo.setAttribute('aria-label', 'De Wit Bouwmachines');
+
+		if (config.logoUrl) {
+			logoImage.src = config.logoUrl;
+			logoImage.alt = 'De Wit Bouwmachines';
+			logoImage.decoding = 'async';
+			logo.appendChild(logoImage);
+		} else {
+			logo.textContent = 'De Wit';
+		}
 
 		form.className = 'dewit-shop-search';
 		form.method = 'get';
@@ -336,6 +352,7 @@
 		form.appendChild(input);
 		form.appendChild(button);
 		form.appendChild(results);
+		toolbar.appendChild(logo);
 		toolbar.appendChild(form);
 		toolbar.appendChild(email);
 		toolbar.appendChild(categoryToggle);
@@ -1255,24 +1272,15 @@
 		}
 
 		const landing = document.createElement('div');
-		const intro = document.createElement('div');
-		const heading = document.createElement('h1');
-		const copy = document.createElement('p');
 		const grid = document.createElement('div');
 
 		landing.className = 'dewit-category-landing';
-		intro.className = 'dewit-category-landing__intro';
 		grid.className = 'dewit-category-landing__grid';
-		heading.textContent = 'Assortiment';
-		copy.textContent = 'Kies een hoofdgroep en navigeer daarna gericht door de subcategorieën.';
 
 		groups.forEach(function (group) {
 			grid.appendChild(createLandingCard(group));
 		});
 
-		intro.appendChild(heading);
-		intro.appendChild(copy);
-		landing.appendChild(intro);
 		landing.appendChild(grid);
 		container.innerHTML = '';
 		container.classList.add('dewit-landing-mode');
