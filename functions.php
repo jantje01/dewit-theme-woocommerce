@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.25' );
+define( 'DEWIT_THEME_VERSION', '0.3.26' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -89,6 +89,26 @@ function dewit_theme_widgets_init(): void {
 add_action( 'widgets_init', 'dewit_theme_widgets_init' );
 
 /**
+ * Return WooCommerce product category image data when a thumbnail is configured.
+ *
+ * @return array{src:string,width:int,height:int}|null
+ */
+function dewit_theme_get_product_category_image_data( int $term_id ): ?array {
+	$thumbnail_id = absint( get_term_meta( $term_id, 'thumbnail_id', true ) );
+	$image_data   = $thumbnail_id ? wp_get_attachment_image_src( $thumbnail_id, 'woocommerce_thumbnail' ) : false;
+
+	if ( ! $image_data ) {
+		return null;
+	}
+
+	return array(
+		'src'    => $image_data[0],
+		'width'  => absint( $image_data[1] ),
+		'height' => absint( $image_data[2] ),
+	);
+}
+
+/**
  * Enqueue scripts and styles.
  */
 function dewit_theme_scripts(): void {
@@ -157,6 +177,7 @@ function dewit_theme_scripts(): void {
 						'slug'   => $term->slug,
 						'parent' => $term->parent,
 						'count'  => $term->count,
+						'image'  => dewit_theme_get_product_category_image_data( $term->term_id ),
 					);
 				},
 				$terms
@@ -440,7 +461,7 @@ add_filter( 'body_class', 'dewit_theme_body_classes' );
 /**
  * Return visible top-level product category groups for the shop landing.
  *
- * @return array<int, array{label:string,parentSlug:string,productCount:int,children:array<int, array{name:string,slug:string,count:int}>}>
+ * @return array<int, array{label:string,parentSlug:string,productCount:int,image:string|false,imageWidth:int,imageHeight:int,children:array<int, array{name:string,slug:string,count:int}>}>
  */
 function dewit_theme_get_landing_category_groups(): array {
 	if ( ! taxonomy_exists( 'product_cat' ) ) {
@@ -512,10 +533,15 @@ function dewit_theme_get_landing_category_groups(): array {
 			continue;
 		}
 
+		$image_data = dewit_theme_get_product_category_image_data( $parent->term_id );
+
 		$groups[] = array(
 			'label'        => dewit_theme_clean_product_text( $parent->name ),
 			'parentSlug'   => $parent->slug,
 			'productCount' => $product_count,
+			'image'        => $image_data ? $image_data['src'] : false,
+			'imageWidth'   => $image_data ? $image_data['width'] : 300,
+			'imageHeight'  => $image_data ? $image_data['height'] : 300,
 			'children'     => $child_items,
 		);
 	}
@@ -556,13 +582,18 @@ function dewit_theme_render_category_landing_html(): string {
 					) : '',
 				) );
 				?>
-				<a class="dewit-category-landing-card" href="<?php echo esc_url( dewit_theme_get_parent_category_shop_url( $group['parentSlug'] ) ); ?>">
+				<a class="dewit-category-landing-card<?php echo $group['image'] ? '' : ' is-missing-image'; ?>" href="<?php echo esc_url( dewit_theme_get_parent_category_shop_url( $group['parentSlug'] ) ); ?>">
 					<span class="dewit-category-landing-card__header">
-						<span class="dewit-category-icon" aria-hidden="true">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<path d="m7.5 4.3 9 5.2"></path><path d="M21 8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path>
-							</svg>
-						</span>
+						<?php if ( $group['image'] ) : ?>
+							<img
+								src="<?php echo esc_url( $group['image'] ); ?>"
+								alt=""
+								width="<?php echo esc_attr( $group['imageWidth'] ); ?>"
+								height="<?php echo esc_attr( $group['imageHeight'] ); ?>"
+								loading="lazy"
+								decoding="async"
+							>
+						<?php endif; ?>
 					</span>
 					<span class="dewit-category-landing-card__content">
 						<span class="dewit-category-landing-card__title"><?php echo esc_html( $group['label'] ); ?></span>
@@ -650,6 +681,7 @@ function dewit_theme_print_sidebar_category_fallback(): void {
 				'slug'   => $term->slug,
 				'parent' => $term->parent,
 				'count'  => $term->count,
+				'image'  => dewit_theme_get_product_category_image_data( $term->term_id ),
 			);
 		},
 		$terms

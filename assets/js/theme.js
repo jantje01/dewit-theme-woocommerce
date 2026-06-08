@@ -1090,6 +1090,7 @@
 					productCount: children.reduce(function (total, child) {
 						return total + Number(child.count || 0);
 					}, Number(parent.count || 0)),
+					image: getCategoryImage(parent),
 					slugs: getDescendantSlugs(parent.id, childrenByParent),
 					children: children.map(function (child) {
 						return {
@@ -1124,6 +1125,28 @@
 		}
 
 		return categories.filter(hasProducts);
+	}
+
+	function getCategoryImage(category) {
+		const image = category ? category.image : null;
+
+		if (!image) {
+			return null;
+		}
+
+		if (typeof image === 'string') {
+			return {
+				src: image,
+				width: 300,
+				height: 300,
+			};
+		}
+
+		return {
+			src: image.src || image.thumbnail || image.url || '',
+			width: image.width || 300,
+			height: image.height || 300,
+		};
 	}
 
 	function getDescendantSlugs(parentId, childrenByParent) {
@@ -1230,6 +1253,7 @@
 		const title = document.createElement('span');
 		const description = document.createElement('span');
 		const meta = document.createElement('span');
+		const categoryImage = group.image || null;
 		const childNames = (group.children || []).slice(0, 3).map(function (child) {
 			return normalizeDisplayText(child.name);
 		});
@@ -1237,6 +1261,7 @@
 		const productCount = Number(group.productCount || 0);
 
 		card.className = 'dewit-category-landing-card';
+		card.classList.toggle('is-missing-image', !categoryImage || !categoryImage.src);
 		card.href = getGroupedCategoryUrl(group.parentSlug);
 		header.className = 'dewit-category-landing-card__header';
 		content.className = 'dewit-category-landing-card__content';
@@ -1251,7 +1276,17 @@
 			productCount ? productCount + ' producten' : '',
 		].filter(Boolean).join(' · ');
 
-		header.appendChild(createCategoryIcon(group));
+		if (categoryImage && categoryImage.src) {
+			const image = document.createElement('img');
+			image.src = categoryImage.src;
+			image.alt = '';
+			image.width = categoryImage.width || 300;
+			image.height = categoryImage.height || 300;
+			image.loading = 'lazy';
+			image.decoding = 'async';
+			header.appendChild(image);
+		}
+
 		content.appendChild(title);
 		content.appendChild(description);
 		content.appendChild(meta);
