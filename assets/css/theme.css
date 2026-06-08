@@ -973,6 +973,16 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing 
 	display: none !important;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing .elementor-widget-loop-grid .e-load-more-anchor,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing .elementor-widget-loop-grid .e-load-more-spinner,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing .elementor-widget-loop-grid .e-load-more-message,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing .elementor-widget-loop-grid [class*="spinner"],
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-landing .elementor-widget-loop-grid [class*="loading"] {
+	display: none !important;
+	opacity: 0 !important;
+	visibility: hidden !important;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products::-webkit-scrollbar {
 	width: 8px;
 }

@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.23' );
+define( 'DEWIT_THEME_VERSION', '0.3.24' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 
 if ( ! function_exists( 'dewit_theme_setup' ) ) {
@@ -434,6 +434,196 @@ function dewit_theme_body_classes( array $classes ): array {
 	return $classes;
 }
 add_filter( 'body_class', 'dewit_theme_body_classes' );
+
+/**
+ * Return visible top-level product category groups for the shop landing.
+ *
+ * @return array<int, array{label:string,parentSlug:string,productCount:int,children:array<int, array{name:string,slug:string,count:int}>}>
+ */
+function dewit_theme_get_landing_category_groups(): array {
+	if ( ! taxonomy_exists( 'product_cat' ) ) {
+		return array();
+	}
+
+	$terms = get_terms( array(
+		'taxonomy'   => 'product_cat',
+		'hide_empty' => true,
+		'number'     => 100,
+	) );
+
+	if ( is_wp_error( $terms ) || empty( $terms ) ) {
+		return array();
+	}
+
+	$children_by_parent = array();
+
+	foreach ( $terms as $term ) {
+		if ( ! $term instanceof WP_Term ) {
+			continue;
+		}
+
+		if ( 'alle' === $term->slug || 'alle' === strtolower( trim( $term->name ) ) ) {
+			continue;
+		}
+
+		$children_by_parent[ $term->parent ][] = $term;
+	}
+
+	$parents = $children_by_parent[0] ?? array();
+	usort(
+		$parents,
+		static function ( WP_Term $a, WP_Term $b ): int {
+			return strnatcasecmp( $a->name, $b->name );
+		}
+	);
+
+	$groups = array();
+
+	foreach ( $parents as $parent ) {
+		$children = $children_by_parent[ $parent->term_id ] ?? array();
+		usort(
+			$children,
+			static function ( WP_Term $a, WP_Term $b ): int {
+				return strnatcasecmp( $a->name, $b->name );
+			}
+		);
+
+		$child_items    = array();
+		$product_count  = absint( $parent->count );
+		$visible_childs = array_filter(
+			$children,
+			static function ( WP_Term $child ): bool {
+				return $child->count > 0;
+			}
+		);
+
+		foreach ( $visible_childs as $child ) {
+			$product_count += absint( $child->count );
+			$child_items[] = array(
+				'name'  => dewit_theme_clean_product_text( $child->name ),
+				'slug'  => $child->slug,
+				'count' => absint( $child->count ),
+			);
+		}
+
+		if ( 0 === $product_count ) {
+			continue;
+		}
+
+		$groups[] = array(
+			'label'        => dewit_theme_clean_product_text( $parent->name ),
+			'parentSlug'   => $parent->slug,
+			'productCount' => $product_count,
+			'children'     => $child_items,
+		);
+	}
+
+	return $groups;
+}
+
+/**
+ * Render the category landing HTML used as a no-spinner fallback on the shop root.
+ */
+function dewit_theme_render_category_landing_html(): string {
+	$groups = dewit_theme_get_landing_category_groups();
+
+	if ( empty( $groups ) ) {
+		return '';
+	}
+
+	ob_start();
+	?>
+	<div class="dewit-category-landing">
+		<div class="dewit-category-landing__intro">
+			<h1><?php esc_html_e( 'Assortiment', 'dewit-theme-woocommerce' ); ?></h1>
+			<p><?php esc_html_e( 'Kies een hoofdgroep en navigeer daarna gericht door de subcategorieën.', 'dewit-theme-woocommerce' ); ?></p>
+		</div>
+		<div class="dewit-category-landing__grid">
+			<?php foreach ( $groups as $group ) : ?>
+				<?php
+				$children      = array_slice( $group['children'], 0, 3 );
+				$child_names   = wp_list_pluck( $children, 'name' );
+				$child_count   = count( $group['children'] );
+				$product_count = absint( $group['productCount'] );
+				$meta_parts    = array_filter( array(
+					$child_count ? sprintf(
+						/* translators: %d: number of subcategories. */
+						_n( '%d subcategorie', '%d subcategorieën', $child_count, 'dewit-theme-woocommerce' ),
+						$child_count
+					) : '',
+					$product_count ? sprintf(
+						/* translators: %d: number of products. */
+						_n( '%d product', '%d producten', $product_count, 'dewit-theme-woocommerce' ),
+						$product_count
+					) : '',
+				) );
+				?>
+				<a class="dewit-category-landing-card" href="<?php echo esc_url( dewit_theme_get_parent_category_shop_url( $group['parentSlug'] ) ); ?>">
+					<span class="dewit-category-landing-card__header">
+						<span class="dewit-category-icon" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="m7.5 4.3 9 5.2"></path><path d="M21 8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path>
+							</svg>
+						</span>
+					</span>
+					<span class="dewit-category-landing-card__content">
+						<span class="dewit-category-landing-card__title"><?php echo esc_html( $group['label'] ); ?></span>
+						<span class="dewit-category-landing-card__description"><?php echo esc_html( $child_names ? implode( ', ', $child_names ) : __( 'Bekijk alle producten in deze hoofdgroep', 'dewit-theme-woocommerce' ) ); ?></span>
+						<span class="dewit-category-landing-card__meta"><?php echo esc_html( implode( ' · ', $meta_parts ) ); ?></span>
+					</span>
+				</a>
+			<?php endforeach; ?>
+		</div>
+	</div>
+	<?php
+	return trim( ob_get_clean() );
+}
+
+/**
+ * Print a server-rendered category landing fallback into Elementor's loop container.
+ */
+function dewit_theme_print_category_landing_fallback(): void {
+	if ( ! dewit_theme_is_shop_landing() ) {
+		return;
+	}
+
+	$html = dewit_theme_render_category_landing_html();
+
+	if ( '' === $html ) {
+		return;
+	}
+	?>
+	<script>
+	(function () {
+		const landingHtml = <?php echo wp_json_encode( $html ); ?>;
+
+		function renderLanding() {
+			const widget = document.querySelector('.elementor-widget-loop-grid');
+			const container = widget ? widget.querySelector('.elementor-loop-container') : null;
+
+			document.body.classList.add('dewit-shop-landing');
+
+			if (!container || container.querySelector('.dewit-category-landing')) {
+				return;
+			}
+
+			container.innerHTML = landingHtml;
+			container.classList.add('dewit-landing-mode');
+			container.classList.remove('elementor-grid', 'dewit-grouped-mode');
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', renderLanding);
+		} else {
+			renderLanding();
+		}
+
+		window.addEventListener('load', renderLanding);
+	}());
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'dewit_theme_print_category_landing_fallback', 90 );
 
 /**
  * Print a small independent sidebar renderer so Elementor's default "Alle" item
