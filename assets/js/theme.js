@@ -161,7 +161,15 @@
 
 		switcher.appendChild(label);
 		switcher.appendChild(controls);
-		content.insertBefore(switcher, grid);
+
+		const toolbar = content.querySelector('.dewit-shop-toolbar');
+
+		if (toolbar) {
+			toolbar.appendChild(switcher);
+		} else {
+			content.insertBefore(switcher, grid);
+		}
+
 		setProductCardViewMode(getProductCardViewMode());
 	}
 
