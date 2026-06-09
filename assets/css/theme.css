@@ -1880,7 +1880,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 		height: auto !important;
 		min-height: 100svh;
 		overflow-x: hidden;
-		overflow-y: auto !important;
+		overflow-y: visible !important;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header {
