@@ -563,8 +563,12 @@
 
 	function setGroupedProductsLoading(view) {
 		view.classList.add('is-visible', 'is-loading');
+		view.setAttribute('aria-busy', 'true');
 		view.style.display = 'grid';
-		view.innerHTML = '<div class="dewit-grouped-products__status">Producten laden...</div>';
+
+		if (!view.children.length) {
+			view.innerHTML = '<div class="dewit-grouped-products__status">Producten laden...</div>';
+		}
 	}
 
 	function renderGroupedProductCard(product, index) {
@@ -616,6 +620,7 @@
 		}
 
 		view.classList.remove('is-loading');
+		view.removeAttribute('aria-busy');
 		view.classList.add('is-visible');
 		view.style.display = 'grid';
 		view.innerHTML = '';
@@ -1671,14 +1676,33 @@
 					filter.querySelectorAll('.dewit-category-group.is-open').forEach(function (openGroup) {
 						openGroup.classList.remove('is-open');
 						const openTrigger = openGroup.querySelector('.dewit-category-trigger');
+						const openPanel = openGroup.querySelector('.dewit-category-panel');
 
 						if (openTrigger) {
 							openTrigger.setAttribute('aria-pressed', 'false');
+						}
+
+						if (openPanel) {
+							openPanel.hidden = true;
 						}
 					});
 
 					groupElement.classList.add('is-open');
 					trigger.setAttribute('aria-pressed', 'true');
+
+					const panel = groupElement.querySelector('.dewit-category-panel');
+
+					if (panel) {
+						panel.hidden = false;
+					}
+
+					if (window.dewitLoadGroupedCategoryProducts && document.querySelector('.elementor-widget-loop-grid .elementor-loop-container')) {
+						updateSelectedCategoryContext(group.parentSlug, group.label || group.name || trigger.textContent.trim());
+						loadGroupedCategoryProducts(group);
+						closeMobileCategoryDrawer();
+						return;
+					}
+
 					window.location.href = trigger.href;
 				});
 

@@ -1651,6 +1651,12 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-prod
 	max-height: 100%;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products.is-loading {
+	opacity: 0.68;
+	pointer-events: none;
+	transition: opacity 160ms ease;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products__section {
 	display: grid;
 	gap: 12px;
