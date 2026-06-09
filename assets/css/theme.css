@@ -1493,6 +1493,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 	overflow: hidden;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-grouped .elementor-widget-loop-grid .elementor-loop-container > .e-loop-item.product {
+	display: none !important;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.dewit-landing-mode {
 	display: block !important;
 	flex: 1 1 auto;

@@ -946,22 +946,24 @@
 		injectMobileCategoryControls();
 	}
 
+	function initServerGroupedProducts() {
+		renderServerGroupedProducts();
+	}
+
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', enhanceShopNavigation);
+		document.addEventListener('DOMContentLoaded', initServerGroupedProducts);
 	} else {
 		enhanceShopNavigation();
+		initServerGroupedProducts();
 	}
 
 	window.addEventListener('elementor/frontend/init', enhanceShopNavigation);
 	window.addEventListener('load', enhanceShopNavigation);
-	window.addEventListener('load', renderServerGroupedProducts);
 	window.dewitGetActiveCategorySlug = getActiveCategorySlug;
 	window.dewitGetActiveParentCategorySlug = getActiveParentCategorySlug;
 	window.dewitGetGroupedCategoryUrl = getGroupedCategoryUrl;
 	window.dewitLoadGroupedCategoryProducts = loadGroupedCategoryProducts;
-	if (document.readyState === 'complete') {
-		renderServerGroupedProducts();
-	}
 	window.addEventListener('dewit/close-mobile-categories', closeMobileCategories);
 }());
 

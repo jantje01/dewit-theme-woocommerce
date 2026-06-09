@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.56' );
+define( 'DEWIT_THEME_VERSION', '0.3.57' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 
@@ -490,6 +490,10 @@ function dewit_theme_body_classes( array $classes ): array {
 
 	if ( dewit_theme_is_shop_landing() ) {
 		$classes[] = 'dewit-shop-landing';
+	}
+
+	if ( '' !== dewit_theme_get_current_parent_category_slug() && ! ( function_exists( 'is_product' ) && is_product() ) ) {
+		$classes[] = 'dewit-shop-grouped';
 	}
 
 	return $classes;
