@@ -173,7 +173,13 @@ body.single-product .site-header {
 }
 
 body.single-product .site-header__inner {
+	grid-template-columns: 42px minmax(0, 1fr);
 	min-height: 60px;
+}
+
+body.single-product .site-branding {
+	justify-content: flex-start;
+	order: 2;
 }
 
 body.single-product .site-branding .custom-logo {
@@ -195,6 +201,18 @@ body.woocommerce-page .site-header .main-navigation {
 
 body.woocommerce-page .site-header__inner {
 	grid-template-columns: auto 1fr;
+}
+
+body.single-product .site-header .menu-toggle {
+	display: inline-flex !important;
+	order: 1;
+}
+
+body.single-product .site-header .main-navigation.is-open {
+	background: #003965;
+	display: block !important;
+	grid-column: 1 / -1;
+	padding-bottom: 16px;
 }
 
 body.woocommerce-page .site-header .menu-toggle,
