@@ -1685,7 +1685,7 @@
 				trigger.addEventListener('click', function (event) {
 					event.preventDefault();
 
-					if (window.dewitLoadGroupedCategoryProducts && document.querySelector('.elementor-widget-loop-grid .elementor-loop-container')) {
+					if (window.dewitLoadGroupedCategoryProducts && !document.body.classList.contains('single-product')) {
 						const label = group.label || group.name || trigger.textContent.trim();
 						const switchId = categorySwitchId + 1;
 
