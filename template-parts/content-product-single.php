@@ -68,35 +68,37 @@ defined( 'ABSPATH' ) || exit;
 					</div>
 
 					<div class="dewit-product-summary">
-						<?php if ( $product && $product->get_sku() ) : ?>
-							<p class="dewit-product-sku">
-								<?php esc_html_e( 'Artikelnummer', 'dewit-theme-woocommerce' ); ?>
-								<span><?php echo esc_html( $product->get_sku() ); ?></span>
-							</p>
-						<?php endif; ?>
+						<div class="dewit-product-summary__content">
+							<?php if ( $product && $product->get_sku() ) : ?>
+								<p class="dewit-product-sku">
+									<?php esc_html_e( 'Artikelnummer', 'dewit-theme-woocommerce' ); ?>
+									<span><?php echo esc_html( $product->get_sku() ); ?></span>
+								</p>
+							<?php endif; ?>
 
-						<?php woocommerce_template_single_title(); ?>
+							<?php woocommerce_template_single_title(); ?>
 
-						<?php if ( $product ) : ?>
-							<div class="dewit-product-meta">
-								<?php echo wc_get_product_category_list( $product->get_id(), ', ', '<span>', '</span>' ); ?>
-							</div>
-						<?php endif; ?>
-
-						<?php woocommerce_template_single_excerpt(); ?>
-
-						<?php if ( ! empty( $product_resources ) ) : ?>
-							<div class="dewit-product-resources" aria-label="<?php esc_attr_e( 'Productinformatie', 'dewit-theme-woocommerce' ); ?>">
-								<p><?php esc_html_e( 'Productinformatie', 'dewit-theme-woocommerce' ); ?></p>
-								<div class="dewit-product-resources__links">
-									<?php foreach ( $product_resources as $resource ) : ?>
-										<a class="dewit-product-resource dewit-product-resource--<?php echo esc_attr( $resource['type'] ); ?>" href="<?php echo esc_url( $resource['url'] ); ?>" target="_blank" rel="noopener">
-											<?php echo esc_html( $resource['label'] ); ?>
-										</a>
-									<?php endforeach; ?>
+							<?php if ( $product ) : ?>
+								<div class="dewit-product-meta">
+									<?php echo wc_get_product_category_list( $product->get_id(), ', ', '<span>', '</span>' ); ?>
 								</div>
-							</div>
-						<?php endif; ?>
+							<?php endif; ?>
+
+							<?php woocommerce_template_single_excerpt(); ?>
+
+							<?php if ( ! empty( $product_resources ) ) : ?>
+								<div class="dewit-product-resources" aria-label="<?php esc_attr_e( 'Productinformatie', 'dewit-theme-woocommerce' ); ?>">
+									<p><?php esc_html_e( 'Productinformatie', 'dewit-theme-woocommerce' ); ?></p>
+									<div class="dewit-product-resources__links">
+										<?php foreach ( $product_resources as $resource ) : ?>
+											<a class="dewit-product-resource dewit-product-resource--<?php echo esc_attr( $resource['type'] ); ?>" href="<?php echo esc_url( $resource['url'] ); ?>" target="_blank" rel="noopener">
+												<?php echo esc_html( $resource['label'] ); ?>
+											</a>
+										<?php endforeach; ?>
+									</div>
+								</div>
+							<?php endif; ?>
+						</div>
 
 						<div class="dewit-product-actions">
 							<p class="dewit-product-actions__label"><?php esc_html_e( 'Direct contact', 'dewit-theme-woocommerce' ); ?></p>
