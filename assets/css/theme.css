@@ -1955,6 +1955,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-location-archive.product,
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-b680c70 {
 		height: auto !important;
+		max-height: none !important;
 		max-width: 100% !important;
 		min-height: 100svh !important;
 		overflow: visible !important;
