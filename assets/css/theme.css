@@ -1873,6 +1873,14 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 }
 
 @media (max-width: 560px) {
+	html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas),
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas {
+		height: auto !important;
+		min-height: 100svh;
+		overflow-x: hidden;
+		overflow-y: auto !important;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header {
 		background: #003965;
 		border-bottom: 0;
@@ -1944,7 +1952,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-location-archive.product,
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-b680c70 {
+		height: auto !important;
 		max-width: 100% !important;
+		min-height: 100svh !important;
+		overflow: visible !important;
 		width: 100% !important;
 	}
 
@@ -1977,10 +1988,12 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-5c7860e {
 		flex: 0 0 auto !important;
-		height: calc(var(--dewit-shop-viewport-height) - 60px) !important;
+		height: auto !important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
 		max-width: 100% !important;
+		min-height: 0 !important;
+		overflow: visible !important;
 		position: relative !important;
 		width: 100% !important;
 	}
@@ -2013,8 +2026,21 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 		grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
 	}
 
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid > .elementor-widget-container,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.dewit-grouped-mode,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.dewit-landing-mode {
+		height: auto !important;
+		max-height: none !important;
+		min-height: 0 !important;
+		overflow: visible !important;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products {
 		gap: 16px;
+		max-height: none !important;
+		overflow: visible !important;
+		padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products__section + .dewit-grouped-products__section {
