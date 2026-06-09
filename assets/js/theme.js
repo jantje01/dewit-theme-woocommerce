@@ -738,10 +738,19 @@
 
 	function getMobileCategoryToggleButtons() {
 		const buttons = Array.from(document.querySelectorAll('.dewit-category-toggle'));
+		const sidebar = document.getElementById('catalog-sidebar');
 		let headerToggle = document.querySelector('.dewit-header-category-toggle');
 		const headerHost = document.querySelector('.elementor-element-c385f59.elementor-sticky--active:not(.elementor-sticky__spacer)') ||
 			document.querySelector('.elementor-element-c385f59:not(.elementor-sticky__spacer)') ||
 			document.querySelector('.site-header');
+
+		if (!sidebar) {
+			if (headerToggle && headerToggle.classList.contains('dewit-category-toggle-ready')) {
+				headerToggle.remove();
+			}
+
+			return buttons;
+		}
 
 		if (!headerToggle && headerHost) {
 			headerToggle = document.createElement('button');
@@ -751,7 +760,7 @@
 			headerHost.insertBefore(headerToggle, headerHost.firstChild);
 		}
 
-		if (headerToggle && document.getElementById('catalog-sidebar')) {
+		if (headerToggle && sidebar) {
 			headerToggle.classList.add('dewit-header-category-toggle');
 			headerToggle.setAttribute('aria-controls', 'catalog-sidebar');
 			headerToggle.setAttribute('aria-expanded', String(document.body.classList.contains('dewit-mobile-filter-open')));
