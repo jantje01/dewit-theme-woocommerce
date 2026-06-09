@@ -799,14 +799,26 @@
 			}
 
 			toggle.classList.add('dewit-category-toggle-ready');
-			toggle.addEventListener('click', function () {
+		});
+
+		if (!document.body.classList.contains('dewit-category-toggle-delegation-ready')) {
+			document.body.classList.add('dewit-category-toggle-delegation-ready');
+			document.addEventListener('click', function (event) {
+				const toggle = event.target.closest('.dewit-category-toggle, .dewit-header-category-toggle');
+
+				if (!toggle || !document.getElementById('catalog-sidebar')) {
+					return;
+				}
+
+				event.preventDefault();
+
 				const isOpen = document.body.classList.toggle('dewit-mobile-filter-open');
 
 				getMobileCategoryToggleButtons().forEach(function (button) {
 					button.setAttribute('aria-expanded', String(isOpen));
 				});
 			});
-		});
+		}
 
 		if (!overlay.classList.contains('dewit-category-overlay-ready')) {
 			overlay.classList.add('dewit-category-overlay-ready');
