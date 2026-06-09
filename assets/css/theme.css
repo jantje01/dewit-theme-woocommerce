@@ -2321,6 +2321,15 @@ body.single-product #catalog-sidebar .e-filter-item {
 	color: #fff;
 }
 
+#catalog-sidebar a,
+#catalog-sidebar .dewit-sidebar-logo-link,
+#catalog-sidebar .dewit-category-trigger,
+#catalog-sidebar .dewit-category-child {
+	text-decoration: none !important;
+	text-decoration-thickness: 0;
+	text-underline-offset: 0;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-heading .elementor-heading-title {
 	color: rgba(255, 255, 255, 0.78);
 	font-family: var(--font-body);
