@@ -212,6 +212,12 @@ body.single-product .site-header .menu-toggle .menu-toggle__bar::after {
 	background: #fff !important;
 }
 
+body.theme-dewit-theme-woocommerce .dewit-header-category-toggle .menu-toggle__bar,
+body.theme-dewit-theme-woocommerce .dewit-header-category-toggle .menu-toggle__bar::before,
+body.theme-dewit-theme-woocommerce .dewit-header-category-toggle .menu-toggle__bar::after {
+	background: #fff !important;
+}
+
 .menu-toggle {
 	background: transparent;
 	border: 1px solid var(--color-line);
