@@ -2002,6 +2002,27 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59:not(.elementor-sticky__spacer) .elementor-widget-theme-site-logo {
 		margin-left: 48px;
 	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-mobile-filter-open {
+		overflow: hidden;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
+		display: none !important;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-mobile-filter-open #catalog-sidebar {
+		border-radius: 0;
+		display: block !important;
+		height: var(--dewit-shop-viewport-height);
+		left: 0;
+		max-width: 320px;
+		overflow-y: auto;
+		position: fixed !important;
+		top: 0;
+		width: min(86vw, 320px) !important;
+		z-index: 1001;
+	}
 }
 
 @media (max-width: 560px) {
