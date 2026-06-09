@@ -9,11 +9,15 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <main id="primary" class="site-main dewit-product-page">
-	<?php if ( is_active_sidebar( 'shop-sidebar' ) ) : ?>
-		<aside id="catalog-sidebar" class="shop-sidebar">
+	<aside id="catalog-sidebar" class="shop-sidebar">
+		<?php if ( is_active_sidebar( 'shop-sidebar' ) ) : ?>
 			<?php dynamic_sidebar( 'shop-sidebar' ); ?>
-		</aside>
-	<?php endif; ?>
+		<?php else : ?>
+			<div class="elementor-widget-taxonomy-filter">
+				<div class="e-filter"></div>
+			</div>
+		<?php endif; ?>
+	</aside>
 
 	<div class="container dewit-product-page__inner">
 		<?php
