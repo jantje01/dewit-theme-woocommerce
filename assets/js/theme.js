@@ -1311,6 +1311,14 @@
 		trigger.appendChild(label);
 	}
 
+	function normalizeDisplayText(value) {
+		const normalized = String(value || '').replace(/&(\d{2,6});/g, '&#$1;');
+		const parser = document.createElement('textarea');
+		parser.innerHTML = normalized;
+
+		return parser.value;
+	}
+
 	function getLandingContainer() {
 		const widget = document.querySelector('.elementor-widget-loop-grid');
 
