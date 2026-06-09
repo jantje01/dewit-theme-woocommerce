@@ -9,6 +9,12 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <main id="primary" class="site-main dewit-product-page">
+	<?php if ( is_active_sidebar( 'shop-sidebar' ) ) : ?>
+		<aside id="catalog-sidebar" class="shop-sidebar">
+			<?php dynamic_sidebar( 'shop-sidebar' ); ?>
+		</aside>
+	<?php endif; ?>
+
 	<div class="container dewit-product-page__inner">
 		<?php
 		while ( have_posts() ) :
