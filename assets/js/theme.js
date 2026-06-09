@@ -751,6 +751,101 @@
 		});
 	}
 
+	function getParentCategorySlugFromTrigger(trigger) {
+		try {
+			return new URL(trigger.href, window.location.href).searchParams.get('dewit_parent_cat') || '';
+		} catch (error) {
+			return '';
+		}
+	}
+
+	function activateSidebarParentTrigger(trigger) {
+		const filter = trigger.closest('.e-filter');
+		const groupElement = trigger.closest('.dewit-category-group');
+
+		if (!filter || !groupElement) {
+			return;
+		}
+
+		filter.querySelectorAll('.dewit-category-group.is-open').forEach(function (openGroup) {
+			const openTrigger = openGroup.querySelector('.dewit-category-trigger');
+			const openPanel = openGroup.querySelector('.dewit-category-panel');
+
+			openGroup.classList.remove('is-open');
+
+			if (openTrigger) {
+				openTrigger.setAttribute('aria-pressed', 'false');
+			}
+
+			if (openPanel) {
+				openPanel.hidden = true;
+			}
+		});
+
+		groupElement.classList.add('is-open');
+		trigger.setAttribute('aria-pressed', 'true');
+
+		const panel = groupElement.querySelector('.dewit-category-panel');
+
+		if (panel) {
+			panel.hidden = false;
+		}
+	}
+
+	function bindDelegatedParentCategorySwitches() {
+		if (document.body.classList.contains('dewit-parent-switch-delegation-ready')) {
+			return;
+		}
+
+		let switchId = 0;
+
+		document.body.classList.add('dewit-parent-switch-delegation-ready');
+		document.addEventListener('click', function (event) {
+			const trigger = event.target.closest('#catalog-sidebar .dewit-category-trigger');
+
+			if (!trigger || document.body.classList.contains('single-product')) {
+				return;
+			}
+
+			const parentSlug = getParentCategorySlugFromTrigger(trigger);
+
+			if (!parentSlug) {
+				return;
+			}
+
+			event.preventDefault();
+			event.stopPropagation();
+
+			const nextSwitchId = switchId + 1;
+			const label = trigger.querySelector('.dewit-category-label') ?
+				trigger.querySelector('.dewit-category-label').textContent.trim() :
+				trigger.textContent.trim();
+
+			switchId = nextSwitchId;
+
+			window.addEventListener('dewit/products-updated', function () {
+				if (nextSwitchId !== switchId) {
+					return;
+				}
+
+				activateSidebarParentTrigger(trigger);
+				window.dispatchEvent(new CustomEvent('dewit/category-selected', {
+					detail: {
+						label: label,
+						slug: parentSlug,
+					},
+				}));
+			}, { once: true });
+
+			loadGroupedCategoryProducts({
+				label: label,
+				name: label,
+				parentSlug: parentSlug,
+			});
+			closeMobileCategories();
+		}, true);
+	}
+
 	function getMobileCategoryToggleButtons() {
 		const buttons = Array.from(document.querySelectorAll('.dewit-category-toggle'));
 		const sidebar = document.getElementById('catalog-sidebar');
@@ -847,6 +942,7 @@
 	}
 
 	function enhanceShopNavigation() {
+		bindDelegatedParentCategorySwitches();
 		injectMobileCategoryControls();
 	}
 
