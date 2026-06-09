@@ -13,8 +13,29 @@ defined( 'ABSPATH' ) || exit;
 		<?php if ( is_active_sidebar( 'shop-sidebar' ) ) : ?>
 			<?php dynamic_sidebar( 'shop-sidebar' ); ?>
 		<?php else : ?>
-			<div class="elementor-widget-taxonomy-filter">
-				<div class="e-filter"></div>
+			<div class="elementor-element elementor-element-c6a068a e-con-full e-flex e-con e-child">
+				<div class="elementor-element elementor-element-aad6506 elementor-widget elementor-widget-image">
+					<a class="dewit-sidebar-logo-link" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php esc_attr_e( 'Terug naar hoofdcategorieën', 'dewit-theme-woocommerce' ); ?>">
+						<?php
+						$custom_logo_id = (int) get_theme_mod( 'custom_logo' );
+
+						if ( $custom_logo_id ) {
+							echo wp_get_attachment_image( $custom_logo_id, 'large' );
+						} else {
+							bloginfo( 'name' );
+						}
+						?>
+					</a>
+				</div>
+			</div>
+
+			<div class="elementor-element elementor-element-cdaf430 e-con-full e-flex e-con e-child">
+				<div class="elementor-element elementor-element-da631c6 elementor-widget elementor-widget-heading">
+					<h2 class="elementor-heading-title elementor-size-default"><?php esc_html_e( 'Categorieën', 'dewit-theme-woocommerce' ); ?></h2>
+				</div>
+				<div class="elementor-element elementor-element-3689aa1 elementor-widget elementor-widget-taxonomy-filter">
+					<search class="e-filter" role="search"></search>
+				</div>
 			</div>
 		<?php endif; ?>
 	</aside>
