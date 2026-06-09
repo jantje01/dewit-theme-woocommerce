@@ -197,6 +197,21 @@ body.woocommerce-page .site-header__inner {
 	grid-template-columns: auto 1fr;
 }
 
+body.woocommerce-page .site-header .menu-toggle,
+body.single-product .site-header .menu-toggle {
+	border-color: transparent;
+	color: #fff;
+}
+
+body.woocommerce-page .site-header .menu-toggle .menu-toggle__bar,
+body.woocommerce-page .site-header .menu-toggle .menu-toggle__bar::before,
+body.woocommerce-page .site-header .menu-toggle .menu-toggle__bar::after,
+body.single-product .site-header .menu-toggle .menu-toggle__bar,
+body.single-product .site-header .menu-toggle .menu-toggle__bar::before,
+body.single-product .site-header .menu-toggle .menu-toggle__bar::after {
+	background: #fff !important;
+}
+
 .menu-toggle {
 	background: transparent;
 	border: 1px solid var(--color-line);
