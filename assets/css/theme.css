@@ -1025,6 +1025,14 @@ body.single-product #catalog-sidebar .elementor-element-aad6506 {
 	padding: 28px 24px 18px !important;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-element-aad6506 img,
+body.single-product #catalog-sidebar .elementor-element-aad6506 img {
+	display: block;
+	height: auto;
+	max-width: 176px;
+	width: 100%;
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-element-cdaf430 {
 	padding: 0 10px 10px !important;
 }
