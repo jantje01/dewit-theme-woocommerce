@@ -1018,22 +1018,23 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-element-aad6506 {
-	align-items: flex-start !important;
+	align-items: center !important;
 	padding: 28px 24px 6px !important;
-	text-align: left !important;
+	text-align: center !important;
 }
 
 body.single-product #catalog-sidebar .elementor-element-aad6506 {
-	align-items: flex-start !important;
+	align-items: center !important;
 	padding: 28px 24px 6px !important;
-	text-align: left !important;
+	text-align: center !important;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .dewit-sidebar-logo-link,
 body.single-product #catalog-sidebar .dewit-sidebar-logo-link {
-	align-items: flex-start;
+	align-items: center;
 	display: inline-flex;
-	justify-content: flex-start;
+	justify-content: center;
+	width: 100%;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-element-aad6506 img,
