@@ -2540,7 +2540,7 @@ body.single-product .dewit-category-panel {
 	flex-direction: column;
 	gap: 4px;
 	margin: 2px 0 10px;
-	padding-left: 10px;
+	padding-left: 16px;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-panel[hidden],
@@ -2562,7 +2562,7 @@ body.single-product .elementor-widget-taxonomy-filter .dewit-category-child {
 	font-weight: 600;
 	line-height: 1.22;
 	opacity: 0.9;
-	padding: 7px 8px 7px 14px;
+	padding: 7px 8px 7px 16px;
 	position: relative;
 	text-align: left;
 	transition: background-color 160ms ease, color 160ms ease, opacity 160ms ease;
