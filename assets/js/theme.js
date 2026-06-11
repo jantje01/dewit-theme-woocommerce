@@ -594,6 +594,7 @@
 
 		card.className = 'dewit-grouped-product-card';
 		card.href = product.url;
+		card.style.setProperty('--dewit-card-index', String(Math.min(index, 24)));
 
 		imageWrap.className = 'dewit-grouped-product-card__image';
 

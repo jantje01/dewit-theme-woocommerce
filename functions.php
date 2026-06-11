@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.65' );
+define( 'DEWIT_THEME_VERSION', '0.3.66' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 
@@ -1334,7 +1334,7 @@ function dewit_theme_render_grouped_category_products_html( string $slug ): stri
 							$is_lcp_candidate  = $product_index < 2;
 							$product_index++;
 							?>
-							<a class="dewit-grouped-product-card" href="<?php echo esc_url( $product['url'] ); ?>">
+							<a class="dewit-grouped-product-card" style="--dewit-card-index: <?php echo esc_attr( min( $product_index - 1, 24 ) ); ?>;" href="<?php echo esc_url( $product['url'] ); ?>">
 								<span class="dewit-grouped-product-card__image">
 									<?php if ( $product['image'] ) : ?>
 										<img
