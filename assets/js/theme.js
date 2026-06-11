@@ -1549,6 +1549,7 @@
 
 		card.className = 'dewit-category-landing-card';
 		card.href = getGroupedCategoryUrl(group.parentSlug);
+		card.setAttribute('data-parent-category', group.parentSlug || '');
 		header.className = 'dewit-category-landing-card__header';
 		content.className = 'dewit-category-landing-card__content';
 		title.className = 'dewit-category-landing-card__title';
@@ -1574,6 +1575,160 @@
 		card.appendChild(content);
 
 		return card;
+	}
+
+	function getCategoryBrowserGroups() {
+		const inlineGroups = getInlineCategoryGroups();
+
+		if (inlineGroups.length) {
+			return Promise.resolve(inlineGroups);
+		}
+
+		const cachedGroups = getCachedCategoryGroups();
+
+		if (cachedGroups.length) {
+			return Promise.resolve(cachedGroups);
+		}
+
+		const renderedGroups = getRenderedSidebarGroups();
+
+		if (renderedGroups.length) {
+			return Promise.resolve(renderedGroups);
+		}
+
+		return fetchCategoryTree();
+	}
+
+	function closeCategoryBrowser() {
+		const browser = document.querySelector('.dewit-category-browser');
+
+		document.body.classList.remove('dewit-category-browser-open');
+		if (browser) {
+			browser.setAttribute('aria-hidden', 'true');
+		}
+		document.querySelectorAll('.dewit-category-browser-trigger').forEach(function (trigger) {
+			trigger.setAttribute('aria-expanded', 'false');
+		});
+	}
+
+	function ensureCategoryBrowser() {
+		let browser = document.querySelector('.dewit-category-browser');
+
+		if (browser) {
+			return browser;
+		}
+
+		browser = document.createElement('div');
+		browser.className = 'dewit-category-browser';
+		browser.setAttribute('aria-hidden', 'true');
+		browser.innerHTML = [
+			'<button class="dewit-category-browser__backdrop" type="button" aria-label="Hoofdcategorieen sluiten"></button>',
+			'<section class="dewit-category-browser__panel" role="dialog" aria-modal="true" aria-label="Hoofdcategorieen">',
+			'<div class="dewit-category-browser__header">',
+			'<span class="dewit-category-browser__title">Hoofdcategorieen</span>',
+			'<button class="dewit-category-browser__close" type="button" aria-label="Sluiten">',
+			'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>',
+			'</button>',
+			'</div>',
+			'<div class="dewit-category-browser__grid"></div>',
+			'</section>',
+		].join('');
+
+		document.body.appendChild(browser);
+
+		browser.addEventListener('click', function (event) {
+			const closeButton = event.target.closest('.dewit-category-browser__backdrop, .dewit-category-browser__close');
+			const card = event.target.closest('.dewit-category-landing-card[data-parent-category]');
+
+			if (closeButton) {
+				closeCategoryBrowser();
+				return;
+			}
+
+			if (card) {
+				const slug = card.getAttribute('data-parent-category') || '';
+				const group = slug && browser._dewitGroups
+					? browser._dewitGroups.find(function (item) {
+						return item.parentSlug === slug;
+					})
+					: null;
+
+				if (group && window.dewitLoadGroupedCategoryProducts) {
+					event.preventDefault();
+
+					const trigger = findParentCategoryTrigger(group.parentSlug);
+
+					if (trigger) {
+						activateSidebarParentTrigger(trigger);
+					}
+
+					closeMobileCategories();
+					closeCategoryBrowser();
+					window.dewitLoadGroupedCategoryProducts(group, { history: 'push' });
+				}
+			}
+		});
+
+		document.addEventListener('keydown', function (event) {
+			if (event.key === 'Escape' && document.body.classList.contains('dewit-category-browser-open')) {
+				closeCategoryBrowser();
+			}
+		});
+
+		return browser;
+	}
+
+	function renderCategoryBrowser(groups) {
+		const browser = ensureCategoryBrowser();
+		const grid = browser.querySelector('.dewit-category-browser__grid');
+
+		if (!grid) {
+			return;
+		}
+
+		browser._dewitGroups = groups;
+		grid.innerHTML = '';
+
+		groups.forEach(function (group) {
+			grid.appendChild(createLandingCard(group));
+		});
+	}
+
+	function openCategoryBrowser() {
+		const browser = ensureCategoryBrowser();
+
+		browser.setAttribute('aria-hidden', 'false');
+		document.body.classList.add('dewit-category-browser-open');
+		document.querySelectorAll('.dewit-category-browser-trigger').forEach(function (trigger) {
+			trigger.setAttribute('aria-expanded', 'true');
+		});
+
+		getCategoryBrowserGroups().then(function (groups) {
+			renderCategoryBrowser(groups);
+		});
+	}
+
+	function bindCategoryBrowserTriggers() {
+		document.querySelectorAll('.dewit-shop-toolbar-logo, #catalog-sidebar .dewit-sidebar-logo-link, #catalog-sidebar .custom-logo-link, #catalog-sidebar .elementor-widget-theme-site-logo a, #catalog-sidebar .elementor-widget-image a')
+			.forEach(function (trigger) {
+				trigger.classList.add('dewit-category-browser-trigger');
+				trigger.setAttribute('aria-haspopup', 'dialog');
+				trigger.setAttribute('aria-expanded', String(document.body.classList.contains('dewit-category-browser-open')));
+			});
+
+		if (!document.body.classList.contains('dewit-category-browser-delegation-ready')) {
+			document.body.classList.add('dewit-category-browser-delegation-ready');
+			document.addEventListener('click', function (event) {
+				const trigger = event.target.closest('.dewit-category-browser-trigger');
+
+				if (!trigger || document.body.classList.contains('single-product')) {
+					return;
+				}
+
+				event.preventDefault();
+				openCategoryBrowser();
+			});
+		}
 	}
 
 	function renderCategoryLanding(groups) {
@@ -2004,9 +2159,11 @@
 		if (inlineGroups.length) {
 			renderCategoryFilters(inlineGroups);
 			renderCategoryLanding(inlineGroups);
+			renderCategoryBrowser(inlineGroups);
 		} else if (cachedGroups.length) {
 			renderCategoryFilters(cachedGroups);
 			renderCategoryLanding(cachedGroups);
+			renderCategoryBrowser(cachedGroups);
 		}
 
 		if (!inlineGroups.length && !cachedGroups.length) {
@@ -2017,6 +2174,7 @@
 
 				renderCategoryFilters(groups);
 				renderCategoryLanding(groups);
+				renderCategoryBrowser(groups);
 			});
 		}
 	}
@@ -2038,16 +2196,19 @@
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', buildCategoryDropdowns);
 		document.addEventListener('DOMContentLoaded', function () {
+			bindCategoryBrowserTriggers();
 			window.setTimeout(revealCategoryFilters, 700);
 			window.setTimeout(renderCategoryLandingFromSidebar, 760);
 		});
 	} else {
 		buildCategoryDropdowns();
+		bindCategoryBrowserTriggers();
 		window.setTimeout(revealCategoryFilters, 700);
 		window.setTimeout(renderCategoryLandingFromSidebar, 760);
 	}
 
 	window.addEventListener('elementor/frontend/init', buildCategoryDropdowns);
+	window.addEventListener('elementor/frontend/init', bindCategoryBrowserTriggers);
 	window.addEventListener('load', revealCategoryFilters);
 	window.addEventListener('load', renderCategoryLandingFromSidebar);
 	window.addEventListener('dewit/categories-ready', renderCategoryLandingFromSidebar);
