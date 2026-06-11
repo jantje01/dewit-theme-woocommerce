@@ -39,8 +39,26 @@
 		}
 	}
 
-	function setProductCardViewMode(mode) {
+	function replayGroupedProductCardAnimation() {
+		const cards = document.querySelectorAll('.dewit-grouped-product-card');
+
+		cards.forEach(function (card, index) {
+			card.style.animation = 'none';
+			card.style.setProperty('--dewit-card-index', String(Math.min(index, 24)));
+		});
+
+		if (cards.length) {
+			cards[0].offsetHeight;
+		}
+
+		cards.forEach(function (card) {
+			card.style.animation = '';
+		});
+	}
+
+	function setProductCardViewMode(mode, replayCards) {
 		const nextMode = mode === 'horizontal' ? 'horizontal' : 'grid';
+		const currentMode = document.body.classList.contains('dewit-horizontal-product-cards') ? 'horizontal' : 'grid';
 
 		document.body.classList.toggle('dewit-horizontal-product-cards', nextMode === 'horizontal');
 		document.querySelectorAll('.dewit-product-view-switch__button').forEach(function (button) {
@@ -53,6 +71,10 @@
 			window.localStorage.setItem(productCardViewStorageKey, nextMode);
 		} catch (error) {
 			// localStorage can be disabled in some browser privacy modes.
+		}
+
+		if (replayCards && currentMode !== nextMode) {
+			window.requestAnimationFrame(replayGroupedProductCardAnimation);
 		}
 	}
 
@@ -154,7 +176,7 @@
 
 		[gridButton, horizontalButton].forEach(function (button) {
 			button.addEventListener('click', function () {
-				setProductCardViewMode(button.getAttribute('data-view'));
+				setProductCardViewMode(button.getAttribute('data-view'), true);
 			});
 			controls.appendChild(button);
 		});
