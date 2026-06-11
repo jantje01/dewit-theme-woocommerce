@@ -508,7 +508,7 @@ body.single-product.woocommerce div.product div.summary {
 
 .dewit-product-gallery {
 	align-self: start;
-	padding: 12px;
+	padding: 0;
 }
 
 .dewit-product-gallery .woocommerce-product-gallery,
@@ -518,7 +518,7 @@ body.single-product.woocommerce div.product div.summary {
 }
 
 .dewit-product-gallery .woocommerce-product-gallery__image {
-	border-radius: 14px;
+	border-radius: 13px;
 	overflow: hidden;
 }
 
@@ -529,7 +529,7 @@ body.single-product.woocommerce div.product div.summary {
 .dewit-product-gallery .woocommerce-product-gallery__image img {
 	aspect-ratio: 1 / 1;
 	max-height: 390px;
-	object-fit: contain;
+	object-fit: cover;
 	width: 100%;
 }
 
@@ -918,11 +918,14 @@ body.single-product.woocommerce div.product div.summary {
 		padding-inline: 12px;
 	}
 
-	.dewit-product-gallery,
 	.dewit-product-summary,
 	.dewit-product-details,
 	.dewit-product-page .related.products {
 		padding: 14px;
+	}
+
+	.dewit-product-gallery {
+		padding: 0;
 	}
 
 	.dewit-product-summary .product_title {
