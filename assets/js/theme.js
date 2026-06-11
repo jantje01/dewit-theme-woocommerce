@@ -17,7 +17,7 @@
 (function () {
 	let searchRequestController = null;
 	let searchDebounceTimer = null;
-	const productCardViewStorageKey = 'dewitProductCardView';
+	const productCardViewStorageKey = 'dewitProductCardViewV2';
 
 	function getThemeConfig() {
 		return window.dewitTheme || (typeof dewitTheme !== 'undefined' ? dewitTheme : {});
@@ -32,10 +32,18 @@
 	}
 
 	function getProductCardViewMode() {
+		const defaultMode = window.matchMedia && window.matchMedia('(min-width: 767px)').matches ? 'horizontal' : 'grid';
+
 		try {
-			return window.localStorage.getItem(productCardViewStorageKey) === 'horizontal' ? 'horizontal' : 'grid';
+			const storedMode = window.localStorage.getItem(productCardViewStorageKey);
+
+			if (storedMode === 'horizontal' || storedMode === 'grid') {
+				return storedMode;
+			}
+
+			return defaultMode;
 		} catch (error) {
-			return 'grid';
+			return defaultMode;
 		}
 	}
 
