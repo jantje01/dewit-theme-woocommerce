@@ -1013,8 +1013,11 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
 	background: #003965 !important;
 	border-radius: 0;
 	box-sizing: border-box;
+	display: flex !important;
+	flex-direction: column;
 	flex: 0 0 260px !important;
 	margin: 0 !important;
+	min-height: 0;
 	overflow: hidden;
 	padding: 0 !important;
 	width: 260px !important;
@@ -1022,6 +1025,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-element-aad6506 {
 	align-items: center !important;
+	flex: 0 0 auto;
 	padding: 28px 24px 6px !important;
 	text-align: center !important;
 }
@@ -1049,7 +1053,15 @@ body.single-product #catalog-sidebar .elementor-element-aad6506 img {
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-element-cdaf430 {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
 	padding: 0 10px 10px !important;
+	scrollbar-color: rgba(255, 255, 255, 0.34) transparent;
+	scrollbar-gutter: stable;
+	scrollbar-width: thin;
+	-webkit-overflow-scrolling: touch;
 }
 
 body.single-product #catalog-sidebar .elementor-element-cdaf430 {

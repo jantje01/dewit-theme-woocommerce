@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.81' );
+define( 'DEWIT_THEME_VERSION', '0.3.82' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
