@@ -9,9 +9,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.76' );
+define( 'DEWIT_THEME_VERSION', '0.3.77' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
+
+function dewit_theme_get_shop_meta_description(): string {
+	return 'Bekijk het assortiment bouwmachines, bekisting, steigers, verbruiksmaterialen en ondersteuningsmateriaal van De Wit Bouwmachines. Wij hebben altijd de oplossing in huis.';
+}
+
+function dewit_theme_print_shop_meta_description(): void {
+	$is_product_page     = function_exists( 'is_product' ) && is_product();
+	$is_product_taxonomy = function_exists( 'is_product_taxonomy' ) && is_product_taxonomy();
+	$is_shop_page        = function_exists( 'is_shop' ) && is_shop();
+
+	if ( is_admin() || is_search() || $is_product_page ) {
+		return;
+	}
+
+	if ( ! ( $is_shop_page || $is_product_taxonomy || is_post_type_archive( 'product' ) || is_front_page() || is_home() ) ) {
+		return;
+	}
+
+	printf(
+		'<meta name="description" content="%s">' . "\n",
+		esc_attr( dewit_theme_get_shop_meta_description() )
+	);
+}
+add_action( 'wp_head', 'dewit_theme_print_shop_meta_description', 2 );
 
 function dewit_theme_should_render_shop_sidebar(): bool {
 	$is_shop             = function_exists( 'is_shop' ) && is_shop();
