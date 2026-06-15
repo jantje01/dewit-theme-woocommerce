@@ -2477,7 +2477,6 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-tri
 	font: inherit;
 	font-size: 13.5px;
 	font-weight: 750;
-	gap: 9px;
 	line-height: 1.2;
 	min-height: 36px;
 	padding: 9px 10px;
@@ -2497,31 +2496,12 @@ body.single-product .dewit-category-trigger {
 	font: inherit;
 	font-size: 13.5px;
 	font-weight: 750;
-	gap: 9px;
 	line-height: 1.2;
 	min-height: 36px;
 	padding: 9px 10px;
 	text-align: left;
 	transition: background-color 160ms ease, color 160ms ease;
 	width: 100%;
-}
-
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-icon,
-body.single-product .dewit-category-icon {
-	align-items: center;
-	color: rgba(255, 255, 255, 0.82);
-	display: inline-flex;
-	flex: 0 0 18px;
-	height: 18px;
-	justify-content: center;
-	width: 18px;
-}
-
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-icon svg,
-body.single-product .dewit-category-icon svg {
-	display: block;
-	height: 18px;
-	width: 18px;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-category-label,

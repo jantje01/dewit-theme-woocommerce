@@ -1433,71 +1433,9 @@
 		});
 	}
 
-	const categoryIconKeywords = [
-		{ icon: 'power', terms: ['elektra', 'elektrisch', 'kabel', 'stroom', 'verdeel', 'haspel', 'bouwelektra'] },
-		{ icon: 'helmet', terms: ['pbm', 'veiligheid', 'helm', 'bescherming', 'bril', 'handschoen'] },
-		{ icon: 'scaffold', terms: ['steiger', 'steigermateriaal', 'vloeren', 'planken', 'doeken'] },
-		{ icon: 'fence', terms: ['hek', 'hekken', 'bouwhek', 'bouwhekken'] },
-		{ icon: 'pallet', terms: ['pallet', 'opslag', 'stapel', 'transport'] },
-		{ icon: 'seal', terms: ['voeg', 'afdichting', 'kimband', 'tape', 'band'] },
-		{ icon: 'support', terms: ['ondersteuning', 'ondersteuningsmateriaal', 'stempel', 'schroefstempel'] },
-		{ icon: 'spacer', terms: ['afstandhouder', 'afstandhouders', 'stel', 'ribben', 'steltegel'] },
-		{ icon: 'pipe', terms: ['buis', 'buizen', 'konus', 'konussen', 'pe'] },
-		{ icon: 'mixer', terms: ['bouwmachine', 'bouwmachines', 'machines', 'mixer', 'betonmolen'] },
-		{ icon: 'formwork', terms: ['bekisting', 'fundatie', 'paschal'] },
-	];
-
-	const categoryIconSvgs = {
-		power: '<path d="M8 2v5"/><path d="M16 2v5"/><path d="M6 7h12v4a6 6 0 0 1-12 0Z"/><path d="M12 17v5"/><path d="M9 22h6"/>',
-		helmet: '<path d="M4 14a8 8 0 0 1 16 0"/><path d="M3 14h18"/><path d="M7 14v-3"/><path d="M17 14v-3"/><path d="M9 6v8"/><path d="M15 6v8"/>',
-		scaffold: '<path d="M5 21V5"/><path d="M19 21V5"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="m5 21 14-16"/><path d="m19 21L5 5"/>',
-		fence: '<path d="M4 21V5"/><path d="M20 21V5"/><path d="M4 7h16"/><path d="M4 13h16"/><path d="M4 19h16"/><path d="M9 7v12"/><path d="M15 7v12"/>',
-		pallet: '<path d="M4 9h16"/><path d="M5 14h14"/><path d="M6 19h12"/><path d="M7 9v10"/><path d="M12 9v10"/><path d="M17 9v10"/>',
-		seal: '<circle cx="8" cy="12" r="4"/><path d="M12 12h8"/><path d="M17 9l3 3-3 3"/><path d="M8 8v8"/>',
-		support: '<path d="M7 21V7"/><path d="M17 21V7"/><path d="M5 7h14"/><path d="M5 21h14"/><path d="M9 11h6"/><path d="M9 17h6"/><path d="m10 14 4-3"/><path d="m14 14-4 3"/>',
-		spacer: '<path d="M4 18h16"/><path d="M6 18 10 6"/><path d="m14 6 4 12"/><path d="M9 10h6"/><path d="M8 14h8"/>',
-		pipe: '<path d="M4 8c0-2.2 3.6-4 8-4s8 1.8 8 4-3.6 4-8 4-8-1.8-8-4Z"/><path d="M4 8v8c0 2.2 3.6 4 8 4s8-1.8 8-4V8"/><path d="M8 10v8"/><path d="M16 10v8"/>',
-		mixer: '<circle cx="7" cy="19" r="2"/><circle cx="17" cy="19" r="2"/><path d="M5 17h14"/><path d="M6 7h9l3 5H9Z"/><path d="m15 7 4-2"/><path d="M8 12v5"/><path d="M16 12v5"/>',
-		formwork: '<rect x="4" y="5" width="16" height="14" rx="1"/><path d="M8 5v14"/><path d="M16 5v14"/><path d="M4 10h16"/><path d="M4 15h16"/>',
-		box: '<path d="M4 8h16v10H4Z"/><path d="M8 8V5h8v3"/><path d="M8 18v2"/><path d="M16 18v2"/>',
-	};
-
-	function getCategoryIconName(category) {
-		const value = [category.parentSlug, category.slug, category.label, category.name]
-			.filter(Boolean)
-			.join(' ')
-			.toLowerCase();
-		const match = categoryIconKeywords.find(function (entry) {
-			return entry.terms.some(function (term) {
-				return value.indexOf(term) > -1;
-			});
-		});
-
-		return match ? match.icon : 'box';
-	}
-
-	function createCategoryIcon(group) {
-		const icon = document.createElement('span');
-		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-
-		icon.className = 'dewit-category-icon';
-		icon.setAttribute('aria-hidden', 'true');
-		svg.setAttribute('viewBox', '0 0 24 24');
-		svg.setAttribute('fill', 'none');
-		svg.setAttribute('stroke', 'currentColor');
-		svg.setAttribute('stroke-width', '2');
-		svg.setAttribute('stroke-linecap', 'round');
-		svg.setAttribute('stroke-linejoin', 'round');
-		svg.innerHTML = categoryIconSvgs[getCategoryIconName(group)] || categoryIconSvgs.box;
-		icon.appendChild(svg);
-
-		return icon;
-	}
-
 	function appendCategoryTriggerContent(trigger, group) {
 		const label = document.createElement('span');
 
-		trigger.appendChild(createCategoryIcon(group));
 		label.className = 'dewit-category-label';
 		label.textContent = group.label || group.name || '';
 
