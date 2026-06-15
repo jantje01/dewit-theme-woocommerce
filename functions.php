@@ -9,9 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.79' );
+define( 'DEWIT_THEME_VERSION', '0.3.80' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
+define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 
 function dewit_theme_get_shop_meta_description(): string {
 	return 'Bekijk het assortiment bouwmachines, bekisting, steigers, verbruiksmaterialen en ondersteuningsmateriaal van De Wit Bouwmachines. Wij hebben altijd de oplossing in huis.';
@@ -46,6 +47,29 @@ function dewit_theme_print_shop_meta_description(): void {
 	);
 }
 add_action( 'wp_head', 'dewit_theme_print_shop_meta_description', 2 );
+
+function dewit_theme_print_shop_social_meta(): void {
+	if ( ! dewit_theme_is_shop_seo_context() ) {
+		return;
+	}
+
+	$title       = 'De Wit Bouwmachines Assortiment';
+	$description = dewit_theme_get_shop_meta_description();
+	$image_url   = DEWIT_SHOP_SOCIAL_IMAGE_URL;
+	$page_url    = home_url( add_query_arg( null, null ) );
+
+	printf( '<meta property="og:type" content="website">' . "\n" );
+	printf( '<meta property="og:title" content="%s">' . "\n", esc_attr( $title ) );
+	printf( '<meta property="og:description" content="%s">' . "\n", esc_attr( $description ) );
+	printf( '<meta property="og:url" content="%s">' . "\n", esc_url( $page_url ) );
+	printf( '<meta property="og:image" content="%s">' . "\n", esc_url( $image_url ) );
+	printf( '<meta property="og:image:type" content="image/jpeg">' . "\n" );
+	printf( '<meta name="twitter:card" content="summary_large_image">' . "\n" );
+	printf( '<meta name="twitter:title" content="%s">' . "\n", esc_attr( $title ) );
+	printf( '<meta name="twitter:description" content="%s">' . "\n", esc_attr( $description ) );
+	printf( '<meta name="twitter:image" content="%s">' . "\n", esc_url( $image_url ) );
+}
+add_action( 'wp_head', 'dewit_theme_print_shop_social_meta', 3 );
 
 function dewit_theme_filter_shop_document_title( array $parts ): array {
 	if ( ! dewit_theme_is_shop_seo_context() ) {
