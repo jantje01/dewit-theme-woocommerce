@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.84' );
+define( 'DEWIT_THEME_VERSION', '0.3.85' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
@@ -58,6 +58,7 @@ function dewit_theme_print_shop_social_meta(): void {
 	$image_url   = DEWIT_SHOP_SOCIAL_IMAGE_URL;
 	$page_url    = home_url( add_query_arg( null, null ) );
 
+	printf( '<meta property="og:locale" content="nl_NL">' . "\n" );
 	printf( '<meta property="og:type" content="website">' . "\n" );
 	printf( '<meta property="og:title" content="%s">' . "\n", esc_attr( $title ) );
 	printf( '<meta property="og:description" content="%s">' . "\n", esc_attr( $description ) );
