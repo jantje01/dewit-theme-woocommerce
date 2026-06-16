@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.86' );
+define( 'DEWIT_THEME_VERSION', '0.3.87' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
@@ -1432,6 +1432,173 @@ function dewit_theme_render_grouped_category_products_html( string $slug ): stri
 			<?php endforeach; ?>
 		<?php endif; ?>
 	</div>
+	<?php
+	return trim( ob_get_clean() );
+}
+
+/**
+ * Return the most relevant product category term for product-page option rows.
+ */
+function dewit_theme_get_product_option_category( WC_Product $product ): ?WP_Term {
+	$terms = get_the_terms( $product->get_id(), 'product_cat' );
+
+	if ( is_wp_error( $terms ) || empty( $terms ) ) {
+		return null;
+	}
+
+	$parent_slug = isset( $_GET['dewit_parent_cat'] ) ? sanitize_title( wp_unslash( $_GET['dewit_parent_cat'] ) ) : '';
+	$parent_term = '' !== $parent_slug ? get_term_by( 'slug', $parent_slug, 'product_cat' ) : null;
+	$candidates  = array();
+
+	foreach ( $terms as $term ) {
+		if ( ! $term instanceof WP_Term ) {
+			continue;
+		}
+
+		if ( $parent_term instanceof WP_Term ) {
+			$ancestors = get_ancestors( $term->term_id, 'product_cat' );
+
+			if ( $term->term_id !== $parent_term->term_id && ! in_array( $parent_term->term_id, $ancestors, true ) ) {
+				continue;
+			}
+		}
+
+		$candidates[] = $term;
+	}
+
+	if ( empty( $candidates ) ) {
+		$candidates = $terms;
+	}
+
+	usort(
+		$candidates,
+		static function ( WP_Term $a, WP_Term $b ): int {
+			return count( get_ancestors( $b->term_id, 'product_cat' ) ) <=> count( get_ancestors( $a->term_id, 'product_cat' ) );
+		}
+	);
+
+	$category = reset( $candidates );
+
+	return $category instanceof WP_Term ? $category : null;
+}
+
+/**
+ * Return all products in the same option category as the current product.
+ *
+ * @return array{category:WP_Term|null, products:array<int, array{id:int,title:string,url:string,sku:string,image:string|false,image_width:int,image_height:int,is_current:bool}>}
+ */
+function dewit_theme_get_product_category_options( WC_Product $product ): array {
+	$category = dewit_theme_get_product_option_category( $product );
+
+	if ( ! $category instanceof WP_Term ) {
+		return array(
+			'category' => null,
+			'products' => array(),
+		);
+	}
+
+	$parent_slug = isset( $_GET['dewit_parent_cat'] ) ? sanitize_title( wp_unslash( $_GET['dewit_parent_cat'] ) ) : '';
+	$query       = new WP_Query( array(
+		'post_type'              => 'product',
+		'post_status'            => 'publish',
+		'fields'                 => 'ids',
+		'posts_per_page'         => -1,
+		'no_found_rows'          => true,
+		'update_post_term_cache' => false,
+		'tax_query'              => array(
+			array(
+				'taxonomy' => 'product_cat',
+				'field'    => 'term_id',
+				'terms'    => $category->term_id,
+			),
+		),
+		'orderby'                => array(
+			'menu_order' => 'ASC',
+			'title'      => 'ASC',
+		),
+	) );
+	$products    = array();
+
+	foreach ( $query->posts as $post_id ) {
+		$option_product = wc_get_product( $post_id );
+
+		if ( ! $option_product instanceof WC_Product ) {
+			continue;
+		}
+
+		$image_id   = get_post_thumbnail_id( $post_id );
+		$image_data = $image_id ? wp_get_attachment_image_src( $image_id, 'woocommerce_thumbnail' ) : false;
+		$image_data = $image_data ? array(
+			'src'    => $image_data[0],
+			'width'  => absint( $image_data[1] ),
+			'height' => absint( $image_data[2] ),
+		) : dewit_theme_get_placeholder_image_data();
+		$url        = get_permalink( $post_id );
+
+		if ( '' !== $parent_slug ) {
+			$url = add_query_arg( 'dewit_parent_cat', $parent_slug, $url );
+		}
+
+		$products[] = array(
+			'id'           => absint( $post_id ),
+			'title'        => dewit_theme_clean_product_text( get_the_title( $post_id ) ),
+			'url'          => $url,
+			'sku'          => dewit_theme_clean_product_text( $option_product->get_sku() ),
+			'image'        => $image_data['src'],
+			'image_width'  => $image_data['width'],
+			'image_height' => $image_data['height'],
+			'is_current'   => absint( $post_id ) === $product->get_id(),
+		);
+	}
+
+	return array(
+		'category' => $category,
+		'products' => $products,
+	);
+}
+
+/**
+ * Render product-page options from the active product subcategory.
+ */
+function dewit_theme_render_product_category_options_table( WC_Product $product ): string {
+	$options = dewit_theme_get_product_category_options( $product );
+
+	if ( empty( $options['products'] ) ) {
+		return '';
+	}
+
+	ob_start();
+	?>
+	<section class="dewit-product-related-options">
+		<div class="dewit-product-related-options__header">
+			<h2><?php esc_html_e( 'Meer uit deze categorie', 'dewit-theme-woocommerce' ); ?></h2>
+			<?php if ( $options['category'] instanceof WP_Term ) : ?>
+				<p><?php echo esc_html( dewit_theme_clean_product_text( $options['category']->name ) ); ?></p>
+			<?php endif; ?>
+		</div>
+		<div class="dewit-grouped-products__grid">
+			<?php foreach ( $options['products'] as $index => $option ) : ?>
+				<a class="dewit-grouped-product-card<?php echo $option['is_current'] ? ' is-current-product' : ''; ?>" style="--dewit-card-index: <?php echo esc_attr( min( $index, 24 ) ); ?>;" href="<?php echo esc_url( $option['url'] ); ?>"<?php echo $option['is_current'] ? ' aria-current="page"' : ''; ?>>
+					<span class="dewit-grouped-product-card__image">
+						<?php if ( $option['image'] ) : ?>
+							<img
+								src="<?php echo esc_url( $option['image'] ); ?>"
+								alt=""
+								width="<?php echo esc_attr( $option['image_width'] ); ?>"
+								height="<?php echo esc_attr( $option['image_height'] ); ?>"
+								loading="lazy"
+								decoding="async"
+							>
+						<?php endif; ?>
+					</span>
+					<span class="dewit-grouped-product-card__body">
+						<span class="dewit-grouped-product-card__sku"><?php echo esc_html( $option['sku'] ); ?></span>
+						<span class="dewit-grouped-product-card__title"><?php echo esc_html( $option['title'] ); ?></span>
+					</span>
+				</a>
+			<?php endforeach; ?>
+		</div>
+	</section>
 	<?php
 	return trim( ob_get_clean() );
 }

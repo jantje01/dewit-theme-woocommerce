@@ -130,12 +130,9 @@ defined( 'ABSPATH' ) || exit;
 				<?php endif; ?>
 
 				<?php
-				woocommerce_output_related_products(
-					array(
-						'posts_per_page' => 4,
-						'columns'        => 4,
-					)
-				);
+				if ( $product instanceof WC_Product ) {
+					echo dewit_theme_render_product_category_options_table( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				}
 				?>
 			</article>
 		<?php endwhile; ?>

@@ -842,6 +842,149 @@ body.single-product.woocommerce div.product div.summary {
 	display: none !important;
 }
 
+.dewit-product-related-options {
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	border-radius: 14px;
+	display: grid;
+	gap: 14px;
+	margin-top: 18px;
+	padding: 18px;
+}
+
+.dewit-product-related-options__header {
+	display: grid;
+	gap: 4px;
+}
+
+.dewit-product-related-options__header h2 {
+	color: #003965;
+	font-family: var(--font-body);
+	font-size: 20px;
+	font-weight: 850;
+	line-height: 1.2;
+	margin: 0;
+}
+
+.dewit-product-related-options__header p {
+	color: #7d7d7d;
+	font-family: var(--font-body);
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.25;
+	margin: 0;
+}
+
+.dewit-product-related-options .dewit-grouped-products__grid {
+	gap: 8px;
+	grid-template-columns: 1fr;
+}
+
+.dewit-product-related-options .dewit-grouped-product-card {
+	align-items: center;
+	animation: dewit-card-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+	animation-delay: calc(var(--dewit-card-index, 0) * 18ms);
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	border-radius: 14px;
+	color: #151515;
+	display: grid;
+	grid-template-columns: 70px minmax(104px, 140px) minmax(0, 1fr) auto;
+	min-height: 72px;
+	overflow: hidden;
+	padding: 0;
+	text-decoration: none;
+	transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+	width: 100%;
+}
+
+.dewit-product-related-options .dewit-grouped-product-card:hover {
+	border-color: #cacaca;
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.dewit-product-related-options .dewit-grouped-product-card::after {
+	align-items: center;
+	background: #f4f6f8;
+	border: 1px solid #e5e5e5;
+	border-radius: 12px;
+	color: #003965;
+	content: "Bekijk";
+	display: inline-flex;
+	font-family: var(--font-body);
+	font-size: 12px;
+	font-weight: 800;
+	height: 38px;
+	justify-content: center;
+	margin-right: 12px;
+	padding: 0 14px;
+	white-space: nowrap;
+}
+
+.dewit-product-related-options .dewit-grouped-product-card:hover::after {
+	background: #003965;
+	border-color: #003965;
+	color: #fff;
+}
+
+.dewit-product-related-options .dewit-grouped-product-card.is-current-product {
+	border-color: rgba(0, 57, 101, 0.32);
+}
+
+.dewit-product-related-options .dewit-grouped-product-card.is-current-product::after {
+	background: #003965;
+	border-color: #003965;
+	color: #fff;
+	content: "Huidig";
+}
+
+.dewit-product-related-options .dewit-grouped-product-card__image {
+	align-items: center;
+	aspect-ratio: 1 / 1;
+	background: #fff;
+	border-radius: 14px 0 0 14px;
+	display: flex;
+	height: 70px;
+	justify-content: center;
+	min-height: 70px;
+	overflow: hidden;
+	width: 70px;
+}
+
+.dewit-product-related-options .dewit-grouped-product-card__image img {
+	height: 100%;
+	object-fit: contain;
+	width: 100%;
+}
+
+.dewit-product-related-options .dewit-grouped-product-card__body {
+	align-items: center;
+	display: contents;
+	padding: 0;
+}
+
+.dewit-product-related-options .dewit-grouped-product-card__sku {
+	color: #7d7d7d;
+	font-size: 12px;
+	font-weight: 750;
+	line-height: 1.25;
+	padding: 0 14px;
+}
+
+.dewit-product-related-options .dewit-grouped-product-card__title {
+	color: #151515;
+	display: -webkit-box;
+	font-family: var(--font-body);
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.25;
+	min-height: 0;
+	padding: 0 14px 0 0;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+}
+
 .woocommerce-cart .cart-collaterals,
 .woocommerce-checkout form.checkout {
 	background: var(--color-soft);
@@ -963,6 +1106,41 @@ body.single-product.woocommerce div.product div.summary {
 	.dewit-product-page .related.products ul.products {
 		gap: 10px;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.dewit-product-related-options {
+		padding: 14px;
+	}
+
+	.dewit-product-related-options__header h2 {
+		font-size: 18px;
+	}
+
+	.dewit-product-related-options .dewit-grouped-product-card {
+		grid-template-columns: 58px minmax(0, 1fr);
+		min-height: 74px;
+	}
+
+	.dewit-product-related-options .dewit-grouped-product-card::after {
+		display: none;
+	}
+
+	.dewit-product-related-options .dewit-grouped-product-card__image {
+		height: 74px;
+		min-height: 74px;
+		width: 58px;
+	}
+
+	.dewit-product-related-options .dewit-grouped-product-card__body {
+		align-content: center;
+		display: grid;
+		gap: 4px;
+		padding: 10px 12px;
+	}
+
+	.dewit-product-related-options .dewit-grouped-product-card__sku,
+	.dewit-product-related-options .dewit-grouped-product-card__title {
+		padding: 0;
 	}
 
 }
