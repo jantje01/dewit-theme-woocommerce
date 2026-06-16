@@ -847,9 +847,10 @@ body.single-product.woocommerce div.product div.summary {
 	border: 1px solid #e5e5e5;
 	border-radius: 14px;
 	display: grid;
-	gap: 14px;
+	gap: 10px;
 	margin-top: 18px;
-	padding: 18px;
+	max-width: 960px;
+	padding: 16px;
 }
 
 .dewit-product-related-options__header {
@@ -860,7 +861,7 @@ body.single-product.woocommerce div.product div.summary {
 .dewit-product-related-options__header h2 {
 	color: #003965;
 	font-family: var(--font-body);
-	font-size: 20px;
+	font-size: 18px;
 	font-weight: 850;
 	line-height: 1.2;
 	margin: 0;
@@ -875,8 +876,22 @@ body.single-product.woocommerce div.product div.summary {
 	margin: 0;
 }
 
+.dewit-product-related-options__table-head {
+	align-items: center;
+	color: #9a9a9a;
+	display: grid;
+	font-family: var(--font-body);
+	font-size: 11px;
+	font-weight: 800;
+	grid-template-columns: 56px 124px minmax(0, 1fr) 82px;
+	letter-spacing: 0;
+	line-height: 1.2;
+	padding: 2px 10px 0 0;
+	text-transform: uppercase;
+}
+
 .dewit-product-related-options .dewit-grouped-products__grid {
-	gap: 8px;
+	gap: 6px;
 	grid-template-columns: 1fr;
 }
 
@@ -886,11 +901,11 @@ body.single-product.woocommerce div.product div.summary {
 	animation-delay: calc(var(--dewit-card-index, 0) * 18ms);
 	background: #fff;
 	border: 1px solid #e5e5e5;
-	border-radius: 14px;
+	border-radius: 12px;
 	color: #151515;
 	display: grid;
-	grid-template-columns: 70px minmax(104px, 140px) minmax(0, 1fr) auto;
-	min-height: 72px;
+	grid-template-columns: 56px 124px minmax(0, 1fr) 82px;
+	min-height: 58px;
 	overflow: hidden;
 	padding: 0;
 	text-decoration: none;
@@ -900,24 +915,24 @@ body.single-product.woocommerce div.product div.summary {
 
 .dewit-product-related-options .dewit-grouped-product-card:hover {
 	border-color: #cacaca;
-	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
 }
 
 .dewit-product-related-options .dewit-grouped-product-card::after {
 	align-items: center;
 	background: #f4f6f8;
 	border: 1px solid #e5e5e5;
-	border-radius: 12px;
+	border-radius: 10px;
 	color: #003965;
 	content: "Bekijk";
 	display: inline-flex;
 	font-family: var(--font-body);
 	font-size: 12px;
 	font-weight: 800;
-	height: 38px;
+	height: 32px;
 	justify-content: center;
-	margin-right: 12px;
-	padding: 0 14px;
+	margin-right: 10px;
+	padding: 0 12px;
 	white-space: nowrap;
 }
 
@@ -928,7 +943,8 @@ body.single-product.woocommerce div.product div.summary {
 }
 
 .dewit-product-related-options .dewit-grouped-product-card.is-current-product {
-	border-color: rgba(0, 57, 101, 0.32);
+	background: #f7fafc;
+	border-color: rgba(0, 57, 101, 0.34);
 }
 
 .dewit-product-related-options .dewit-grouped-product-card.is-current-product::after {
@@ -942,13 +958,13 @@ body.single-product.woocommerce div.product div.summary {
 	align-items: center;
 	aspect-ratio: 1 / 1;
 	background: #fff;
-	border-radius: 14px 0 0 14px;
+	border-radius: 12px 0 0 12px;
 	display: flex;
-	height: 70px;
+	height: 56px;
 	justify-content: center;
-	min-height: 70px;
+	min-height: 56px;
 	overflow: hidden;
-	width: 70px;
+	width: 56px;
 }
 
 .dewit-product-related-options .dewit-grouped-product-card__image img {
@@ -968,7 +984,7 @@ body.single-product.woocommerce div.product div.summary {
 	font-size: 12px;
 	font-weight: 750;
 	line-height: 1.25;
-	padding: 0 14px;
+	padding: 0 12px;
 }
 
 .dewit-product-related-options .dewit-grouped-product-card__title {
@@ -979,7 +995,7 @@ body.single-product.woocommerce div.product div.summary {
 	font-weight: 700;
 	line-height: 1.25;
 	min-height: 0;
-	padding: 0 14px 0 0;
+	padding: 0 12px 0 0;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	overflow: hidden;
@@ -1114,6 +1130,10 @@ body.single-product.woocommerce div.product div.summary {
 
 	.dewit-product-related-options__header h2 {
 		font-size: 18px;
+	}
+
+	.dewit-product-related-options__table-head {
+		display: none;
 	}
 
 	.dewit-product-related-options .dewit-grouped-product-card {

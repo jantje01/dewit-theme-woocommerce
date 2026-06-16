@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.87' );
+define( 'DEWIT_THEME_VERSION', '0.3.88' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
@@ -1575,6 +1575,12 @@ function dewit_theme_render_product_category_options_table( WC_Product $product 
 			<?php if ( $options['category'] instanceof WP_Term ) : ?>
 				<p><?php echo esc_html( dewit_theme_clean_product_text( $options['category']->name ) ); ?></p>
 			<?php endif; ?>
+		</div>
+		<div class="dewit-product-related-options__table-head" aria-hidden="true">
+			<span></span>
+			<span><?php esc_html_e( 'Artikelnummer', 'dewit-theme-woocommerce' ); ?></span>
+			<span><?php esc_html_e( 'Product', 'dewit-theme-woocommerce' ); ?></span>
+			<span></span>
 		</div>
 		<div class="dewit-grouped-products__grid">
 			<?php foreach ( $options['products'] as $index => $option ) : ?>
