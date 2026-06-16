@@ -903,6 +903,10 @@ body.single-product.woocommerce div.product div.summary {
 	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
+.dewit-product-related-options .dewit-grouped-product-card:nth-child(even) {
+	background: #f8fafc;
+}
+
 .dewit-product-related-options .dewit-grouped-product-card::after {
 	align-items: center;
 	background: #f4f6f8;
@@ -928,6 +932,7 @@ body.single-product.woocommerce div.product div.summary {
 }
 
 .dewit-product-related-options .dewit-grouped-product-card.is-current-product {
+	background: #eef5fa;
 	border-color: rgba(0, 57, 101, 0.32);
 }
 
