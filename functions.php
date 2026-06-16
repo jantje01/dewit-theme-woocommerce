@@ -9,13 +9,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.94' );
+define( 'DEWIT_THEME_VERSION', '0.3.95' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 
 function dewit_theme_get_shop_meta_description(): string {
 	return 'Bekijk het assortiment bouwmachines, bekisting, steigers, verbruiksmaterialen en ondersteuningsmateriaal van De Wit Bouwmachines. Wij hebben altijd de oplossing in huis.';
+}
+
+function dewit_theme_get_social_locale(): string {
+	return 'nl_NL';
+}
+add_filter( 'wpseo_locale', 'dewit_theme_get_social_locale', 20 );
+add_filter( 'wpseo_og_locale', 'dewit_theme_get_social_locale', 20 );
+
+function dewit_theme_has_external_og_locale_provider(): bool {
+	return defined( 'WPSEO_VERSION' ) || class_exists( 'WPSEO_Frontend' );
 }
 
 function dewit_theme_is_shop_seo_context(): bool {
@@ -58,7 +68,9 @@ function dewit_theme_print_shop_social_meta(): void {
 	$image_url   = DEWIT_SHOP_SOCIAL_IMAGE_URL;
 	$page_url    = home_url( add_query_arg( null, null ) );
 
-	printf( '<meta property="og:locale" content="nl_NL">' . "\n" );
+	if ( ! dewit_theme_has_external_og_locale_provider() ) {
+		printf( '<meta property="og:locale" content="%s">' . "\n", esc_attr( dewit_theme_get_social_locale() ) );
+	}
 	printf( '<meta property="og:type" content="website">' . "\n" );
 	printf( '<meta property="og:title" content="%s">' . "\n", esc_attr( $title ) );
 	printf( '<meta property="og:description" content="%s">' . "\n", esc_attr( $description ) );
