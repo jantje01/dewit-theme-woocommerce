@@ -885,7 +885,7 @@ body.single-product.woocommerce div.product div.summary {
 	animation: dewit-card-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 	animation-delay: calc(var(--dewit-card-index, 0) * 18ms);
 	background: #fff;
-	border: 1px solid #e5e5e5;
+	border: 1px solid transparent;
 	border-radius: 14px;
 	color: #151515;
 	display: grid;
@@ -899,8 +899,8 @@ body.single-product.woocommerce div.product div.summary {
 }
 
 .dewit-product-related-options .dewit-grouped-product-card:hover {
-	border-color: #cacaca;
-	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+	border-color: transparent;
+	box-shadow: none;
 }
 
 .dewit-product-related-options .dewit-grouped-product-card:nth-child(even) {
