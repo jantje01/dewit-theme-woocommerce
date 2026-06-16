@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.83' );
+define( 'DEWIT_THEME_VERSION', '0.3.84' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
@@ -578,6 +578,53 @@ function dewit_theme_body_classes( array $classes ): array {
 	return $classes;
 }
 add_filter( 'body_class', 'dewit_theme_body_classes' );
+
+/**
+ * Put grouped products into Elementor's loop as early as possible to avoid a refresh flash.
+ */
+function dewit_theme_print_grouped_products_fallback(): void {
+	$parent_slug = dewit_theme_get_current_parent_category_slug();
+
+	if ( '' === $parent_slug || ( function_exists( 'is_product' ) && is_product() ) ) {
+		return;
+	}
+
+	$html = dewit_theme_render_grouped_category_products_html( $parent_slug );
+
+	if ( '' === $html ) {
+		return;
+	}
+	?>
+	<script>
+	(function () {
+		const groupedHtml = <?php echo wp_json_encode( $html ); ?>;
+
+		function renderGroupedFallback() {
+			const widget = document.querySelector('.elementor-widget-loop-grid');
+			const container = widget ? widget.querySelector('.elementor-loop-container') : null;
+
+			document.body.classList.add('dewit-shop-grouped');
+
+			if (!container || container.querySelector('.dewit-grouped-products')) {
+				return;
+			}
+
+			widget.classList.add('dewit-grouped-widget');
+			container.innerHTML = groupedHtml;
+			container.classList.add('dewit-grouped-mode');
+			container.classList.remove('elementor-grid', 'dewit-landing-mode');
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', renderGroupedFallback);
+		} else {
+			renderGroupedFallback();
+		}
+	}());
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'dewit_theme_print_grouped_products_fallback', 1 );
 
 /**
  * Return visible top-level product category groups for the shop landing.

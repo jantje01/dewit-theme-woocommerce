@@ -728,6 +728,15 @@
 			return;
 		}
 
+		if (container.querySelector('.dewit-grouped-products.is-visible')) {
+			container.classList.add('dewit-grouped-mode');
+			container.style.display = 'block';
+			disableGroupedElementorLoadMore();
+			updateGroupedCategoryUrl(grouped.slug, 'replace');
+			window.dispatchEvent(new CustomEvent('dewit/products-updated'));
+			return;
+		}
+
 		container.classList.add('dewit-grouped-mode');
 		container.style.display = 'block';
 		container.innerHTML = grouped.html;
