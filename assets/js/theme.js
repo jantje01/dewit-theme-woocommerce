@@ -17,7 +17,7 @@
 (function () {
 	let searchRequestController = null;
 	let searchDebounceTimer = null;
-	const productCardViewStorageKey = 'dewitProductCardViewV2';
+	const productCardViewStorageKey = 'dewitProductCardViewV3';
 
 	function getThemeConfig() {
 		return window.dewitTheme || (typeof dewitTheme !== 'undefined' ? dewitTheme : {});
@@ -37,7 +37,7 @@
 		try {
 			const storedMode = window.localStorage.getItem(productCardViewStorageKey);
 
-			if (storedMode === 'horizontal' || storedMode === 'grid') {
+			if (storedMode === 'horizontal' || storedMode === 'grid' || storedMode === 'table') {
 				return storedMode;
 			}
 
@@ -65,10 +65,13 @@
 	}
 
 	function setProductCardViewMode(mode, replayCards) {
-		const nextMode = mode === 'horizontal' ? 'horizontal' : 'grid';
-		const currentMode = document.body.classList.contains('dewit-horizontal-product-cards') ? 'horizontal' : 'grid';
+		const nextMode = mode === 'horizontal' || mode === 'table' ? mode : 'grid';
+		const currentMode = document.body.classList.contains('dewit-table-product-cards')
+			? 'table'
+			: (document.body.classList.contains('dewit-horizontal-product-cards') ? 'horizontal' : 'grid');
 
 		document.body.classList.toggle('dewit-horizontal-product-cards', nextMode === 'horizontal');
+		document.body.classList.toggle('dewit-table-product-cards', nextMode === 'table');
 		document.querySelectorAll('.dewit-product-view-switch__button').forEach(function (button) {
 			const isActive = button.getAttribute('data-view') === nextMode;
 			button.classList.toggle('is-active', isActive);
@@ -161,6 +164,7 @@
 		const controls = document.createElement('span');
 		const gridButton = document.createElement('button');
 		const horizontalButton = document.createElement('button');
+		const tableButton = document.createElement('button');
 
 		switcher.className = 'dewit-product-view-switch';
 		switcher.setAttribute('aria-label', 'Productweergave');
@@ -182,7 +186,13 @@
 		horizontalButton.setAttribute('aria-label', 'Horizontale productcards');
 		horizontalButton.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="5" x="3" y="4" rx="1"></rect><rect width="18" height="5" x="3" y="15" rx="1"></rect></svg>';
 
-		[gridButton, horizontalButton].forEach(function (button) {
+		tableButton.className = 'dewit-product-view-switch__button';
+		tableButton.type = 'button';
+		tableButton.setAttribute('data-view', 'table');
+		tableButton.setAttribute('aria-label', 'Tabelweergave');
+		tableButton.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M3 12h18"></path><path d="M3 18h18"></path><path d="M8 6v12"></path></svg>';
+
+		[gridButton, horizontalButton, tableButton].forEach(function (button) {
 			button.addEventListener('click', function () {
 				setProductCardViewMode(button.getAttribute('data-view'), true);
 			});
