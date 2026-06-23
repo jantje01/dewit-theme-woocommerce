@@ -1250,7 +1250,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .e
 body.single-product #catalog-sidebar .elementor-element-aad6506 img {
 	display: block;
 	height: auto;
-	max-width: 176px;
+	max-width: 100%;
 	width: 100%;
 }
 
