@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.100' );
+define( 'DEWIT_THEME_VERSION', '0.3.101' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
@@ -870,7 +870,8 @@ function dewit_theme_print_sidebar_category_fallback(): void {
 		}
 
 		function getUrl(slug) {
-			const url = new URL(window.location.href);
+			const homeUrl = (window.dewitTheme && window.dewitTheme.homeUrl) || '/';
+			const url = new URL(homeUrl, window.location.origin + '/');
 
 			Array.from(url.searchParams.keys()).forEach(function (key) {
 				if (key.indexOf('e-filter-') === 0 || key === 'product_cat' || key === 'dewit_parent_cat') {
@@ -975,7 +976,7 @@ function dewit_theme_print_sidebar_category_fallback(): void {
 							event.preventDefault();
 							event.stopPropagation();
 
-							if (activeParent !== category.slug) {
+							if (document.body.classList.contains('single-product') || activeParent !== category.slug) {
 								window.location.href = childLink.href;
 								return;
 							}
