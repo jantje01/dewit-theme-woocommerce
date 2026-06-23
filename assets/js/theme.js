@@ -1999,20 +1999,250 @@
 		return url.toString();
 	}
 
+	const sidebarPreviewCache = new Map();
+	let sidebarPreviewController = null;
+	let sidebarPreviewTimer = null;
+	let sidebarPreviewActiveSlug = '';
+
+	function getSidebarPreviewPanel() {
+		let panel = document.querySelector('.dewit-sidebar-preview');
+
+		if (panel) {
+			return panel;
+		}
+
+		panel = document.createElement('aside');
+		panel.className = 'dewit-sidebar-preview';
+		panel.setAttribute('aria-hidden', 'true');
+		panel.innerHTML = '<div class="dewit-sidebar-preview__inner"></div>';
+		document.body.appendChild(panel);
+
+		panel.addEventListener('mouseenter', function () {
+			window.clearTimeout(sidebarPreviewTimer);
+		});
+
+		panel.addEventListener('mouseleave', hideSidebarPreview);
+
+		return panel;
+	}
+
+	function hideSidebarPreview() {
+		window.clearTimeout(sidebarPreviewTimer);
+		sidebarPreviewTimer = window.setTimeout(function () {
+			const panel = document.querySelector('.dewit-sidebar-preview');
+
+			if (panel) {
+				panel.classList.remove('is-visible', 'is-loading');
+				panel.setAttribute('aria-hidden', 'true');
+			}
+		}, 120);
+	}
+
+	function positionSidebarPreview(panel, trigger) {
+		const sidebar = document.getElementById('catalog-sidebar');
+		const triggerRect = trigger.getBoundingClientRect();
+		const sidebarRect = sidebar ? sidebar.getBoundingClientRect() : triggerRect;
+		const panelHeight = 248;
+		const top = Math.max(16, Math.min(triggerRect.top - 12, window.innerHeight - panelHeight - 16));
+
+		panel.style.left = Math.round(sidebarRect.right + 12) + 'px';
+		panel.style.top = Math.round(top) + 'px';
+	}
+
+	function renderSidebarPreviewItems(panel, label, slug, items) {
+		const config = getThemeConfig();
+		const placeholder = config.placeholderImage && config.placeholderImage.src ? config.placeholderImage.src : '';
+		const inner = panel.querySelector('.dewit-sidebar-preview__inner');
+		const productItems = Array.isArray(items) ? items : [];
+
+		if (!inner) {
+			return;
+		}
+
+		inner.innerHTML = '';
+
+		const heading = document.createElement('div');
+		heading.className = 'dewit-sidebar-preview__heading';
+		heading.textContent = normalizeDisplayText(label || slug || 'Categorie');
+		inner.appendChild(heading);
+
+		if (!productItems.length) {
+			const empty = document.createElement('div');
+			empty.className = 'dewit-sidebar-preview__empty';
+			empty.textContent = 'Geen voorbeeldproducten gevonden';
+			inner.appendChild(empty);
+			return;
+		}
+
+		productItems.forEach(function (item) {
+			const link = document.createElement('a');
+			const image = document.createElement('img');
+			const body = document.createElement('span');
+			const sku = document.createElement('span');
+			const title = document.createElement('span');
+
+			link.className = 'dewit-sidebar-preview__item';
+			link.href = item.url || '#';
+
+			image.src = item.image || placeholder;
+			image.alt = '';
+			image.loading = 'lazy';
+			image.decoding = 'async';
+
+			body.className = 'dewit-sidebar-preview__body';
+			sku.className = 'dewit-sidebar-preview__sku';
+			sku.textContent = normalizeDisplayText(item.sku || '');
+			title.className = 'dewit-sidebar-preview__title';
+			title.textContent = normalizeDisplayText(item.title || '');
+
+			body.appendChild(sku);
+			body.appendChild(title);
+			link.appendChild(image);
+			link.appendChild(body);
+			inner.appendChild(link);
+		});
+	}
+
+	function showSidebarPreview(trigger) {
+		if (!window.matchMedia || !window.matchMedia('(min-width: 1024px)').matches) {
+			return;
+		}
+
+		if (document.body.classList.contains('dewit-mobile-filter-open')) {
+			return;
+		}
+
+		const slug = getParentCategorySlugFromTrigger(trigger);
+
+		if (!slug) {
+			return;
+		}
+
+		const label = getParentCategoryLabelFromTrigger(trigger, slug);
+		const panel = getSidebarPreviewPanel();
+		const inner = panel.querySelector('.dewit-sidebar-preview__inner');
+
+		window.clearTimeout(sidebarPreviewTimer);
+		positionSidebarPreview(panel, trigger);
+		panel.classList.add('is-visible');
+		panel.setAttribute('aria-hidden', 'false');
+
+		if (sidebarPreviewActiveSlug === slug && panel.classList.contains('is-visible')) {
+			return;
+		}
+
+		sidebarPreviewActiveSlug = slug;
+
+		if (sidebarPreviewCache.has(slug)) {
+			panel.classList.remove('is-loading');
+			renderSidebarPreviewItems(panel, label, slug, sidebarPreviewCache.get(slug));
+			return;
+		}
+
+		panel.classList.add('is-loading');
+
+		if (inner) {
+			const heading = document.createElement('div');
+			const loading = document.createElement('div');
+
+			inner.innerHTML = '';
+			heading.className = 'dewit-sidebar-preview__heading';
+			heading.textContent = normalizeDisplayText(label || slug);
+			loading.className = 'dewit-sidebar-preview__empty';
+			loading.textContent = 'Voorbeeldproducten laden...';
+			inner.appendChild(heading);
+			inner.appendChild(loading);
+		}
+
+		if (sidebarPreviewController) {
+			sidebarPreviewController.abort();
+		}
+
+		const config = getThemeConfig();
+		const ajaxUrl = config.ajaxUrl || (window.location.origin + '/wp-admin/admin-ajax.php');
+		const url = new URL(ajaxUrl);
+		url.searchParams.set('action', 'dewit_category_preview_products');
+		url.searchParams.set('category', slug);
+
+		sidebarPreviewController = new AbortController();
+
+		window.fetch(url.toString(), {
+			credentials: 'same-origin',
+			signal: sidebarPreviewController.signal,
+		})
+			.then(function (response) {
+				return response.json();
+			})
+			.then(function (payload) {
+				const items = payload && payload.data ? payload.data : [];
+
+				sidebarPreviewCache.set(slug, items);
+				panel.classList.remove('is-loading');
+				renderSidebarPreviewItems(panel, label, slug, items);
+				positionSidebarPreview(panel, trigger);
+			})
+			.catch(function (error) {
+				if (error.name !== 'AbortError') {
+					panel.classList.remove('is-loading');
+					renderSidebarPreviewItems(panel, label, slug, []);
+				}
+			});
+	}
+
+	function initSidebarCategoryPreviews() {
+		const sidebar = document.getElementById('catalog-sidebar');
+
+		if (!sidebar || sidebar.classList.contains('dewit-sidebar-previews-ready')) {
+			return;
+		}
+
+		sidebar.classList.add('dewit-sidebar-previews-ready');
+		sidebar.addEventListener('mouseover', function (event) {
+			const trigger = event.target.closest('.dewit-category-trigger');
+
+			if (trigger && sidebar.contains(trigger)) {
+				showSidebarPreview(trigger);
+			}
+		});
+		sidebar.addEventListener('focusin', function (event) {
+			const trigger = event.target.closest('.dewit-category-trigger');
+
+			if (trigger && sidebar.contains(trigger)) {
+				showSidebarPreview(trigger);
+			}
+		});
+		sidebar.addEventListener('mouseout', function (event) {
+			if (!event.relatedTarget || !sidebar.contains(event.relatedTarget)) {
+				hideSidebarPreview();
+			}
+		});
+		sidebar.addEventListener('focusout', function (event) {
+			if (!event.relatedTarget || !sidebar.contains(event.relatedTarget)) {
+				hideSidebarPreview();
+			}
+		});
+		window.addEventListener('scroll', hideSidebarPreview, { passive: true });
+		window.addEventListener('resize', hideSidebarPreview);
+	}
+
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', buildCategoryDropdowns);
 		document.addEventListener('DOMContentLoaded', function () {
 			window.setTimeout(revealCategoryFilters, 700);
 			window.setTimeout(renderCategoryLandingFromSidebar, 760);
+			window.setTimeout(initSidebarCategoryPreviews, 820);
 		});
 	} else {
 		buildCategoryDropdowns();
 		window.setTimeout(revealCategoryFilters, 700);
 		window.setTimeout(renderCategoryLandingFromSidebar, 760);
+		window.setTimeout(initSidebarCategoryPreviews, 820);
 	}
 
 	window.addEventListener('elementor/frontend/init', buildCategoryDropdowns);
 	window.addEventListener('load', revealCategoryFilters);
 	window.addEventListener('load', renderCategoryLandingFromSidebar);
 	window.addEventListener('dewit/categories-ready', renderCategoryLandingFromSidebar);
+	window.addEventListener('load', initSidebarCategoryPreviews);
+	window.addEventListener('dewit/categories-ready', initSidebarCategoryPreviews);
 }());

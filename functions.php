@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.109' );
+define( 'DEWIT_THEME_VERSION', '0.3.110' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
@@ -1624,6 +1624,66 @@ function dewit_theme_ajax_grouped_category_products(): void {
 }
 add_action( 'wp_ajax_dewit_category_grouped_products', 'dewit_theme_ajax_grouped_category_products' );
 add_action( 'wp_ajax_nopriv_dewit_category_grouped_products', 'dewit_theme_ajax_grouped_category_products' );
+
+/**
+ * Get a small product preview for a sidebar parent category.
+ */
+function dewit_theme_ajax_category_preview_products(): void {
+	$slug = isset( $_GET['category'] ) ? sanitize_title( wp_unslash( $_GET['category'] ) ) : '';
+
+	if ( '' === $slug || ! taxonomy_exists( 'product_cat' ) ) {
+		wp_send_json_success( array() );
+	}
+
+	$term = get_term_by( 'slug', $slug, 'product_cat' );
+
+	if ( ! $term instanceof WP_Term ) {
+		wp_send_json_success( array() );
+	}
+
+	$products = new WP_Query( array(
+		'post_type'              => 'product',
+		'post_status'            => 'publish',
+		'fields'                 => 'ids',
+		'posts_per_page'         => 3,
+		'no_found_rows'          => true,
+		'update_post_meta_cache' => true,
+		'update_post_term_cache' => false,
+		'tax_query'              => array(
+			array(
+				'taxonomy'         => 'product_cat',
+				'field'            => 'term_id',
+				'terms'            => $term->term_id,
+				'include_children' => true,
+			),
+		),
+		'orderby'                => array(
+			'menu_order' => 'ASC',
+			'date'       => 'DESC',
+		),
+	) );
+
+	$items = array();
+
+	foreach ( $products->posts as $post_id ) {
+		$product = wc_get_product( $post_id );
+
+		if ( ! $product instanceof WC_Product ) {
+			continue;
+		}
+
+		$items[] = array(
+			'title' => dewit_theme_clean_product_text( get_the_title( $post_id ) ),
+			'url'   => add_query_arg( 'dewit_parent_cat', $term->slug, get_permalink( $post_id ) ),
+			'sku'   => dewit_theme_clean_product_text( $product->get_sku() ),
+			'image' => get_the_post_thumbnail_url( $post_id, 'woocommerce_thumbnail' ),
+		);
+	}
+
+	wp_send_json_success( $items );
+}
+add_action( 'wp_ajax_dewit_category_preview_products', 'dewit_theme_ajax_category_preview_products' );
+add_action( 'wp_ajax_nopriv_dewit_category_preview_products', 'dewit_theme_ajax_category_preview_products' );
 
 /**
  * Temporarily disable purchasing while the catalog is being prepared.

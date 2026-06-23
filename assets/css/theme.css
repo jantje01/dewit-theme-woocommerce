@@ -2965,3 +2965,111 @@ body.single-product .elementor-widget-taxonomy-filter .dewit-category-child::bef
 	top: 50%;
 	width: 4px;
 }
+
+.dewit-sidebar-preview {
+	display: none;
+}
+
+@media (min-width: 1024px) {
+	.dewit-sidebar-preview {
+		background: #fff;
+		border: 1px solid #e5e5e5;
+		border-radius: 14px;
+		box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
+		box-sizing: border-box;
+		display: block;
+		opacity: 0;
+		padding: 10px;
+		pointer-events: none;
+		position: fixed;
+		transform: translateX(-6px);
+		transition: opacity 140ms ease, transform 140ms ease;
+		width: 310px;
+		z-index: 1002;
+	}
+
+	.dewit-sidebar-preview.is-visible {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateX(0);
+	}
+
+	.dewit-sidebar-preview__inner {
+		display: grid;
+		gap: 8px;
+	}
+
+	.dewit-sidebar-preview__heading {
+		color: #111827;
+		font-size: 14px;
+		font-weight: 750;
+		line-height: 1.25;
+		padding: 4px 4px 2px;
+	}
+
+	.dewit-sidebar-preview__item {
+		align-items: center;
+		background: #f5f5f7;
+		border: 1px solid transparent;
+		border-radius: 10px;
+		color: #111827;
+		display: grid;
+		gap: 10px;
+		grid-template-columns: 54px minmax(0, 1fr);
+		min-height: 68px;
+		padding: 7px;
+		text-decoration: none;
+		transition: background 140ms ease, border-color 140ms ease;
+	}
+
+	.dewit-sidebar-preview__item:hover,
+	.dewit-sidebar-preview__item:focus-visible {
+		background: #fff;
+		border-color: #d9dde3;
+		outline: none;
+	}
+
+	.dewit-sidebar-preview__item img {
+		aspect-ratio: 1 / 1;
+		background: #fff;
+		border-radius: 8px;
+		display: block;
+		height: auto;
+		object-fit: contain;
+		width: 54px;
+	}
+
+	.dewit-sidebar-preview__body {
+		display: grid;
+		gap: 3px;
+		min-width: 0;
+	}
+
+	.dewit-sidebar-preview__sku {
+		color: #8a929d;
+		font-size: 12px;
+		line-height: 1.2;
+		min-height: 14px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.dewit-sidebar-preview__title {
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		color: #111827;
+		display: -webkit-box;
+		font-size: 13px;
+		font-weight: 700;
+		line-height: 1.25;
+		overflow: hidden;
+	}
+
+	.dewit-sidebar-preview__empty {
+		color: #6b7280;
+		font-size: 13px;
+		line-height: 1.35;
+		padding: 8px 4px 6px;
+	}
+}
