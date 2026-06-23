@@ -546,7 +546,7 @@ body.single-product.woocommerce div.product div.summary {
 .dewit-product-gallery .woocommerce-product-gallery__image img {
 	aspect-ratio: 1 / 1;
 	max-height: 390px;
-	object-fit: cover;
+	object-fit: contain;
 	width: 100%;
 }
 
@@ -1048,6 +1048,9 @@ body.single-product.woocommerce div.product div.summary {
 	.dewit-product-gallery {
 		border-bottom: 1px solid #fff;
 		border-right: 0;
+		margin-inline: auto;
+		max-width: 430px;
+		width: 100%;
 	}
 
 	.woocommerce ul.products {
