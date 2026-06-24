@@ -1294,6 +1294,9 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-
 @media (min-width: 767px) {
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-b680c70 {
 		gap: 12px !important;
+		margin-left: auto !important;
+		margin-right: auto !important;
+		max-width: 1440px !important;
 		padding: 12px !important;
 	}
 
