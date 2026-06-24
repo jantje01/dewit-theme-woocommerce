@@ -2000,7 +2000,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-prod
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products__grid {
 	display: grid;
 	gap: 12px;
-	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	grid-template-columns: repeat(4, minmax(0, 1fr));
 	justify-content: start;
 	width: 100%;
 }
@@ -2105,9 +2105,12 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-prod
 	overflow: hidden;
 }
 
-body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-horizontal-product-cards .dewit-grouped-products__grid,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-horizontal-product-cards .dewit-grouped-products__grid {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-horizontal-product-cards .dewit-grouped-products__grid.is-single {
-	grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+	grid-template-columns: minmax(360px, 420px);
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-horizontal-product-cards .dewit-grouped-products__grid.is-single .dewit-grouped-product-card {
