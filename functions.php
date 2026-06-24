@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.111' );
+define( 'DEWIT_THEME_VERSION', '0.3.112' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
@@ -23,6 +23,57 @@ function dewit_theme_get_social_locale(): string {
 }
 add_filter( 'wpseo_locale', 'dewit_theme_get_social_locale', 20 );
 add_filter( 'wpseo_og_locale', 'dewit_theme_get_social_locale', 20 );
+
+function dewit_theme_is_product_tag_archive(): bool {
+	return function_exists( 'is_tax' ) && is_tax( 'product_tag' );
+}
+
+function dewit_theme_get_product_tag_redirect_url(): string {
+	$parent_slug = DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG ?: DEWIT_DEFAULT_PARENT_CATEGORY_SLUG;
+
+	return add_query_arg( 'dewit_parent_cat', sanitize_title( $parent_slug ), home_url( '/' ) );
+}
+
+function dewit_theme_redirect_product_tag_archives(): void {
+	if ( ! dewit_theme_is_product_tag_archive() ) {
+		return;
+	}
+
+	wp_safe_redirect( dewit_theme_get_product_tag_redirect_url(), 301 );
+	exit;
+}
+add_action( 'template_redirect', 'dewit_theme_redirect_product_tag_archives', 1 );
+
+function dewit_theme_noindex_product_tag_archives( array $robots ): array {
+	if ( ! dewit_theme_is_product_tag_archive() ) {
+		return $robots;
+	}
+
+	unset( $robots['index'] );
+	$robots['noindex'] = true;
+	$robots['follow']  = true;
+
+	return $robots;
+}
+add_filter( 'wp_robots', 'dewit_theme_noindex_product_tag_archives', 20 );
+
+function dewit_theme_noindex_product_tag_archives_for_yoast( string $robots ): string {
+	if ( ! dewit_theme_is_product_tag_archive() ) {
+		return $robots;
+	}
+
+	return 'noindex, follow';
+}
+add_filter( 'wpseo_robots', 'dewit_theme_noindex_product_tag_archives_for_yoast', 20 );
+
+function dewit_theme_exclude_product_tags_from_yoast_sitemap( bool $exclude, string $taxonomy ): bool {
+	if ( 'product_tag' === $taxonomy ) {
+		return true;
+	}
+
+	return $exclude;
+}
+add_filter( 'wpseo_sitemap_exclude_taxonomy', 'dewit_theme_exclude_product_tags_from_yoast_sitemap', 20, 2 );
 
 function dewit_theme_has_external_og_locale_provider(): bool {
 	return defined( 'WPSEO_VERSION' ) || class_exists( 'WPSEO_Frontend' );
