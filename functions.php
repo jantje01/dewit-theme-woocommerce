@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.117' );
+define( 'DEWIT_THEME_VERSION', '0.3.118' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
@@ -1748,9 +1748,7 @@ add_filter( 'woocommerce_is_purchasable', 'dewit_theme_disable_product_purchases
  * Keep the product description tab clean and Dutch.
  */
 function dewit_theme_filter_product_tabs( array $tabs ): array {
-	if ( isset( $tabs['description'] ) ) {
-		$tabs['description']['title'] = __( 'Omschrijving', 'dewit-theme-woocommerce' );
-	}
+	unset( $tabs['description'] );
 
 	return $tabs;
 }

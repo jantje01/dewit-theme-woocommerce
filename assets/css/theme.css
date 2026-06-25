@@ -627,6 +627,27 @@ body.single-product.woocommerce div.product div.summary {
 	margin: 0;
 }
 
+.dewit-product-description {
+	color: #3f4650;
+	font-size: 14px;
+	line-height: 1.55;
+	margin: 2px 0 0;
+	max-width: 62ch;
+}
+
+.dewit-product-description :where(p, ul, ol, table) {
+	margin: 0 0 10px;
+}
+
+.dewit-product-description :where(p, span, div, li, td, th) {
+	font-size: inherit !important;
+	line-height: inherit !important;
+}
+
+.dewit-product-description :where(p, ul, ol, table):last-child {
+	margin-bottom: 0;
+}
+
 .dewit-product-resources {
 	border-top: 1px solid #e5e5e5;
 	margin-top: 4px;
