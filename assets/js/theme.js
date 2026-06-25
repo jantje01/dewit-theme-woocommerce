@@ -2192,37 +2192,47 @@
 	function initSidebarCategoryPreviews() {
 		const sidebar = document.getElementById('catalog-sidebar');
 
-		if (!sidebar || sidebar.classList.contains('dewit-sidebar-previews-ready')) {
+		if (!sidebar) {
 			return;
 		}
 
-		sidebar.classList.add('dewit-sidebar-previews-ready');
-		sidebar.addEventListener('mouseover', function (event) {
+		function handlePreviewOpen(event) {
 			const trigger = event.target.closest('.dewit-category-trigger');
 
 			if (trigger && sidebar.contains(trigger)) {
 				showSidebarPreview(trigger);
 			}
-		});
-		sidebar.addEventListener('focusin', function (event) {
-			const trigger = event.target.closest('.dewit-category-trigger');
+		}
 
-			if (trigger && sidebar.contains(trigger)) {
-				showSidebarPreview(trigger);
-			}
-		});
-		sidebar.addEventListener('mouseout', function (event) {
+		function handlePreviewClose(event) {
 			if (!event.relatedTarget || !sidebar.contains(event.relatedTarget)) {
 				hideSidebarPreview();
 			}
-		});
-		sidebar.addEventListener('focusout', function (event) {
-			if (!event.relatedTarget || !sidebar.contains(event.relatedTarget)) {
-				hideSidebarPreview();
-			}
-		});
-		window.addEventListener('scroll', hideSidebarPreview, { passive: true });
-		window.addEventListener('resize', hideSidebarPreview);
+		}
+
+		if (!sidebar.classList.contains('dewit-sidebar-previews-ready')) {
+			sidebar.classList.add('dewit-sidebar-previews-ready');
+			sidebar.addEventListener('pointerover', handlePreviewOpen);
+			sidebar.addEventListener('mouseover', handlePreviewOpen);
+			sidebar.addEventListener('focusin', handlePreviewOpen);
+			sidebar.addEventListener('pointerout', handlePreviewClose);
+			sidebar.addEventListener('mouseout', handlePreviewClose);
+			sidebar.addEventListener('focusout', handlePreviewClose);
+		}
+
+		if (!document.documentElement.classList.contains('dewit-sidebar-previews-delegated')) {
+			document.documentElement.classList.add('dewit-sidebar-previews-delegated');
+			document.addEventListener('pointerover', function (event) {
+				const currentSidebar = document.getElementById('catalog-sidebar');
+				const trigger = event.target.closest('#catalog-sidebar .dewit-category-trigger');
+
+				if (currentSidebar && trigger) {
+					showSidebarPreview(trigger);
+				}
+			});
+			window.addEventListener('scroll', hideSidebarPreview, { passive: true });
+			window.addEventListener('resize', hideSidebarPreview);
+		}
 	}
 
 	if (document.readyState === 'loading') {
