@@ -2003,6 +2003,7 @@
 	let sidebarPreviewController = null;
 	let sidebarPreviewTimer = null;
 	let sidebarPreviewActiveSlug = '';
+	let sidebarPreviewRequestTimer = null;
 
 	function getSidebarPreviewPanel() {
 		let panel = document.querySelector('.dewit-sidebar-preview');
@@ -2176,6 +2177,10 @@
 			sidebarPreviewController.abort();
 		}
 
+		if (sidebarPreviewRequestTimer) {
+			window.clearTimeout(sidebarPreviewRequestTimer);
+		}
+
 		const config = getThemeConfig();
 		const ajaxUrl = config.ajaxUrl || (window.location.origin + '/wp-admin/admin-ajax.php');
 		const url = new URL(ajaxUrl);
@@ -2183,16 +2188,44 @@
 		url.searchParams.set('category', slug);
 
 		sidebarPreviewController = new AbortController();
+		sidebarPreviewRequestTimer = window.setTimeout(function () {
+			if (sidebarPreviewActiveSlug !== slug) {
+				return;
+			}
+
+			if (sidebarPreviewController) {
+				sidebarPreviewController.abort();
+			}
+
+			sidebarPreviewCache.set(slug, []);
+			panel.classList.remove('is-loading');
+			renderSidebarPreviewItems(panel, label, slug, []);
+		}, 2800);
 
 		window.fetch(url.toString(), {
 			credentials: 'same-origin',
 			signal: sidebarPreviewController.signal,
 		})
 			.then(function (response) {
+				if (!response.ok) {
+					return [];
+				}
+
 				return response.json();
 			})
 			.then(function (payload) {
-				const items = payload && payload.data ? payload.data : [];
+				const items = Array.isArray(payload)
+					? payload
+					: (payload && Array.isArray(payload.data) ? payload.data : []);
+
+				if (sidebarPreviewActiveSlug !== slug) {
+					return;
+				}
+
+				if (sidebarPreviewRequestTimer) {
+					window.clearTimeout(sidebarPreviewRequestTimer);
+					sidebarPreviewRequestTimer = null;
+				}
 
 				sidebarPreviewCache.set(slug, items);
 				panel.classList.remove('is-loading');
@@ -2200,7 +2233,17 @@
 				positionSidebarPreview(panel, trigger);
 			})
 			.catch(function (error) {
+				if (sidebarPreviewActiveSlug !== slug) {
+					return;
+				}
+
+				if (sidebarPreviewRequestTimer) {
+					window.clearTimeout(sidebarPreviewRequestTimer);
+					sidebarPreviewRequestTimer = null;
+				}
+
 				if (error.name !== 'AbortError') {
+					sidebarPreviewCache.set(slug, []);
 					panel.classList.remove('is-loading');
 					renderSidebarPreviewItems(panel, label, slug, []);
 				}
