@@ -2103,6 +2103,24 @@
 		});
 	}
 
+	function getSidebarPreviewSlugFromTrigger(trigger) {
+		try {
+			return new URL(trigger.href, window.location.href).searchParams.get('dewit_parent_cat') || '';
+		} catch (error) {
+			return '';
+		}
+	}
+
+	function getSidebarPreviewLabelFromTrigger(trigger, fallbackSlug) {
+		if (!trigger) {
+			return fallbackSlug || '';
+		}
+
+		const label = trigger.querySelector('.dewit-category-label');
+
+		return label ? label.textContent.trim() : trigger.textContent.trim();
+	}
+
 	function showSidebarPreview(trigger) {
 		if (!window.matchMedia || !window.matchMedia('(min-width: 1024px)').matches) {
 			return;
@@ -2112,13 +2130,13 @@
 			return;
 		}
 
-		const slug = getParentCategorySlugFromTrigger(trigger);
+		const slug = getSidebarPreviewSlugFromTrigger(trigger);
 
 		if (!slug) {
 			return;
 		}
 
-		const label = getParentCategoryLabelFromTrigger(trigger, slug);
+		const label = getSidebarPreviewLabelFromTrigger(trigger, slug);
 		const panel = getSidebarPreviewPanel();
 		const inner = panel.querySelector('.dewit-sidebar-preview__inner');
 
