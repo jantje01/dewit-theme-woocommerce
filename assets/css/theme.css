@@ -571,22 +571,22 @@ body.single-product.woocommerce div.product div.summary {
 	display: flex;
 	flex-direction: column;
 	min-height: 100%;
-	padding: 24px;
+	padding: 26px;
 }
 
 .dewit-product-summary__content {
 	display: grid;
-	gap: 10px;
+	gap: 12px;
 	justify-items: start;
 }
 
 .dewit-product-summary .product_title {
 	color: #151515;
 	font-family: var(--font-body);
-	font-size: clamp(1.45rem, 2.3vw, 1.95rem);
+	font-size: clamp(1.42rem, 2.05vw, 1.82rem);
 	font-weight: 800;
 	letter-spacing: 0;
-	line-height: 1.12;
+	line-height: 1.14;
 	margin: 0;
 }
 
@@ -612,7 +612,7 @@ body.single-product.woocommerce div.product div.summary {
 	color: #777;
 	font-size: 13px;
 	font-weight: 700;
-	margin: -2px 0 4px;
+	margin: -3px 0 2px;
 }
 
 .dewit-product-meta a {
@@ -629,9 +629,9 @@ body.single-product.woocommerce div.product div.summary {
 
 .dewit-product-description {
 	color: #3f4650;
-	font-size: 14px;
-	line-height: 1.55;
-	margin: 2px 0 0;
+	font-size: 15px;
+	line-height: 1.58;
+	margin: 0;
 	width: 100%;
 }
 
