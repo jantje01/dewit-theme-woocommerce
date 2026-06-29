@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.134' );
+define( 'DEWIT_THEME_VERSION', '0.3.135' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -34,12 +34,26 @@ function dewit_theme_get_logo_url(): string {
 
 function dewit_theme_get_logo_markup( string $class = 'custom-logo' ): string {
 	return sprintf(
-		'<img src="%1$s" class="%2$s" alt="%3$s" width="1028" height="245" decoding="async">',
+		'<img src="%1$s" class="%2$s" alt="%3$s" width="1028" height="245" loading="eager" decoding="async" fetchpriority="high">',
 		esc_url( dewit_theme_get_logo_url() ),
 		esc_attr( $class ),
 		esc_attr( get_bloginfo( 'name' ) )
 	);
 }
+
+function dewit_theme_prioritize_logo_image_attributes( array $attr, WP_Post $attachment, $size ): array {
+	$custom_logo_id = (int) get_theme_mod( 'custom_logo' );
+
+	if ( $custom_logo_id && (int) $attachment->ID === $custom_logo_id ) {
+		$attr['loading']       = 'eager';
+		$attr['decoding']      = 'async';
+		$attr['fetchpriority'] = 'high';
+		$attr['alt']           = get_bloginfo( 'name' );
+	}
+
+	return $attr;
+}
+add_filter( 'wp_get_attachment_image_attributes', 'dewit_theme_prioritize_logo_image_attributes', 20, 3 );
 
 function dewit_theme_use_theme_logo_for_attachment( $image, int $attachment_id ) {
 	$custom_logo_id = (int) get_theme_mod( 'custom_logo' );
@@ -590,6 +604,18 @@ function dewit_theme_filter_catalog_script_tag( string $tag, string $handle, str
 }
 add_filter( 'script_loader_tag', 'dewit_theme_filter_catalog_script_tag', 20, 3 );
 
+function dewit_theme_preload_logo_asset(): void {
+	if ( is_admin() ) {
+		return;
+	}
+
+	printf(
+		'<link rel="preload" as="image" href="%s" type="image/svg+xml" fetchpriority="high">' . "\n",
+		esc_url( dewit_theme_get_logo_url() )
+	);
+}
+add_action( 'wp_head', 'dewit_theme_preload_logo_asset', 1 );
+
 /**
  * Preload the first catalog product images so mobile LCP can start earlier.
  */
@@ -844,10 +870,10 @@ function dewit_theme_print_grouped_products_fallback(): void {
 			container.removeAttribute('aria-label');
 		}
 
+		renderGroupedFallback();
+
 		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', renderGroupedFallback);
-		} else {
-			renderGroupedFallback();
+			document.addEventListener('DOMContentLoaded', renderGroupedFallback, { once: true });
 		}
 	}());
 	</script>

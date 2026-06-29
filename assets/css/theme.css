@@ -1827,6 +1827,11 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 	overflow: hidden;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-grouped .elementor-widget-loop-grid .elementor-loop-container:not(.dewit-grouped-mode) {
+	min-height: 520px;
+	min-height: min(760px, calc(100svh - 220px));
+}
+
 body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-grouped .elementor-widget-loop-grid .elementor-loop-container > .e-loop-item.product {
 	display: none !important;
 }
