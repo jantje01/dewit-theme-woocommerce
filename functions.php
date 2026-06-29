@@ -9,9 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.124' );
+define( 'DEWIT_THEME_VERSION', '0.3.125' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
-define( 'DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG', 'afstandhouders' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 
 function dewit_theme_get_shop_meta_description(): string {
@@ -29,9 +28,7 @@ function dewit_theme_is_product_tag_archive(): bool {
 }
 
 function dewit_theme_get_product_tag_redirect_url(): string {
-	$parent_slug = DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG ?: DEWIT_DEFAULT_PARENT_CATEGORY_SLUG;
-
-	return add_query_arg( 'dewit_parent_cat', sanitize_title( $parent_slug ), home_url( '/' ) );
+	return add_query_arg( 'dewit_parent_cat', sanitize_title( DEWIT_DEFAULT_PARENT_CATEGORY_SLUG ), home_url( '/' ) );
 }
 
 function dewit_theme_redirect_product_tag_archives(): void {
@@ -412,7 +409,7 @@ function dewit_theme_clean_product_text( string $text ): string {
 }
 
 /**
- * Return the configured default parent category for the shop landing page.
+ * Return the configured default parent category for the shop UI.
  */
 function dewit_theme_get_default_parent_category_slug(): string {
 	return '';
@@ -428,69 +425,6 @@ function dewit_theme_get_current_parent_category_slug(): string {
 
 	return dewit_theme_get_default_parent_category_slug();
 }
-
-/**
- * Decide whether the shop landing page should open with a default category.
- */
-function dewit_theme_should_use_default_parent_category(): bool {
-	$is_product_page     = function_exists( 'is_product' ) && is_product();
-	$is_product_taxonomy = function_exists( 'is_product_taxonomy' ) && is_product_taxonomy();
-	$is_shop_page        = function_exists( 'is_shop' ) && is_shop();
-
-	if ( is_admin() || is_search() || $is_product_page || $is_product_taxonomy ) {
-		return false;
-	}
-
-	if ( ! ( $is_shop_page || is_post_type_archive( 'product' ) || is_front_page() || is_home() ) ) {
-		return false;
-	}
-
-	foreach ( array_keys( $_GET ) as $key ) {
-		if ( 'dewit_parent_cat' === $key || 'product_cat' === $key || str_starts_with( (string) $key, 'e-filter-' ) ) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-/**
- * Determine whether the current shop view should render the category landing.
- */
-function dewit_theme_is_shop_landing(): bool {
-	$is_product_page     = function_exists( 'is_product' ) && is_product();
-	$is_product_taxonomy = function_exists( 'is_product_taxonomy' ) && is_product_taxonomy();
-	$is_shop_page        = function_exists( 'is_shop' ) && is_shop();
-
-	if ( is_admin() || is_search() || $is_product_page || $is_product_taxonomy ) {
-		return false;
-	}
-
-	if ( ! ( $is_shop_page || is_post_type_archive( 'product' ) || is_front_page() || is_home() ) ) {
-		return false;
-	}
-
-	foreach ( array_keys( $_GET ) as $key ) {
-		if ( 'dewit_parent_cat' === $key || 'product_cat' === $key || str_starts_with( (string) $key, 'e-filter-' ) ) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-/**
- * Temporarily route the shop landing to a parent category while the landing page is being refined.
- */
-function dewit_theme_redirect_temporary_shop_landing(): void {
-	if ( ! dewit_theme_is_shop_landing() || '' === DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG ) {
-		return;
-	}
-
-	wp_safe_redirect( dewit_theme_get_parent_category_shop_url( DEWIT_TEMPORARY_LANDING_PARENT_CATEGORY_SLUG ), 302 );
-	exit;
-}
-add_action( 'template_redirect', 'dewit_theme_redirect_temporary_shop_landing', 5 );
 
 /**
  * Build a shop URL for a selected parent category.
@@ -630,10 +564,6 @@ function dewit_theme_body_classes( array $classes ): array {
 		$classes[] = 'has-woocommerce';
 	}
 
-	if ( dewit_theme_is_shop_landing() ) {
-		$classes[] = 'dewit-shop-landing';
-	}
-
 	if ( '' !== dewit_theme_get_current_parent_category_slug() && ! ( function_exists( 'is_product' ) && is_product() ) ) {
 		$classes[] = 'dewit-shop-grouped';
 	}
@@ -675,7 +605,7 @@ function dewit_theme_print_grouped_products_fallback(): void {
 			widget.classList.add('dewit-grouped-widget');
 			container.innerHTML = groupedHtml;
 			container.classList.add('dewit-grouped-mode');
-			container.classList.remove('elementor-grid', 'dewit-landing-mode');
+			container.classList.remove('elementor-grid');
 		}
 
 		if (document.readyState === 'loading') {
@@ -688,185 +618,6 @@ function dewit_theme_print_grouped_products_fallback(): void {
 	<?php
 }
 add_action( 'wp_footer', 'dewit_theme_print_grouped_products_fallback', 1 );
-
-/**
- * Return visible top-level product category groups for the shop landing.
- *
- * @return array<int, array{label:string,parentSlug:string,productCount:int,image:string|false,imageWidth:int,imageHeight:int,children:array<int, array{name:string,slug:string,count:int}>}>
- */
-function dewit_theme_get_landing_category_groups(): array {
-	if ( ! taxonomy_exists( 'product_cat' ) ) {
-		return array();
-	}
-
-	$terms = get_terms( array(
-		'taxonomy'   => 'product_cat',
-		'hide_empty' => true,
-		'number'     => 100,
-	) );
-
-	if ( is_wp_error( $terms ) || empty( $terms ) ) {
-		return array();
-	}
-
-	$children_by_parent = array();
-
-	foreach ( $terms as $term ) {
-		if ( ! $term instanceof WP_Term ) {
-			continue;
-		}
-
-		if ( 'alle' === $term->slug || 'alle' === strtolower( trim( $term->name ) ) ) {
-			continue;
-		}
-
-		$children_by_parent[ $term->parent ][] = $term;
-	}
-
-	$parents = $children_by_parent[0] ?? array();
-	usort(
-		$parents,
-		static function ( WP_Term $a, WP_Term $b ): int {
-			return strnatcasecmp( $a->name, $b->name );
-		}
-	);
-
-	$groups = array();
-
-	foreach ( $parents as $parent ) {
-		$children = $children_by_parent[ $parent->term_id ] ?? array();
-		usort(
-			$children,
-			static function ( WP_Term $a, WP_Term $b ): int {
-				return strnatcasecmp( $a->name, $b->name );
-			}
-		);
-
-		$child_items    = array();
-		$product_count  = absint( $parent->count );
-		$visible_childs = array_filter(
-			$children,
-			static function ( WP_Term $child ): bool {
-				return $child->count > 0;
-			}
-		);
-
-		foreach ( $visible_childs as $child ) {
-			$product_count += absint( $child->count );
-			$child_items[] = array(
-				'name'  => dewit_theme_clean_product_text( $child->name ),
-				'slug'  => $child->slug,
-				'count' => absint( $child->count ),
-			);
-		}
-
-		if ( 0 === $product_count ) {
-			continue;
-		}
-
-		$image_data = dewit_theme_get_product_category_image_data( $parent->term_id ) ?? dewit_theme_get_placeholder_image_data();
-
-		$groups[] = array(
-			'label'        => dewit_theme_clean_product_text( $parent->name ),
-			'parentSlug'   => $parent->slug,
-			'productCount' => $product_count,
-			'image'        => $image_data['src'],
-			'imageWidth'   => $image_data['width'],
-			'imageHeight'  => $image_data['height'],
-			'children'     => $child_items,
-		);
-	}
-
-	return $groups;
-}
-
-/**
- * Render the category landing HTML used as a no-spinner fallback on the shop root.
- */
-function dewit_theme_render_category_landing_html(): string {
-	$groups = dewit_theme_get_landing_category_groups();
-
-	if ( empty( $groups ) ) {
-		return '';
-	}
-
-	ob_start();
-	?>
-	<div class="dewit-category-landing">
-		<div class="dewit-category-landing__grid">
-			<?php foreach ( $groups as $group ) : ?>
-				<?php
-				$children      = array_slice( $group['children'], 0, 3 );
-				$child_names   = wp_list_pluck( $children, 'name' );
-				?>
-				<a class="dewit-category-landing-card" href="<?php echo esc_url( dewit_theme_get_parent_category_shop_url( $group['parentSlug'] ) ); ?>">
-					<span class="dewit-category-landing-card__header">
-						<img
-							src="<?php echo esc_url( $group['image'] ); ?>"
-							alt=""
-							width="<?php echo esc_attr( $group['imageWidth'] ); ?>"
-							height="<?php echo esc_attr( $group['imageHeight'] ); ?>"
-							loading="lazy"
-							decoding="async"
-						>
-					</span>
-					<span class="dewit-category-landing-card__content">
-						<span class="dewit-category-landing-card__title"><?php echo esc_html( $group['label'] ); ?></span>
-						<span class="dewit-category-landing-card__description"><?php echo esc_html( $child_names ? implode( ', ', $child_names ) : __( 'Bekijk alle producten in deze hoofdgroep', 'dewit-theme-woocommerce' ) ); ?></span>
-					</span>
-				</a>
-			<?php endforeach; ?>
-		</div>
-	</div>
-	<?php
-	return trim( ob_get_clean() );
-}
-
-/**
- * Print a server-rendered category landing fallback into Elementor's loop container.
- */
-function dewit_theme_print_category_landing_fallback(): void {
-	if ( ! dewit_theme_is_shop_landing() ) {
-		return;
-	}
-
-	$html = dewit_theme_render_category_landing_html();
-
-	if ( '' === $html ) {
-		return;
-	}
-	?>
-	<script>
-	(function () {
-		const landingHtml = <?php echo wp_json_encode( $html ); ?>;
-
-		function renderLanding() {
-			const widget = document.querySelector('.elementor-widget-loop-grid');
-			const container = widget ? widget.querySelector('.elementor-loop-container') : null;
-
-			document.body.classList.add('dewit-shop-landing');
-
-			if (!container || container.querySelector('.dewit-category-landing')) {
-				return;
-			}
-
-			container.innerHTML = landingHtml;
-			container.classList.add('dewit-landing-mode');
-			container.classList.remove('elementor-grid', 'dewit-grouped-mode');
-		}
-
-		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', renderLanding);
-		} else {
-			renderLanding();
-		}
-
-		window.addEventListener('load', renderLanding);
-	}());
-	</script>
-	<?php
-}
-add_action( 'wp_footer', 'dewit_theme_print_category_landing_fallback', 90 );
 
 /**
  * Print a small independent sidebar renderer so Elementor's default "Alle" item

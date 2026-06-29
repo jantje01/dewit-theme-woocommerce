@@ -1470,144 +1470,6 @@
 		return parser.value;
 	}
 
-	function getLandingContainer() {
-		const widget = document.querySelector('.elementor-widget-loop-grid');
-
-		if (!widget) {
-			return null;
-		}
-
-		let container = widget.querySelector('.elementor-loop-container');
-
-		if (!container) {
-			container = document.createElement('div');
-			container.className = 'elementor-loop-container elementor-grid dewit-generated-loop-container';
-			widget.appendChild(container);
-		}
-
-		return container;
-	}
-
-	function hasCategoryContext() {
-		return Array.from(new URL(window.location.href).searchParams.keys()).some(function (key) {
-			return key === 'dewit_parent_cat' || key === 'product_cat' || key.indexOf('e-filter-') === 0;
-		});
-	}
-
-	function createLandingCard(group) {
-		const card = document.createElement('a');
-		const header = document.createElement('span');
-		const content = document.createElement('span');
-		const title = document.createElement('span');
-		const description = document.createElement('span');
-		const categoryImage = group.image || null;
-		const childNames = (group.children || []).slice(0, 3).map(function (child) {
-			return normalizeDisplayText(child.name);
-		});
-
-		card.className = 'dewit-category-landing-card';
-		card.href = getGroupedCategoryUrl(group.parentSlug);
-		header.className = 'dewit-category-landing-card__header';
-		content.className = 'dewit-category-landing-card__content';
-		title.className = 'dewit-category-landing-card__title';
-		description.className = 'dewit-category-landing-card__description';
-
-		title.textContent = normalizeDisplayText(group.label);
-		description.textContent = childNames.length ? childNames.join(', ') : 'Bekijk alle producten in deze hoofdgroep';
-
-		if (categoryImage && categoryImage.src) {
-			const image = document.createElement('img');
-			image.src = categoryImage.src;
-			image.alt = '';
-			image.width = categoryImage.width || 300;
-			image.height = categoryImage.height || 300;
-			image.loading = 'lazy';
-			image.decoding = 'async';
-			header.appendChild(image);
-		}
-
-		content.appendChild(title);
-		content.appendChild(description);
-		card.appendChild(header);
-		card.appendChild(content);
-
-		return card;
-	}
-
-	function renderCategoryLanding(groups) {
-		const hasActiveCategoryContext = hasCategoryContext();
-		const container = getLandingContainer();
-
-		document.body.classList.toggle('dewit-shop-landing', !hasActiveCategoryContext);
-
-		if (hasActiveCategoryContext || !container || !groups.length) {
-			return;
-		}
-
-		const landing = document.createElement('div');
-		const grid = document.createElement('div');
-
-		landing.className = 'dewit-category-landing';
-		grid.className = 'dewit-category-landing__grid';
-
-		groups.forEach(function (group) {
-			grid.appendChild(createLandingCard(group));
-		});
-
-		landing.appendChild(grid);
-		container.innerHTML = '';
-		container.classList.add('dewit-landing-mode');
-		container.classList.remove('elementor-grid');
-		container.classList.remove('dewit-grouped-mode');
-		container.appendChild(landing);
-	}
-
-	function getRenderedSidebarGroups() {
-		return Array.from(document.querySelectorAll('#catalog-sidebar .dewit-category-group')).map(function (groupElement) {
-			const trigger = groupElement.querySelector('.dewit-category-trigger');
-			const label = trigger ? trigger.querySelector('.dewit-category-label') : null;
-			const href = trigger ? trigger.getAttribute('href') : '';
-			let parentSlug = '';
-
-			try {
-				parentSlug = href ? new URL(href, window.location.href).searchParams.get('dewit_parent_cat') || '' : '';
-			} catch (error) {
-				parentSlug = '';
-			}
-
-			const children = Array.from(groupElement.querySelectorAll('.dewit-category-child[data-filter]')).map(function (child) {
-				return {
-					name: child.textContent.trim(),
-					slug: child.getAttribute('data-filter') || '',
-					count: 0,
-				};
-			}).filter(function (child) {
-				return child.name && child.slug;
-			});
-
-			return {
-				label: label ? label.textContent.trim() : '',
-				parentSlug: parentSlug,
-				count: 0,
-				productCount: 0,
-				slugs: children.map(function (child) {
-					return child.slug;
-				}),
-				children: children,
-			};
-		}).filter(function (group) {
-			return group.label && group.parentSlug;
-		});
-	}
-
-	function renderCategoryLandingFromSidebar() {
-		if (hasCategoryContext() || document.querySelector('.dewit-category-landing-card')) {
-			return;
-		}
-
-		renderCategoryLanding(getRenderedSidebarGroups());
-	}
-
 	function getActiveCategorySlug() {
 		if (window.dewitGetActiveCategorySlug) {
 			return window.dewitGetActiveCategorySlug();
@@ -1953,12 +1815,6 @@
 		const filters = document.querySelectorAll('.elementor-widget-taxonomy-filter .e-filter');
 
 		if (!filters.length) {
-			const inlineGroups = getInlineCategoryGroups();
-
-			if (inlineGroups.length) {
-				renderCategoryLanding(inlineGroups);
-			}
-
 			return;
 		}
 
@@ -1967,10 +1823,8 @@
 
 		if (inlineGroups.length) {
 			renderCategoryFilters(inlineGroups);
-			renderCategoryLanding(inlineGroups);
 		} else if (cachedGroups.length) {
 			renderCategoryFilters(cachedGroups);
-			renderCategoryLanding(cachedGroups);
 		}
 
 		if (!inlineGroups.length && !cachedGroups.length) {
@@ -1980,7 +1834,6 @@
 				}
 
 				renderCategoryFilters(groups);
-				renderCategoryLanding(groups);
 			});
 		}
 	}
@@ -2300,20 +2153,16 @@
 		document.addEventListener('DOMContentLoaded', buildCategoryDropdowns);
 		document.addEventListener('DOMContentLoaded', function () {
 			window.setTimeout(revealCategoryFilters, 700);
-			window.setTimeout(renderCategoryLandingFromSidebar, 760);
 			window.setTimeout(initSidebarCategoryPreviews, 820);
 		});
 	} else {
 		buildCategoryDropdowns();
 		window.setTimeout(revealCategoryFilters, 700);
-		window.setTimeout(renderCategoryLandingFromSidebar, 760);
 		window.setTimeout(initSidebarCategoryPreviews, 820);
 	}
 
 	window.addEventListener('elementor/frontend/init', buildCategoryDropdowns);
 	window.addEventListener('load', revealCategoryFilters);
-	window.addEventListener('load', renderCategoryLandingFromSidebar);
-	window.addEventListener('dewit/categories-ready', renderCategoryLandingFromSidebar);
 	window.addEventListener('load', initSidebarCategoryPreviews);
 	window.addEventListener('dewit/categories-ready', initSidebarCategoryPreviews);
 }());
