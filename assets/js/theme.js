@@ -543,7 +543,8 @@
 		widget.classList.add('dewit-grouped-widget');
 		widget.querySelectorAll('.e-load-more-anchor, .e-load-more-spinner, .e-load-more-message')
 			.forEach(function (element) {
-				element.remove();
+				element.hidden = true;
+				element.setAttribute('aria-hidden', 'true');
 			});
 	}
 
