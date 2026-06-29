@@ -9,9 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.132' );
+define( 'DEWIT_THEME_VERSION', '0.3.133' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
+define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
 
 function dewit_theme_get_shop_meta_description(): string {
 	return 'Bekijk het assortiment bouwmachines, bekisting, steigers, verbruiksmaterialen en ondersteuningsmateriaal van De Wit Bouwmachines. Wij hebben altijd de oplossing in huis.';
@@ -27,10 +28,42 @@ function dewit_theme_get_default_shop_url(): string {
 	return add_query_arg( 'dewit_parent_cat', sanitize_title( DEWIT_DEFAULT_PARENT_CATEGORY_SLUG ), home_url( '/' ) );
 }
 
+function dewit_theme_get_logo_url(): string {
+	return get_template_directory_uri() . DEWIT_THEME_LOGO_FILE;
+}
+
+function dewit_theme_get_logo_markup( string $class = 'custom-logo' ): string {
+	return sprintf(
+		'<img src="%1$s" class="%2$s" alt="%3$s" width="1028" height="245" decoding="async">',
+		esc_url( dewit_theme_get_logo_url() ),
+		esc_attr( $class ),
+		esc_attr( get_bloginfo( 'name' ) )
+	);
+}
+
+function dewit_theme_use_theme_logo_for_attachment( $image, int $attachment_id ) {
+	$custom_logo_id = (int) get_theme_mod( 'custom_logo' );
+
+	if ( $custom_logo_id && $attachment_id === $custom_logo_id ) {
+		return array( dewit_theme_get_logo_url(), 1028, 245, false );
+	}
+
+	return $image;
+}
+add_filter( 'wp_get_attachment_image_src', 'dewit_theme_use_theme_logo_for_attachment', 20, 2 );
+
 function dewit_theme_route_custom_logo_to_default_shop( string $html ): string {
 	if ( '' === $html ) {
 		return $html;
 	}
+
+	$logo_html = preg_replace(
+		'/<img\b[^>]*>/',
+		dewit_theme_get_logo_markup(),
+		$html,
+		1
+	);
+	$html      = is_string( $logo_html ) ? $logo_html : $html;
 
 	return str_replace(
 		'href="' . esc_url( home_url( '/' ) ) . '"',
@@ -334,7 +367,7 @@ function dewit_theme_scripts(): void {
 		array(
 			'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
 			'defaultParentCategory' => dewit_theme_get_default_parent_category_slug(),
-			'logoUrl'               => get_theme_mod( 'custom_logo' ) ? wp_get_attachment_image_url( (int) get_theme_mod( 'custom_logo' ), 'full' ) : '',
+			'logoUrl'               => dewit_theme_get_logo_url(),
 			'homeUrl'               => dewit_theme_get_default_shop_url(),
 			'placeholderImage'      => dewit_theme_get_placeholder_image_data(),
 		)

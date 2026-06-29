@@ -16,15 +16,7 @@ defined( 'ABSPATH' ) || exit;
 			<div class="elementor-element elementor-element-c6a068a e-con-full e-flex e-con e-child">
 				<div class="elementor-element elementor-element-aad6506 elementor-widget elementor-widget-image">
 					<a class="dewit-sidebar-logo-link" href="<?php echo esc_url( dewit_theme_get_default_shop_url() ); ?>" aria-label="<?php esc_attr_e( 'Terug naar hoofdcategorieën', 'dewit-theme-woocommerce' ); ?>">
-						<?php
-						$custom_logo_id = (int) get_theme_mod( 'custom_logo' );
-
-						if ( $custom_logo_id ) {
-							echo wp_get_attachment_image( $custom_logo_id, 'large' );
-						} else {
-							bloginfo( 'name' );
-						}
-						?>
+						<?php echo dewit_theme_get_logo_markup(); ?>
 					</a>
 				</div>
 			</div>
