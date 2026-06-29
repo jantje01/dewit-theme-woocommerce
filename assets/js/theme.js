@@ -479,6 +479,16 @@
 		return parser.value;
 	}
 
+	function normalizeGroupedContainerAccessibility(container) {
+		if (!container) {
+			return;
+		}
+
+		container.removeAttribute('role');
+		container.removeAttribute('aria-live');
+		container.removeAttribute('aria-label');
+	}
+
 	function getActiveFilterParamNames() {
 		return Array.from(new URL(window.location.href).searchParams.keys())
 			.filter(function (key) {
