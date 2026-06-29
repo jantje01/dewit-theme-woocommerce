@@ -26,7 +26,7 @@
 				the_custom_logo();
 			} else {
 				?>
-				<a class="site-title" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a>
+				<a class="site-title" href="<?php echo esc_url( dewit_theme_get_default_shop_url() ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a>
 				<?php
 			}
 			?>

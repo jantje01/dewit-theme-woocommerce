@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.125' );
+define( 'DEWIT_THEME_VERSION', '0.3.127' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 
@@ -23,12 +23,29 @@ function dewit_theme_get_social_locale(): string {
 add_filter( 'wpseo_locale', 'dewit_theme_get_social_locale', 20 );
 add_filter( 'wpseo_og_locale', 'dewit_theme_get_social_locale', 20 );
 
+function dewit_theme_get_default_shop_url(): string {
+	return add_query_arg( 'dewit_parent_cat', sanitize_title( DEWIT_DEFAULT_PARENT_CATEGORY_SLUG ), home_url( '/' ) );
+}
+
+function dewit_theme_route_custom_logo_to_default_shop( string $html ): string {
+	if ( '' === $html ) {
+		return $html;
+	}
+
+	return str_replace(
+		'href="' . esc_url( home_url( '/' ) ) . '"',
+		'href="' . esc_url( dewit_theme_get_default_shop_url() ) . '"',
+		$html
+	);
+}
+add_filter( 'get_custom_logo', 'dewit_theme_route_custom_logo_to_default_shop' );
+
 function dewit_theme_is_product_tag_archive(): bool {
 	return function_exists( 'is_tax' ) && is_tax( 'product_tag' );
 }
 
 function dewit_theme_get_product_tag_redirect_url(): string {
-	return add_query_arg( 'dewit_parent_cat', sanitize_title( DEWIT_DEFAULT_PARENT_CATEGORY_SLUG ), home_url( '/' ) );
+	return dewit_theme_get_default_shop_url();
 }
 
 function dewit_theme_redirect_product_tag_archives(): void {
@@ -297,7 +314,7 @@ function dewit_theme_scripts(): void {
 			'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
 			'defaultParentCategory' => dewit_theme_get_default_parent_category_slug(),
 			'logoUrl'               => get_theme_mod( 'custom_logo' ) ? wp_get_attachment_image_url( (int) get_theme_mod( 'custom_logo' ), 'full' ) : '',
-			'homeUrl'               => home_url( '/' ),
+			'homeUrl'               => dewit_theme_get_default_shop_url(),
 			'placeholderImage'      => dewit_theme_get_placeholder_image_data(),
 		)
 	);
