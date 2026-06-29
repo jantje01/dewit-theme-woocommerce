@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.129' );
+define( 'DEWIT_THEME_VERSION', '0.3.130' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 
@@ -461,6 +461,55 @@ function dewit_theme_trim_catalog_frontend_assets(): void {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'dewit_theme_trim_catalog_frontend_assets', 100 );
+
+function dewit_theme_dequeue_catalog_assets_by_source(): void {
+	if ( ! dewit_theme_is_catalog_performance_context() ) {
+		return;
+	}
+
+	global $wp_scripts, $wp_styles;
+
+	$style_src_matches = array(
+		'/woocommerce/assets/client/blocks/wc-blocks.css',
+		'/woocommerce/assets/css/woocommerce',
+	);
+
+	if ( $wp_styles instanceof WP_Styles ) {
+		foreach ( (array) $wp_styles->queue as $handle ) {
+			$src = isset( $wp_styles->registered[ $handle ] ) ? (string) $wp_styles->registered[ $handle ]->src : '';
+
+			foreach ( $style_src_matches as $match ) {
+				if ( str_contains( $src, $match ) ) {
+					wp_dequeue_style( $handle );
+					break;
+				}
+			}
+		}
+	}
+
+	$script_src_matches = array(
+		'/woocommerce/assets/js/jquery-blockui/',
+		'/woocommerce/assets/js/js-cookie/',
+		'/woocommerce/assets/js/frontend/woocommerce',
+		'/woocommerce/assets/js/sourcebuster/',
+		'/woocommerce/assets/js/frontend/order-attribution',
+	);
+
+	if ( $wp_scripts instanceof WP_Scripts ) {
+		foreach ( (array) $wp_scripts->queue as $handle ) {
+			$src = isset( $wp_scripts->registered[ $handle ] ) ? (string) $wp_scripts->registered[ $handle ]->src : '';
+
+			foreach ( $script_src_matches as $match ) {
+				if ( str_contains( $src, $match ) ) {
+					wp_dequeue_script( $handle );
+					break;
+				}
+			}
+		}
+	}
+}
+add_action( 'wp_print_styles', 'dewit_theme_dequeue_catalog_assets_by_source', 100 );
+add_action( 'wp_print_scripts', 'dewit_theme_dequeue_catalog_assets_by_source', 100 );
 
 /**
  * Preload the first catalog product images so mobile LCP can start earlier.
