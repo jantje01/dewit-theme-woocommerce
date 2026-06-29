@@ -945,6 +945,14 @@
 			const label = trigger.querySelector('.dewit-category-label') ?
 				trigger.querySelector('.dewit-category-label').textContent.trim() :
 				trigger.textContent.trim();
+			let fallbackTimer = null;
+
+			function clearFallbackTimer() {
+				if (fallbackTimer) {
+					window.clearTimeout(fallbackTimer);
+					fallbackTimer = null;
+				}
+			}
 
 			switchId = nextSwitchId;
 
@@ -953,6 +961,7 @@
 					return;
 				}
 
+				clearFallbackTimer();
 				activateSidebarParentTrigger(trigger);
 				window.dispatchEvent(new CustomEvent('dewit/category-selected', {
 					detail: {
@@ -962,11 +971,22 @@
 				}));
 			}, { once: true });
 
-			loadGroupedCategoryProducts({
-				label: label,
-				name: label,
-				parentSlug: parentSlug,
-			});
+			try {
+				loadGroupedCategoryProducts({
+					label: label,
+					name: label,
+					parentSlug: parentSlug,
+				});
+
+				fallbackTimer = window.setTimeout(function () {
+					if (nextSwitchId === switchId) {
+						window.location.href = trigger.href;
+					}
+				}, 900);
+			} catch (error) {
+				window.location.href = trigger.href;
+			}
+
 			closeMobileCategories();
 		}, true);
 	}
@@ -1738,6 +1758,14 @@
 					if (window.dewitLoadGroupedCategoryProducts && !document.body.classList.contains('single-product')) {
 						const label = group.label || group.name || trigger.textContent.trim();
 						const switchId = categorySwitchId + 1;
+						let fallbackTimer = null;
+
+						function clearFallbackTimer() {
+							if (fallbackTimer) {
+								window.clearTimeout(fallbackTimer);
+								fallbackTimer = null;
+							}
+						}
 
 						categorySwitchId = switchId;
 
@@ -1746,12 +1774,24 @@
 								return;
 							}
 
+							clearFallbackTimer();
 							activateParentGroup(filter, groupElement, trigger);
 							updateSelectedCategoryContext(group.parentSlug, label);
 						}, { once: true });
 
-						loadGroupedCategoryProducts(group);
-						closeMobileCategoryDrawer();
+						try {
+							loadGroupedCategoryProducts(group);
+							closeMobileCategoryDrawer();
+
+							fallbackTimer = window.setTimeout(function () {
+								if (switchId === categorySwitchId) {
+									window.location.href = trigger.href;
+								}
+							}, 900);
+						} catch (error) {
+							window.location.href = trigger.href;
+						}
+
 						return;
 					}
 
