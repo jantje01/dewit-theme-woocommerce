@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.135' );
+define( 'DEWIT_THEME_VERSION', '0.3.136' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -86,6 +86,43 @@ function dewit_theme_route_custom_logo_to_default_shop( string $html ): string {
 	);
 }
 add_filter( 'get_custom_logo', 'dewit_theme_route_custom_logo_to_default_shop' );
+
+function dewit_theme_add_logo_img_priority_attributes( string $html ): string {
+	if ( ! str_contains( $html, 'dewit-logo.svg' ) ) {
+		return $html;
+	}
+
+	return (string) preg_replace_callback(
+		'/<img\b(?=[^>]*dewit-logo\.svg)[^>]*>/i',
+		static function ( array $matches ): string {
+			$tag     = $matches[0];
+			$closing = str_ends_with( $tag, '/>' ) ? ' />' : '>';
+			$tag     = (string) preg_replace( '/\s*\/?>$/', '', $tag );
+
+			foreach ( array(
+				'loading'       => 'eager',
+				'decoding'      => 'async',
+				'fetchpriority' => 'high',
+			) as $name => $value ) {
+				if ( ! preg_match( '/\s' . preg_quote( $name, '/' ) . '\s*=/i', $tag ) ) {
+					$tag .= sprintf( ' %s="%s"', $name, esc_attr( $value ) );
+				}
+			}
+
+			return $tag . $closing;
+		},
+		$html
+	);
+}
+
+function dewit_theme_start_logo_attribute_buffer(): void {
+	if ( is_admin() || wp_doing_ajax() || ( function_exists( 'wp_is_json_request' ) && wp_is_json_request() ) ) {
+		return;
+	}
+
+	ob_start( 'dewit_theme_add_logo_img_priority_attributes' );
+}
+add_action( 'template_redirect', 'dewit_theme_start_logo_attribute_buffer', 0 );
 
 function dewit_theme_is_product_tag_archive(): bool {
 	return function_exists( 'is_tax' ) && is_tax( 'product_tag' );
