@@ -144,6 +144,29 @@
 		});
 	}
 
+	function ensureMainLandmark() {
+		if (document.querySelector('main, [role="main"]')) {
+			return;
+		}
+
+		const mainCandidate = document.querySelector('.elementor-location-archive.product, .elementor-location-archive, .elementor-element-5c7860e, .site-content');
+
+		if (mainCandidate) {
+			mainCandidate.setAttribute('role', 'main');
+			mainCandidate.setAttribute('id', mainCandidate.id || 'primary');
+		}
+	}
+
+	function normalizeGroupedContainerAccessibility(container) {
+		if (!container) {
+			return;
+		}
+
+		container.removeAttribute('role');
+		container.removeAttribute('aria-live');
+		container.removeAttribute('aria-label');
+	}
+
 	function updateProductViewSwitchLabel() {
 		const label = document.querySelector('.dewit-product-view-switch__label');
 
@@ -364,7 +387,8 @@
 		button.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>';
 
 		results.className = 'dewit-shop-search-results';
-		results.setAttribute('role', 'listbox');
+		results.setAttribute('role', 'region');
+		results.setAttribute('aria-label', 'Directe zoekresultaten');
 
 		input.setAttribute('autocomplete', 'off');
 		input.setAttribute('aria-autocomplete', 'list');
@@ -422,9 +446,11 @@
 	}
 
 	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', ensureMainLandmark);
 		document.addEventListener('DOMContentLoaded', injectShopToolbar);
 		document.addEventListener('DOMContentLoaded', routeSidebarLogoToHome);
 	} else {
+		ensureMainLandmark();
 		injectShopToolbar();
 		routeSidebarLogoToHome();
 	}
@@ -591,6 +617,7 @@
 
 		container.classList.add('dewit-grouped-mode');
 		container.style.display = 'block';
+		normalizeGroupedContainerAccessibility(container);
 		view.style.display = 'grid';
 		disableGroupedElementorLoadMore();
 
@@ -664,6 +691,7 @@
 
 		if (container) {
 			container.classList.add('dewit-grouped-mode');
+			normalizeGroupedContainerAccessibility(container);
 		}
 
 		if (!groups.length) {
