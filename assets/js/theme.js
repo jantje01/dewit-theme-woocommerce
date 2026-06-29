@@ -1293,6 +1293,18 @@
 	const categoryCacheKey = 'dewitProductCategoriesWithProducts';
 	const categoryCacheMaxAge = 12 * 60 * 60 * 1000;
 
+	function getThemeConfig() {
+		return window.dewitTheme || (typeof dewitTheme !== 'undefined' ? dewitTheme : {});
+	}
+
+	function normalizeDisplayText(value) {
+		const normalized = String(value || '').replace(/&(\d{2,6});/g, '&#$1;');
+		const parser = document.createElement('textarea');
+		parser.innerHTML = normalized;
+
+		return parser.value;
+	}
+
 	function getCachedCategoryGroups() {
 		try {
 			const cached = JSON.parse(window.localStorage.getItem(categoryCacheKey) || 'null');
