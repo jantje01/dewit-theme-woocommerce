@@ -438,14 +438,34 @@
 		injectProductViewSwitch(content, grid);
 	}
 
+	function placeHorizontalCategoryNav() {
+		const nav = document.querySelector('.dewit-horizontal-category-nav');
+		const layout = document.querySelector('.elementor-element-b680c70');
+		const content = document.querySelector('.elementor-element-5c7860e');
+
+		if (!nav || !layout || !content || nav.parentElement === layout) {
+			if (nav && layout) {
+				document.body.classList.add('dewit-horizontal-nav-active');
+			}
+
+			return;
+		}
+
+		layout.insertBefore(nav, content);
+		document.body.classList.add('dewit-horizontal-nav-active');
+	}
+
 	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', placeHorizontalCategoryNav);
 		document.addEventListener('DOMContentLoaded', injectShopToolbar);
 		document.addEventListener('DOMContentLoaded', routeSidebarLogoToHome);
 	} else {
+		placeHorizontalCategoryNav();
 		injectShopToolbar();
 		routeSidebarLogoToHome();
 	}
 
+	window.addEventListener('load', placeHorizontalCategoryNav);
 	window.addEventListener('elementor/frontend/init', injectShopToolbar);
 	window.addEventListener('elementor/frontend/init', routeSidebarLogoToHome);
 	window.addEventListener('load', routeSidebarLogoToHome);

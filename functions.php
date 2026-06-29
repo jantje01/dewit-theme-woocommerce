@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.125' );
+define( 'DEWIT_THEME_VERSION', '0.3.126' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 
@@ -425,6 +425,119 @@ function dewit_theme_get_current_parent_category_slug(): string {
 
 	return dewit_theme_get_default_parent_category_slug();
 }
+
+/**
+ * Return visible top-level category groups for horizontal shop navigation.
+ *
+ * @return array<int, array{label:string,slug:string,url:string,isActive:bool,children:array<int, array{label:string,slug:string,url:string,isActive:bool}>}>
+ */
+function dewit_theme_get_horizontal_category_nav_items(): array {
+	if ( ! taxonomy_exists( 'product_cat' ) ) {
+		return array();
+	}
+
+	$terms = get_terms( array(
+		'taxonomy'   => 'product_cat',
+		'hide_empty' => true,
+		'number'     => 120,
+	) );
+
+	if ( is_wp_error( $terms ) || empty( $terms ) ) {
+		return array();
+	}
+
+	$children_by_parent = array();
+
+	foreach ( $terms as $term ) {
+		if ( ! $term instanceof WP_Term ) {
+			continue;
+		}
+
+		if ( 'alle' === $term->slug || 'alle' === strtolower( trim( $term->name ) ) ) {
+			continue;
+		}
+
+		$children_by_parent[ $term->parent ][] = $term;
+	}
+
+	$parents     = $children_by_parent[0] ?? array();
+	$active_slug = dewit_theme_get_current_parent_category_slug();
+
+	usort(
+		$parents,
+		static function ( WP_Term $a, WP_Term $b ): int {
+			return strnatcasecmp( $a->name, $b->name );
+		}
+	);
+
+	$items = array();
+
+	foreach ( $parents as $parent ) {
+		$children = $children_by_parent[ $parent->term_id ] ?? array();
+
+		usort(
+			$children,
+			static function ( WP_Term $a, WP_Term $b ): int {
+				return strnatcasecmp( $a->name, $b->name );
+			}
+		);
+
+		$child_items = array();
+
+		foreach ( $children as $child ) {
+			if ( $child->count <= 0 ) {
+				continue;
+			}
+
+			$child_items[] = array(
+				'label'    => dewit_theme_clean_product_text( $child->name ),
+				'slug'     => $child->slug,
+				'url'      => dewit_theme_get_parent_category_shop_url( $parent->slug ) . '#dewit-cat-' . sanitize_title( $child->slug ),
+				'isActive' => $active_slug === $parent->slug && isset( $_GET['product_cat'] ) && sanitize_title( wp_unslash( $_GET['product_cat'] ) ) === $child->slug,
+			);
+		}
+
+		if ( $parent->count <= 0 && empty( $child_items ) ) {
+			continue;
+		}
+
+		$items[] = array(
+			'label'    => dewit_theme_clean_product_text( $parent->name ),
+			'slug'     => $parent->slug,
+			'url'      => dewit_theme_get_parent_category_shop_url( $parent->slug ),
+			'isActive' => $active_slug === $parent->slug,
+			'children' => $child_items,
+		);
+	}
+
+	return $items;
+}
+
+/**
+ * Print the branch-only horizontal category navigation component.
+ */
+function dewit_theme_print_horizontal_category_nav(): void {
+	if ( is_admin() || ! ( function_exists( 'is_shop' ) && ( is_shop() || is_post_type_archive( 'product' ) || is_front_page() || is_home() ) ) ) {
+		return;
+	}
+
+	$items = dewit_theme_get_horizontal_category_nav_items();
+
+	if ( empty( $items ) ) {
+		return;
+	}
+
+	get_template_part(
+		'template-parts/horizontal-category-nav',
+		null,
+		array(
+			'items'   => $items,
+			'logoUrl' => get_theme_mod( 'custom_logo' ) ? wp_get_attachment_image_url( (int) get_theme_mod( 'custom_logo' ), 'full' ) : '',
+			'homeUrl' => home_url( '/' ),
+		)
+	);
+}
+add_action( 'wp_footer', 'dewit_theme_print_horizontal_category_nav', 5 );
 
 /**
  * Build a shop URL for a selected parent category.
