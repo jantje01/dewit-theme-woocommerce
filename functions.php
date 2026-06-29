@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.128' );
+define( 'DEWIT_THEME_VERSION', '0.3.129' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 
@@ -58,28 +58,6 @@ function dewit_theme_has_category_context_query(): bool {
 	return false;
 }
 
-function dewit_theme_redirect_root_to_default_category(): void {
-	if ( is_admin() || is_search() || is_preview() || is_customize_preview() ) {
-		return;
-	}
-
-	if ( ! ( is_front_page() || is_home() ) || dewit_theme_has_category_context_query() ) {
-		return;
-	}
-
-	$redirect_url = dewit_theme_get_default_shop_url();
-
-	foreach ( $_GET as $key => $value ) {
-		if ( is_scalar( $value ) && 'dewit_parent_cat' !== $key ) {
-			$redirect_url = add_query_arg( sanitize_key( $key ), sanitize_text_field( wp_unslash( $value ) ), $redirect_url );
-		}
-	}
-
-	wp_safe_redirect( $redirect_url, 302 );
-	exit;
-}
-add_action( 'template_redirect', 'dewit_theme_redirect_root_to_default_category', 1 );
-
 function dewit_theme_redirect_product_tag_archives(): void {
 	if ( ! dewit_theme_is_product_tag_archive() ) {
 		return;
@@ -120,6 +98,17 @@ function dewit_theme_exclude_product_tags_from_yoast_sitemap( bool $exclude, str
 	return $exclude;
 }
 add_filter( 'wpseo_sitemap_exclude_taxonomy', 'dewit_theme_exclude_product_tags_from_yoast_sitemap', 20, 2 );
+
+function dewit_theme_disable_emoji_assets(): void {
+	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+	remove_action( 'wp_print_styles', 'print_emoji_styles' );
+	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+	remove_action( 'admin_print_styles', 'print_emoji_styles' );
+	remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
+	remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+	remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
+}
+add_action( 'init', 'dewit_theme_disable_emoji_assets' );
 
 function dewit_theme_has_external_og_locale_provider(): bool {
 	return defined( 'WPSEO_VERSION' ) || class_exists( 'WPSEO_Frontend' );
@@ -406,6 +395,73 @@ function dewit_theme_scripts(): void {
 }
 add_action( 'wp_enqueue_scripts', 'dewit_theme_scripts' );
 
+function dewit_theme_is_catalog_performance_context(): bool {
+	if ( is_admin() || is_search() || is_preview() || is_customize_preview() ) {
+		return false;
+	}
+
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		return false;
+	}
+
+	if ( function_exists( 'is_cart' ) && is_cart() ) {
+		return false;
+	}
+
+	if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+		return false;
+	}
+
+	return is_front_page()
+		|| is_home()
+		|| dewit_theme_has_category_context_query()
+		|| ( function_exists( 'is_shop' ) && is_shop() )
+		|| is_post_type_archive( 'product' );
+}
+
+function dewit_theme_disable_elementor_google_fonts( bool $print_google_fonts ): bool {
+	if ( dewit_theme_is_catalog_performance_context() || ( function_exists( 'is_product' ) && is_product() ) ) {
+		return false;
+	}
+
+	return $print_google_fonts;
+}
+add_filter( 'elementor/frontend/print_google_fonts', 'dewit_theme_disable_elementor_google_fonts', 20 );
+
+function dewit_theme_trim_catalog_frontend_assets(): void {
+	if ( ! dewit_theme_is_catalog_performance_context() ) {
+		return;
+	}
+
+	$style_handles = array(
+		'wc-blocks-style',
+		'wc-blocks-vendors-style',
+		'woocommerce-general',
+		'woocommerce-layout',
+		'woocommerce-smallscreen',
+	);
+
+	foreach ( $style_handles as $handle ) {
+		wp_dequeue_style( $handle );
+	}
+
+	$script_handles = array(
+		'jquery-blockui',
+		'js-cookie',
+		'wc-add-to-cart',
+		'woocommerce',
+		'wc-cart-fragments',
+		'wc-cart-fragments-js',
+		'wc-order-attribution',
+		'sourcebuster-js',
+	);
+
+	foreach ( $script_handles as $handle ) {
+		wp_dequeue_script( $handle );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'dewit_theme_trim_catalog_frontend_assets', 100 );
+
 /**
  * Preload the first catalog product images so mobile LCP can start earlier.
  */
@@ -461,7 +517,7 @@ function dewit_theme_clean_product_text( string $text ): string {
  * Return the configured default parent category for the shop UI.
  */
 function dewit_theme_get_default_parent_category_slug(): string {
-	return '';
+	return sanitize_title( DEWIT_DEFAULT_PARENT_CATEGORY_SLUG );
 }
 
 /**
