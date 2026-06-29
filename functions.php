@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.130' );
+define( 'DEWIT_THEME_VERSION', '0.3.131' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 
@@ -434,6 +434,7 @@ function dewit_theme_trim_catalog_frontend_assets(): void {
 	}
 
 	$style_handles = array(
+		'wp-block-library',
 		'wc-blocks-style',
 		'wc-blocks-vendors-style',
 		'woocommerce-general',
@@ -510,6 +511,51 @@ function dewit_theme_dequeue_catalog_assets_by_source(): void {
 }
 add_action( 'wp_print_styles', 'dewit_theme_dequeue_catalog_assets_by_source', 100 );
 add_action( 'wp_print_scripts', 'dewit_theme_dequeue_catalog_assets_by_source', 100 );
+
+function dewit_theme_should_omit_catalog_asset_src( string $src ): bool {
+	if ( '' === $src || ! dewit_theme_is_catalog_performance_context() ) {
+		return false;
+	}
+
+	$matches = array(
+		'/wp-includes/css/dist/block-library/style.min.css',
+		'/woocommerce/assets/client/blocks/wc-blocks.css',
+		'/woocommerce/assets/css/woocommerce',
+		'/wp-includes/js/jquery/jquery-migrate.min.js',
+		'/woocommerce/assets/js/jquery-blockui/',
+		'/woocommerce/assets/js/js-cookie/',
+		'/woocommerce/assets/js/frontend/woocommerce',
+		'/woocommerce/assets/js/sourcebuster/',
+		'/woocommerce/assets/js/frontend/order-attribution',
+		'/google-site-kit/dist/assets/js/googlesitekit-events-provider-woocommerce',
+	);
+
+	foreach ( $matches as $match ) {
+		if ( str_contains( $src, $match ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function dewit_theme_filter_catalog_style_tag( string $html, string $handle, string $href ): string {
+	if ( dewit_theme_should_omit_catalog_asset_src( $href ) ) {
+		return '';
+	}
+
+	return $html;
+}
+add_filter( 'style_loader_tag', 'dewit_theme_filter_catalog_style_tag', 20, 3 );
+
+function dewit_theme_filter_catalog_script_tag( string $tag, string $handle, string $src ): string {
+	if ( dewit_theme_should_omit_catalog_asset_src( $src ) ) {
+		return '';
+	}
+
+	return $tag;
+}
+add_filter( 'script_loader_tag', 'dewit_theme_filter_catalog_script_tag', 20, 3 );
 
 /**
  * Preload the first catalog product images so mobile LCP can start earlier.
