@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.144' );
+define( 'DEWIT_THEME_VERSION', '0.3.145' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -478,6 +478,36 @@ function dewit_theme_scripts(): void {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'dewit_theme_scripts' );
+
+/**
+ * Apply the saved product card view before the main theme script runs.
+ */
+function dewit_theme_print_early_product_view_mode(): void {
+	if ( '' === dewit_theme_get_current_parent_category_slug() || ( function_exists( 'is_product' ) && is_product() ) ) {
+		return;
+	}
+	?>
+	<script>
+	(function () {
+		try {
+			var key = 'dewitProductCardViewV4';
+			var storedMode = window.localStorage ? window.localStorage.getItem(key) : '';
+			var mode = storedMode === 'horizontal' || storedMode === 'grid' || storedMode === 'table'
+				? storedMode
+				: (window.matchMedia && window.matchMedia('(min-width: 767px)').matches ? 'horizontal' : 'grid');
+
+			document.documentElement.classList.toggle('dewit-horizontal-product-cards', mode === 'horizontal');
+			document.documentElement.classList.toggle('dewit-table-product-cards', mode === 'table');
+		} catch (error) {
+			if (window.matchMedia && window.matchMedia('(min-width: 767px)').matches) {
+				document.documentElement.classList.add('dewit-horizontal-product-cards');
+			}
+		}
+	}());
+	</script>
+	<?php
+}
+add_action( 'wp_head', 'dewit_theme_print_early_product_view_mode', 0 );
 
 function dewit_theme_is_catalog_performance_context(): bool {
 	if ( is_admin() || is_search() || is_preview() || is_customize_preview() ) {

@@ -72,6 +72,8 @@
 
 		document.body.classList.toggle('dewit-horizontal-product-cards', nextMode === 'horizontal');
 		document.body.classList.toggle('dewit-table-product-cards', nextMode === 'table');
+		document.documentElement.classList.toggle('dewit-horizontal-product-cards', nextMode === 'horizontal');
+		document.documentElement.classList.toggle('dewit-table-product-cards', nextMode === 'table');
 		document.querySelectorAll('.dewit-product-view-switch__button').forEach(function (button) {
 			const isActive = button.getAttribute('data-view') === nextMode;
 			button.classList.toggle('is-active', isActive);
