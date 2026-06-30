@@ -2229,16 +2229,12 @@
 		document.addEventListener('DOMContentLoaded', buildCategoryDropdowns);
 		document.addEventListener('DOMContentLoaded', function () {
 			window.setTimeout(revealCategoryFilters, 700);
-			window.setTimeout(initSidebarCategoryPreviews, 820);
 		});
 	} else {
 		buildCategoryDropdowns();
 		window.setTimeout(revealCategoryFilters, 700);
-		window.setTimeout(initSidebarCategoryPreviews, 820);
 	}
 
 	window.addEventListener('elementor/frontend/init', buildCategoryDropdowns);
 	window.addEventListener('load', revealCategoryFilters);
-	window.addEventListener('load', initSidebarCategoryPreviews);
-	window.addEventListener('dewit/categories-ready', initSidebarCategoryPreviews);
 }());
