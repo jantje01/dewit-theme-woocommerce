@@ -17,7 +17,7 @@
 (function () {
 	let searchRequestController = null;
 	let searchDebounceTimer = null;
-	const productCardViewStorageKey = 'dewitProductCardViewV3';
+	const productCardViewStorageKey = 'dewitProductCardViewV4';
 
 	function getThemeConfig() {
 		return window.dewitTheme || (typeof dewitTheme !== 'undefined' ? dewitTheme : {});
