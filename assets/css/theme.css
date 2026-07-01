@@ -2356,6 +2356,10 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 }
 
 @media (max-width: 766px) {
+	body.single-product {
+		background: #003965;
+	}
+
 	body.single-product .site-header {
 		left: 0;
 		position: fixed;
@@ -2365,8 +2369,18 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	}
 
 	body.single-product .dewit-product-page {
+		background: #003965;
 		margin-top: 60px;
 		overscroll-behavior-y: contain;
+		padding-block: 0;
+	}
+
+	body.single-product .dewit-product-page__inner {
+		background: #f5f5f7;
+		box-sizing: border-box;
+		max-width: none;
+		min-height: 100%;
+		padding-block: 18px 56px;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header,
