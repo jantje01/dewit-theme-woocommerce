@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.151' );
+define( 'DEWIT_THEME_VERSION', '0.3.152' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -743,6 +743,28 @@ function dewit_theme_clean_product_text( string $text ): string {
 	$text = preg_replace( '/&(\d{2,6});/', '&#$1;', $text ) ?? $text;
 
 	return html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, get_bloginfo( 'charset' ) ?: 'UTF-8' );
+}
+
+/**
+ * Render numeric product codes as separate visual characters to prevent mobile tel: auto-linking.
+ */
+function dewit_theme_render_non_linked_text( string $text ): string {
+	$text       = dewit_theme_clean_product_text( $text );
+	$characters = preg_split( '//u', $text, -1, PREG_SPLIT_NO_EMPTY );
+
+	if ( ! is_array( $characters ) || empty( $characters ) ) {
+		return '';
+	}
+
+	$output = sprintf( '<span class="dewit-no-link-text" aria-label="%s">', esc_attr( $text ) );
+
+	foreach ( $characters as $character ) {
+		$output .= sprintf( '<i aria-hidden="true">%s</i>', esc_html( $character ) );
+	}
+
+	$output .= '</span>';
+
+	return $output;
 }
 
 /**
@@ -1576,7 +1598,7 @@ function dewit_theme_render_grouped_category_products_html( string $slug ): stri
 									<?php endif; ?>
 								</span>
 								<span class="dewit-grouped-product-card__body">
-									<span class="dewit-grouped-product-card__sku"><?php echo esc_html( $product['sku'] ); ?></span>
+									<span class="dewit-grouped-product-card__sku"><?php echo dewit_theme_render_non_linked_text( $product['sku'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 									<span class="dewit-grouped-product-card__title"><?php echo esc_html( $product['title'] ); ?></span>
 								</span>
 							</a>
@@ -1746,7 +1768,7 @@ function dewit_theme_render_product_category_options_table( WC_Product $product 
 						<?php endif; ?>
 					</span>
 					<span class="dewit-grouped-product-card__body">
-						<span class="dewit-grouped-product-card__sku"><?php echo esc_html( $option['sku'] ); ?></span>
+						<span class="dewit-grouped-product-card__sku"><?php echo dewit_theme_render_non_linked_text( $option['sku'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 						<span class="dewit-grouped-product-card__title"><?php echo esc_html( $option['title'] ); ?></span>
 					</span>
 				</a>

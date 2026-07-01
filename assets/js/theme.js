@@ -481,6 +481,20 @@
 		return parser.value;
 	}
 
+	function setNonLinkedText(element, value) {
+		const text = normalizeDisplayText(value || '');
+		element.textContent = '';
+		element.classList.add('dewit-no-link-text');
+		element.setAttribute('aria-label', text);
+
+		Array.from(text).forEach(function (character) {
+			const characterElement = document.createElement('i');
+			characterElement.setAttribute('aria-hidden', 'true');
+			characterElement.textContent = character;
+			element.appendChild(characterElement);
+		});
+	}
+
 	function normalizeGroupedContainerAccessibility(container) {
 		if (!container) {
 			return;
@@ -676,7 +690,7 @@
 
 		body.className = 'dewit-grouped-product-card__body';
 		sku.className = 'dewit-grouped-product-card__sku';
-		sku.textContent = normalizeDisplayText(product.sku || '');
+		setNonLinkedText(sku, product.sku || '');
 		title.className = 'dewit-grouped-product-card__title';
 		title.textContent = normalizeDisplayText(product.title || '');
 

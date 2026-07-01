@@ -616,6 +616,10 @@ body.single-product.woocommerce div.product div.summary {
 	margin-left: 6px;
 }
 
+.dewit-no-link-text i {
+	font-style: inherit;
+}
+
 .dewit-product-meta {
 	color: #59616d;
 	font-size: 13px;

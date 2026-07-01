@@ -65,7 +65,7 @@ defined( 'ABSPATH' ) || exit;
 							<?php if ( $product && $product->get_sku() ) : ?>
 								<p class="dewit-product-sku">
 									<?php esc_html_e( 'Artikelnummer', 'dewit-theme-woocommerce' ); ?>
-									<span><?php echo esc_html( $product->get_sku() ); ?></span>
+									<?php echo dewit_theme_render_non_linked_text( $product->get_sku() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								</p>
 							<?php endif; ?>
 
