@@ -2356,6 +2356,15 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 }
 
 @media (max-width: 766px) {
+	html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas),
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas {
+		height: auto !important;
+		min-height: 100svh;
+		overscroll-behavior-y: contain;
+		overflow-x: hidden;
+		overflow-y: visible !important;
+	}
+
 	body.single-product {
 		background: #003965;
 	}
@@ -2439,6 +2448,16 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-mobile-filter-open {
 		overflow: hidden;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-location-archive.product,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-b680c70 {
+		height: auto !important;
+		max-height: none !important;
+		max-width: 100% !important;
+		min-height: 100svh !important;
+		overflow: visible !important;
+		width: 100% !important;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
