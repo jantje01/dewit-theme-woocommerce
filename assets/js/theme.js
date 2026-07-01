@@ -31,6 +31,39 @@
 		return parser.value;
 	}
 
+	function initPullRefreshGuard() {
+		const isMobileViewport = window.matchMedia && window.matchMedia('(max-width: 766px)').matches;
+		const scrollContainer = document.querySelector('.dewit-product-page');
+
+		if (!isMobileViewport || !scrollContainer || scrollContainer.dataset.dewitPullGuardReady === 'true') {
+			return;
+		}
+
+		let startY = 0;
+
+		scrollContainer.dataset.dewitPullGuardReady = 'true';
+		scrollContainer.addEventListener('touchstart', function (event) {
+			if (!event.touches || !event.touches.length) {
+				return;
+			}
+
+			startY = event.touches[0].clientY;
+		}, { passive: true });
+
+		scrollContainer.addEventListener('touchmove', function (event) {
+			if (!event.touches || !event.touches.length) {
+				return;
+			}
+
+			const currentY = event.touches[0].clientY;
+			const isPullingDown = currentY > startY;
+
+			if (isPullingDown && scrollContainer.scrollTop <= 0) {
+				event.preventDefault();
+			}
+		}, { passive: false });
+	}
+
 	function getProductCardViewMode() {
 		const defaultMode = window.matchMedia && window.matchMedia('(min-width: 767px)').matches ? 'horizontal' : 'grid';
 
@@ -451,15 +484,20 @@
 		document.addEventListener('DOMContentLoaded', ensureMainLandmark);
 		document.addEventListener('DOMContentLoaded', injectShopToolbar);
 		document.addEventListener('DOMContentLoaded', routeSidebarLogoToHome);
+		document.addEventListener('DOMContentLoaded', initPullRefreshGuard);
 	} else {
 		ensureMainLandmark();
 		injectShopToolbar();
 		routeSidebarLogoToHome();
+		initPullRefreshGuard();
 	}
 
 	window.addEventListener('elementor/frontend/init', injectShopToolbar);
 	window.addEventListener('elementor/frontend/init', routeSidebarLogoToHome);
+	window.addEventListener('elementor/frontend/init', initPullRefreshGuard);
 	window.addEventListener('load', routeSidebarLogoToHome);
+	window.addEventListener('load', initPullRefreshGuard);
+	window.addEventListener('resize', initPullRefreshGuard);
 	window.addEventListener('dewit/products-updated', function () {
 		updateProductViewSwitchLabel();
 		setProductCardViewMode(getProductCardViewMode());
