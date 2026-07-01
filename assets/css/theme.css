@@ -28,7 +28,7 @@ body {
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas {
 	--dewit-shop-viewport-height: 100vh;
-	touch-action: manipulation;
+	touch-action: pan-y;
 }
 
 @supports (height: 100svh) {
@@ -42,9 +42,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas button,
 body.theme-dewit-theme-woocommerce.elementor-template-canvas input,
 body.theme-dewit-theme-woocommerce.elementor-template-canvas select,
 body.theme-dewit-theme-woocommerce.elementor-template-canvas textarea,
-body.theme-dewit-theme-woocommerce.elementor-template-canvas [role="button"],
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products,
-body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid {
+body.theme-dewit-theme-woocommerce.elementor-template-canvas [role="button"] {
 	touch-action: manipulation;
 }
 
