@@ -230,8 +230,14 @@ body.single-product .site-header .menu-toggle .menu-toggle__bar::after {
 	background: #fff !important;
 }
 
-html:has(body.single-product),
+html:has(body.single-product) {
+	background: #003965;
+	height: 100%;
+	overflow: hidden;
+}
+
 body.single-product {
+	background: #f5f5f7;
 	height: 100%;
 	overflow: hidden;
 }
@@ -1244,6 +1250,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas {
 }
 
 html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas) {
+	background: #003965;
 	height: 100% !important;
 	min-height: 100%;
 	overflow-x: hidden;
