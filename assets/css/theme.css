@@ -2356,6 +2356,19 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 }
 
 @media (max-width: 766px) {
+	body.single-product .site-header {
+		left: 0;
+		position: fixed;
+		right: 0;
+		top: 0;
+		z-index: 1000;
+	}
+
+	body.single-product .dewit-product-page {
+		margin-top: 60px;
+		overscroll-behavior-y: contain;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header,
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59:not(.elementor-sticky__spacer) {
 		background: #003965;
