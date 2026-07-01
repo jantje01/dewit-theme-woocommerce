@@ -2437,6 +2437,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas {
 		height: auto !important;
 		min-height: 100svh;
+		overscroll-behavior-y: contain;
 		overflow-x: hidden;
 		overflow-y: visible !important;
 	}
