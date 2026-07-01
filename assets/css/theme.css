@@ -28,6 +28,8 @@ body {
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas {
 	--dewit-shop-viewport-height: 100vh;
+	overscroll-behavior-x: none;
+	overscroll-behavior-y: none;
 	touch-action: manipulation;
 }
 
@@ -1238,6 +1240,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas {
 	background: #f5f5f7;
 	height: var(--dewit-shop-viewport-height) !important;
 	min-height: var(--dewit-shop-viewport-height);
+	overscroll-behavior-x: none;
+	overscroll-behavior-y: none;
 	overflow-x: hidden;
 	overflow-y: hidden !important;
 	width: 100%;
@@ -1246,6 +1250,8 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas {
 html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas) {
 	height: 100% !important;
 	min-height: 100%;
+	overscroll-behavior-x: none;
+	overscroll-behavior-y: none;
 	overflow-x: hidden;
 	overflow-y: hidden !important;
 }
@@ -1257,6 +1263,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-location
 	margin: 0 !important;
 	max-width: none;
 	min-height: 0;
+	overscroll-behavior: none;
 	overflow: hidden !important;
 	padding: 0 !important;
 	width: 100%;
@@ -1838,6 +1845,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products {
 	display: none;
 	min-height: 0;
+	overscroll-behavior: contain;
 	overflow-x: hidden;
 	overflow-y: auto;
 	padding: 0 6px calc(20px + env(safe-area-inset-bottom, 0px)) 0;
