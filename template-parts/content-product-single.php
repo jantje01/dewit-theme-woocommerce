@@ -45,7 +45,7 @@ defined( 'ABSPATH' ) || exit;
 
 			$back_link = dewit_theme_get_product_back_link( $product );
 			$product_resources = dewit_theme_get_product_resources( $product );
-			$product_description = $product ? apply_filters( 'the_content', $product->get_description() ) : '';
+			$product_description = $product ? dewit_theme_remove_empty_paragraphs( apply_filters( 'the_content', $product->get_description() ) ) : '';
 			?>
 
 			<nav class="dewit-product-breadcrumb" aria-label="<?php esc_attr_e( 'Product navigatie', 'dewit-theme-woocommerce' ); ?>">

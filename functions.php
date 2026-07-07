@@ -9,13 +9,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.162' );
+define( 'DEWIT_THEME_VERSION', '0.3.163' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
 
 function dewit_theme_get_shop_meta_description(): string {
 	return 'Bekijk het assortiment bouwmachines, bekisting, steigers, verbruiksmaterialen en ondersteuningsmateriaal van De Wit Bouwmachines. Wij hebben altijd de oplossing in huis.';
+}
+
+function dewit_theme_remove_empty_paragraphs( string $html ): string {
+	return preg_replace(
+		'/<p>(?:\s|&nbsp;|&#160;|\xC2\xA0|<br\s*\/?>)*<\/p>/iu',
+		'',
+		$html
+	) ?? $html;
 }
 
 function dewit_theme_get_social_locale(): string {
