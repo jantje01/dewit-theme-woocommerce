@@ -574,12 +574,14 @@ body.single-product.woocommerce div.product div.summary {
 
 .dewit-product-gallery .flex-control-thumbs img {
 	aspect-ratio: 1 / 1;
+	box-sizing: border-box;
 	cursor: pointer;
 	display: block;
 	height: 100% !important;
 	object-fit: contain;
 	object-position: center;
 	opacity: 0.64;
+	padding: 6px;
 	transition: border-color 0.18s ease, opacity 0.18s ease;
 	width: 100% !important;
 }
