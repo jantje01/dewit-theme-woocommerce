@@ -1430,6 +1430,12 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 	display: none !important;
 }
 
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-grouped .elementor-widget-loop-grid .e-load-more-anchor,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-grouped .elementor-widget-loop-grid .e-load-more-spinner,
+body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-grouped .elementor-widget-loop-grid .e-load-more-message {
+	display: none !important;
+}
+
 @supports selector(:has(*)) {
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-5c7860e:not(:has(.dewit-shop-toolbar))::before {
 		content: "";
