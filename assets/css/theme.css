@@ -566,9 +566,31 @@ body.single-product.woocommerce div.product div.summary {
 }
 
 .dewit-product-gallery .flex-control-thumbs li {
+	background: #fff;
 	border: 1px solid #e5e5e5;
 	border-radius: 10px;
 	overflow: hidden;
+}
+
+.dewit-product-gallery .flex-control-thumbs img {
+	aspect-ratio: 1 / 1;
+	cursor: pointer;
+	display: block;
+	height: 100% !important;
+	object-fit: contain;
+	object-position: center;
+	opacity: 0.64;
+	transition: border-color 0.18s ease, opacity 0.18s ease;
+	width: 100% !important;
+}
+
+.dewit-product-gallery .flex-control-thumbs img.flex-active,
+.dewit-product-gallery .flex-control-thumbs img:hover {
+	opacity: 1;
+}
+
+.dewit-product-gallery .flex-control-thumbs li:has(img.flex-active) {
+	border-color: #003965;
 }
 
 .dewit-product-summary {
