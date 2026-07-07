@@ -2431,15 +2431,6 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59:not(.elementor-sticky__spacer) {
 		background: #003965;
 		border-bottom: 0;
-		max-height: 60px !important;
-		overflow: visible !important;
-		position: sticky !important;
-		top: 0 !important;
-		transform: none !important;
-	}
-
-	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59.elementor-sticky__spacer {
-		display: none !important;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header__inner {
@@ -2542,18 +2533,6 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header {
 		background: #003965;
 		border-bottom: 0;
-	}
-
-	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59:not(.elementor-sticky__spacer) {
-		max-height: 60px !important;
-		overflow: visible !important;
-		position: sticky !important;
-		top: 0 !important;
-		transform: none !important;
-	}
-
-	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-c385f59.elementor-sticky__spacer {
-		display: none !important;
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header__inner {
