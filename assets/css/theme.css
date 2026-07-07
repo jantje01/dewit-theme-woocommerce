@@ -2384,6 +2384,13 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 }
 
 @media (max-width: 766px) {
+	html {
+		height: auto !important;
+		min-height: 100svh;
+		overflow-x: hidden;
+		overflow-y: auto !important;
+	}
+
 	html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas),
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas {
 		height: auto !important;
@@ -2507,6 +2514,13 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 }
 
 @media (max-width: 560px) {
+	html {
+		height: auto !important;
+		min-height: 100svh;
+		overflow-x: hidden;
+		overflow-y: auto !important;
+	}
+
 	html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas),
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas {
 		height: auto !important;
