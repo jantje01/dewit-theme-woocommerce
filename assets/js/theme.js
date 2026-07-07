@@ -64,29 +64,6 @@
 		}, { passive: false });
 	}
 
-	function initFixedHeaderWheelScroll() {
-		const isNarrowViewport = window.matchMedia && window.matchMedia('(max-width: 560px)').matches;
-		const header = document.querySelector('.elementor-element-c385f59:not(.elementor-sticky__spacer), .site-header');
-
-		if (!isNarrowViewport || !header || header.dataset.dewitWheelScrollReady === 'true') {
-			return;
-		}
-
-		header.dataset.dewitWheelScrollReady = 'true';
-		header.addEventListener('wheel', function (event) {
-			if (document.body.classList.contains('dewit-mobile-filter-open') || (!event.deltaY && !event.deltaX)) {
-				return;
-			}
-
-			window.scrollBy({
-				left: event.deltaX,
-				top: event.deltaY,
-				behavior: 'auto'
-			});
-			event.preventDefault();
-		}, { passive: false });
-	}
-
 	function getProductCardViewMode() {
 		const defaultMode = window.matchMedia && window.matchMedia('(min-width: 767px)').matches ? 'horizontal' : 'grid';
 
@@ -508,24 +485,19 @@
 		document.addEventListener('DOMContentLoaded', injectShopToolbar);
 		document.addEventListener('DOMContentLoaded', routeSidebarLogoToHome);
 		document.addEventListener('DOMContentLoaded', initPullRefreshGuard);
-		document.addEventListener('DOMContentLoaded', initFixedHeaderWheelScroll);
 	} else {
 		ensureMainLandmark();
 		injectShopToolbar();
 		routeSidebarLogoToHome();
 		initPullRefreshGuard();
-		initFixedHeaderWheelScroll();
 	}
 
 	window.addEventListener('elementor/frontend/init', injectShopToolbar);
 	window.addEventListener('elementor/frontend/init', routeSidebarLogoToHome);
 	window.addEventListener('elementor/frontend/init', initPullRefreshGuard);
-	window.addEventListener('elementor/frontend/init', initFixedHeaderWheelScroll);
 	window.addEventListener('load', routeSidebarLogoToHome);
 	window.addEventListener('load', initPullRefreshGuard);
-	window.addEventListener('load', initFixedHeaderWheelScroll);
 	window.addEventListener('resize', initPullRefreshGuard);
-	window.addEventListener('resize', initFixedHeaderWheelScroll);
 	window.addEventListener('dewit/products-updated', function () {
 		updateProductViewSwitchLabel();
 		setProductCardViewMode(getProductCardViewMode());
