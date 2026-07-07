@@ -477,7 +477,7 @@ body.single-product.woocommerce div.product div.summary {
 	height: calc(100svh - 60px);
 	overflow-x: hidden;
 	overflow-y: auto;
-	padding-block: 18px 56px;
+	padding: 18px 0 calc(18px + env(safe-area-inset-bottom, 0px));
 	-webkit-overflow-scrolling: touch;
 }
 
@@ -1151,7 +1151,7 @@ body.single-product.woocommerce div.product div.summary {
 	}
 
 	.dewit-product-page {
-		padding-block: 14px 48px;
+		padding: 14px 0 calc(18px + env(safe-area-inset-bottom, 0px));
 	}
 
 	.dewit-product-page .container {
