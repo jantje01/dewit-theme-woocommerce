@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.171' );
+define( 'DEWIT_THEME_VERSION', '0.3.172' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -29,13 +29,22 @@ function dewit_theme_remove_empty_paragraphs( string $html ): string {
 function dewit_theme_print_critical_font_style(): void {
 	?>
 	<style id="dewit-critical-font-css">
+		:root {
+			--dewit-system-font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+		}
+
 		html,
 		body,
 		button,
 		input,
 		select,
 		textarea {
-			font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+			font-family: var(--dewit-system-font);
+		}
+
+		body.theme-dewit-theme-woocommerce,
+		body.theme-dewit-theme-woocommerce :where(.elementor, .elementor-widget, .elementor-heading-title, .elementor-button, .elementor-item, .woocommerce, .woocommerce-loop-product__title, .product_title, [class^="dewit-"], [class*=" dewit-"]) {
+			font-family: var(--dewit-system-font) !important;
 		}
 	</style>
 	<?php
@@ -572,7 +581,7 @@ function dewit_theme_is_catalog_performance_context(): bool {
 }
 
 function dewit_theme_disable_elementor_google_fonts( bool $print_google_fonts ): bool {
-	if ( dewit_theme_is_catalog_performance_context() || ( function_exists( 'is_product' ) && is_product() ) ) {
+	if ( ! is_admin() ) {
 		return false;
 	}
 
