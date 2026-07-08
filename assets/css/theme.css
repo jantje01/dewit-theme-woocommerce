@@ -1397,6 +1397,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-5c7860e {
 		height: calc(var(--dewit-shop-viewport-height) - 24px) !important;
+		padding-right: 0 !important;
 	}
 }
 
