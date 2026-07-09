@@ -33,35 +33,41 @@
 
 	function initPullRefreshGuard() {
 		const isMobileViewport = window.matchMedia && window.matchMedia('(max-width: 766px)').matches;
-		const scrollContainer = document.querySelector('.dewit-product-page');
+		const scrollContainers = document.querySelectorAll('.dewit-product-page, .dewit-grouped-products');
 
-		if (!isMobileViewport || !scrollContainer || scrollContainer.dataset.dewitPullGuardReady === 'true') {
+		if (!isMobileViewport || !scrollContainers.length) {
 			return;
 		}
 
-		let startY = 0;
-
-		scrollContainer.dataset.dewitPullGuardReady = 'true';
-		scrollContainer.addEventListener('touchstart', function (event) {
-			if (!event.touches || !event.touches.length) {
+		scrollContainers.forEach(function (scrollContainer) {
+			if (scrollContainer.dataset.dewitPullGuardReady === 'true') {
 				return;
 			}
 
-			startY = event.touches[0].clientY;
-		}, { passive: true });
+			let startY = 0;
 
-		scrollContainer.addEventListener('touchmove', function (event) {
-			if (!event.touches || !event.touches.length) {
-				return;
-			}
+			scrollContainer.dataset.dewitPullGuardReady = 'true';
+			scrollContainer.addEventListener('touchstart', function (event) {
+				if (!event.touches || !event.touches.length) {
+					return;
+				}
 
-			const currentY = event.touches[0].clientY;
-			const isPullingDown = currentY > startY;
+				startY = event.touches[0].clientY;
+			}, { passive: true });
 
-			if (isPullingDown && scrollContainer.scrollTop <= 0) {
-				event.preventDefault();
-			}
-		}, { passive: false });
+			scrollContainer.addEventListener('touchmove', function (event) {
+				if (!event.touches || !event.touches.length) {
+					return;
+				}
+
+				const currentY = event.touches[0].clientY;
+				const isPullingDown = currentY > startY;
+
+				if (isPullingDown && scrollContainer.scrollTop <= 0) {
+					event.preventDefault();
+				}
+			}, { passive: false });
+		});
 	}
 
 	function initFixedHeaderWheelScroll() {
@@ -535,6 +541,7 @@
 	window.addEventListener('dewit/products-updated', function () {
 		updateProductViewSwitchLabel();
 		setProductCardViewMode(getProductCardViewMode());
+		initPullRefreshGuard();
 	});
 }());
 
