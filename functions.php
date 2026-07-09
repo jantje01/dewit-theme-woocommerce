@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.173' );
+define( 'DEWIT_THEME_VERSION', '0.3.174' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -49,8 +49,6 @@ function dewit_theme_print_critical_font_style(): void {
 	</style>
 	<?php
 }
-add_action( 'wp_head', 'dewit_theme_print_critical_font_style', 0 );
-
 function dewit_theme_get_social_locale(): string {
 	return 'nl_NL';
 }
