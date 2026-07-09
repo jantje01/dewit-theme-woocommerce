@@ -106,6 +106,8 @@
 	function replayGroupedProductCardAnimation() {
 		const cards = document.querySelectorAll('.dewit-grouped-product-card');
 
+		document.body.classList.add('dewit-animate-grouped-products');
+
 		cards.forEach(function (card, index) {
 			card.style.animation = 'none';
 			card.style.setProperty('--dewit-card-index', String(Math.min(index, 24)));
@@ -118,6 +120,10 @@
 		cards.forEach(function (card) {
 			card.style.animation = '';
 		});
+
+		window.setTimeout(function () {
+			document.body.classList.remove('dewit-animate-grouped-products');
+		}, 720);
 	}
 
 	function setProductCardViewMode(mode, replayCards) {
@@ -772,6 +778,7 @@
 		const view = getGroupedProductsView();
 		const container = getProductLoopContainer();
 		const fragment = document.createDocumentFragment();
+		const shouldAnimate = view && view.classList.contains('is-visible') && !view.classList.contains('is-loading');
 
 		if (!view) {
 			return;
@@ -827,6 +834,10 @@
 
 		view.replaceChildren(fragment);
 		window.dispatchEvent(new CustomEvent('dewit/products-updated'));
+
+		if (shouldAnimate) {
+			window.requestAnimationFrame(replayGroupedProductCardAnimation);
+		}
 	}
 
 	function renderServerGroupedProducts() {
