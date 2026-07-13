@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.178' );
+define( 'DEWIT_THEME_VERSION', '0.3.179' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -468,10 +468,9 @@ function dewit_theme_scripts(): void {
 		if ( $parent_term instanceof WP_Term ) {
 			wp_add_inline_script(
 				'dewit-theme-woocommerce-script',
-				'window.dewitGroupedCategory = ' . wp_json_encode( array(
+				'window.dewitGroupedCategory = window.dewitGroupedCategory || ' . wp_json_encode( array(
 					'label' => $parent_term->name,
 					'slug'  => $parent_slug,
-					'html'  => dewit_theme_render_grouped_category_products_html( $parent_slug ),
 				) ) . ';',
 				'before'
 			);
@@ -966,9 +965,9 @@ function dewit_theme_body_classes( array $classes ): array {
 add_filter( 'body_class', 'dewit_theme_body_classes' );
 
 /**
- * Put grouped products into Elementor's loop as early as possible to avoid a refresh flash.
+ * Put grouped products into Elementor's loop before the footer scripts run.
  */
-function dewit_theme_print_grouped_products_fallback(): void {
+function dewit_theme_print_grouped_products_bootstrap(): void {
 	$parent_slug = dewit_theme_get_current_parent_category_slug();
 
 	if ( '' === $parent_slug || ( function_exists( 'is_product' ) && is_product() ) ) {
@@ -980,40 +979,80 @@ function dewit_theme_print_grouped_products_fallback(): void {
 	if ( '' === $html ) {
 		return;
 	}
-	?>
-	<script>
-	(function () {
-		const groupedHtml = <?php echo wp_json_encode( $html ); ?>;
 
-		function renderGroupedFallback() {
+	$parent_term = get_term_by( 'slug', $parent_slug, 'product_cat' );
+	$label       = $parent_term instanceof WP_Term ? $parent_term->name : $parent_slug;
+	?>
+	<script id="dewit-grouped-products-bootstrap">
+	(function () {
+		const grouped = <?php echo wp_json_encode( array(
+			'label' => $label,
+			'slug'  => $parent_slug,
+			'html'  => $html,
+		) ); ?>;
+
+		window.dewitGroupedCategory = grouped;
+		document.documentElement.classList.add('dewit-shop-grouped');
+
+		function markGroupedBody() {
+			if (document.body) {
+				document.body.classList.add('dewit-shop-grouped');
+			}
+		}
+
+		function renderGroupedProducts() {
 			const widget = document.querySelector('.elementor-widget-loop-grid');
 			const container = widget ? widget.querySelector('.elementor-loop-container') : null;
 
-			document.body.classList.add('dewit-shop-grouped');
+			markGroupedBody();
 
 			if (!container || container.querySelector('.dewit-grouped-products')) {
-				return;
+				return Boolean(container);
 			}
 
 			widget.classList.add('dewit-grouped-widget');
-			container.innerHTML = groupedHtml;
+			container.innerHTML = grouped.html;
 			container.classList.add('dewit-grouped-mode');
 			container.classList.remove('elementor-grid');
 			container.removeAttribute('role');
 			container.removeAttribute('aria-live');
 			container.removeAttribute('aria-label');
+
+			return true;
 		}
 
-		renderGroupedFallback();
+		if (renderGroupedProducts()) {
+			return;
+		}
+
+		const observer = new MutationObserver(function () {
+			if (renderGroupedProducts()) {
+				observer.disconnect();
+			}
+		});
+
+		observer.observe(document.documentElement, {
+			childList: true,
+			subtree: true
+		});
 
 		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', renderGroupedFallback, { once: true });
+			document.addEventListener('DOMContentLoaded', function () {
+				renderGroupedProducts();
+			}, { once: true });
+		} else {
+			window.setTimeout(renderGroupedProducts, 0);
 		}
+
+		window.addEventListener('load', function () {
+			renderGroupedProducts();
+			observer.disconnect();
+		}, { once: true });
 	}());
 	</script>
 	<?php
 }
-add_action( 'wp_footer', 'dewit_theme_print_grouped_products_fallback', 1 );
+add_action( 'wp_head', 'dewit_theme_print_grouped_products_bootstrap', 1 );
 
 /**
  * Print a small independent sidebar renderer so Elementor's default "Alle" item
