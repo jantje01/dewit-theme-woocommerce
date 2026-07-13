@@ -2500,6 +2500,23 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 		width: 100% !important;
 	}
 
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-element-5c7860e {
+		height: auto !important;
+		max-height: none !important;
+		min-height: 0 !important;
+		overflow: visible !important;
+		position: relative !important;
+	}
+
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid > .elementor-widget-container,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid .elementor-loop-container.dewit-grouped-mode,
+	body.theme-dewit-theme-woocommerce.elementor-template-canvas .dewit-grouped-products {
+		height: auto !important;
+		max-height: none !important;
+		overflow: visible !important;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar {
 		display: none !important;
 	}
