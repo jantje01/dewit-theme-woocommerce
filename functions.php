@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.184' );
+define( 'DEWIT_THEME_VERSION', '0.3.185' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -711,9 +711,29 @@ function dewit_theme_filter_catalog_script_tag( string $tag, string $handle, str
 		return '';
 	}
 
+	if ( 'dewit-theme-woocommerce-script' === $handle && ! str_contains( $tag, 'data-no-defer' ) ) {
+		$tag = str_replace( '<script ', '<script data-no-defer="1" ', $tag );
+	}
+
 	return $tag;
 }
 add_filter( 'script_loader_tag', 'dewit_theme_filter_catalog_script_tag', 20, 3 );
+
+/**
+ * Keep the catalog renderer out of LiteSpeed's interaction-based JS delay.
+ * The product grid is critical page content, not a secondary enhancement.
+ *
+ * @param array<int, string> $excludes Existing LiteSpeed exclusions.
+ * @return array<int, string>
+ */
+function dewit_theme_litespeed_critical_js_excludes( array $excludes ): array {
+	$excludes[] = '/assets/js/theme.js';
+	$excludes[] = 'dewit-grouped-products-bootstrap';
+
+	return array_values( array_unique( $excludes ) );
+}
+add_filter( 'litespeed_optm_js_defer_exc', 'dewit_theme_litespeed_critical_js_excludes' );
+add_filter( 'litespeed_optm_gm_js_exc', 'dewit_theme_litespeed_critical_js_excludes' );
 
 function dewit_theme_preload_logo_asset(): void {
 	if ( is_admin() ) {
@@ -985,7 +1005,7 @@ function dewit_theme_print_grouped_products_bootstrap(): void {
 	$parent_term = get_term_by( 'slug', $parent_slug, 'product_cat' );
 	$label       = $parent_term instanceof WP_Term ? $parent_term->name : $parent_slug;
 	?>
-	<script id="dewit-grouped-products-bootstrap">
+	<script id="dewit-grouped-products-bootstrap" data-no-defer="1">
 	(function () {
 		const grouped = <?php echo wp_json_encode( array(
 			'label' => $label,
