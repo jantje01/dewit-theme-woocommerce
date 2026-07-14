@@ -748,7 +748,7 @@
 		const body = document.createElement('span');
 		const sku = document.createElement('span');
 		const title = document.createElement('span');
-		const isPriorityImage = index < 4;
+		const isPriorityImage = index < 2;
 		const isLcpCandidate = index < 2;
 
 		card.className = 'dewit-grouped-product-card';
