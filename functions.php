@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.182' );
+define( 'DEWIT_THEME_VERSION', '0.3.183' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -751,8 +751,10 @@ function dewit_theme_preload_shop_lcp_images(): void {
 			}
 
 			printf(
-				'<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n",
-				esc_url( $product['image'] )
+				'<link rel="preload" as="image" href="%1$s"%2$s imagesizes="%3$s" fetchpriority="high">' . "\n",
+				esc_url( $product['image'] ),
+				! empty( $product['image_srcset'] ) ? ' imagesrcset="' . esc_attr( $product['image_srcset'] ) . '"' : '',
+				esc_attr( $product['image_sizes'] ?? '(max-width: 766px) calc((100vw - 40px) / 2), 220px' )
 			);
 
 			$preloaded_count++;
@@ -1601,8 +1603,8 @@ function dewit_theme_get_grouped_category_products( string $slug ): array {
 			}
 
 			$image_id     = get_post_thumbnail_id( $post_id );
-			$image_data   = $image_id ? wp_get_attachment_image_src( $image_id, 'woocommerce_single' ) : false;
-			$image_srcset = $image_id ? wp_get_attachment_image_srcset( $image_id, 'woocommerce_single' ) : false;
+			$image_data   = $image_id ? wp_get_attachment_image_src( $image_id, 'medium_large' ) : false;
+			$image_srcset = $image_id ? wp_get_attachment_image_srcset( $image_id, 'medium_large' ) : false;
 
 			$items[] = array(
 				'id'           => absint( $post_id ),
@@ -1655,7 +1657,7 @@ function dewit_theme_render_grouped_category_products_html( string $slug ): stri
 					<div class="dewit-grouped-products__grid<?php echo 1 === count( $group['products'] ) ? ' is-single' : ''; ?>">
 						<?php foreach ( $group['products'] as $product ) : ?>
 							<?php
-							$is_priority_image = $product_index < 4;
+							$is_priority_image = $product_index < 2;
 							$is_lcp_candidate  = $product_index < 2;
 							$product_index++;
 							?>
