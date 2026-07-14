@@ -765,6 +765,10 @@
 			image.fetchPriority = isLcpCandidate ? 'high' : 'low';
 			image.width = product.image_width || 300;
 			image.height = product.image_height || 300;
+			if (product.image_srcset) {
+				image.srcset = product.image_srcset;
+			}
+			image.sizes = product.image_sizes || '(max-width: 766px) calc((100vw - 40px) / 2), 220px';
 			image.src = product.image;
 			imageWrap.appendChild(image);
 		}
