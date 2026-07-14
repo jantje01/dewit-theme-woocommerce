@@ -33,14 +33,16 @@
 
 	function initPullRefreshGuard() {
 		const isMobileViewport = window.matchMedia && window.matchMedia('(max-width: 766px)').matches;
-		const scrollContainers = document.querySelectorAll('.dewit-product-page, .dewit-grouped-products');
+		const productPage = document.querySelector('.dewit-product-page');
+		const rootScroller = document.scrollingElement || document.documentElement;
+		const scrollContainers = productPage ? [productPage] : [rootScroller];
 
 		if (!isMobileViewport || !scrollContainers.length) {
 			return;
 		}
 
 		scrollContainers.forEach(function (scrollContainer) {
-			if (scrollContainer.dataset.dewitPullGuardReady === 'true') {
+			if (!scrollContainer || scrollContainer.dataset.dewitPullGuardReady === 'true') {
 				return;
 			}
 
@@ -71,7 +73,7 @@
 	}
 
 	function initFixedHeaderWheelScroll() {
-		const isNarrowViewport = window.matchMedia && window.matchMedia('(max-width: 560px)').matches;
+		const isNarrowViewport = window.matchMedia && window.matchMedia('(max-width: 766px)').matches;
 		const header = document.querySelector('.elementor-element-c385f59:not(.elementor-sticky__spacer), .site-header');
 
 		if (!isNarrowViewport || !header || header.dataset.dewitWheelScrollReady === 'true') {
