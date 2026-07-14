@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.186' );
+define( 'DEWIT_THEME_VERSION', '0.3.187' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -1629,9 +1629,13 @@ function dewit_theme_get_grouped_category_products( string $slug ): array {
 				continue;
 			}
 
-			$image_id     = get_post_thumbnail_id( $post_id );
-			$image_data   = $image_id ? wp_get_attachment_image_src( $image_id, 'dewit_catalog_card' ) : false;
-			$image_srcset = $image_id ? wp_get_attachment_image_srcset( $image_id, 'dewit_catalog_card' ) : false;
+			$image_id       = get_post_thumbnail_id( $post_id );
+			$image_metadata = $image_id ? wp_get_attachment_metadata( $image_id ) : false;
+			$image_size     = is_array( $image_metadata ) && ! empty( $image_metadata['sizes']['dewit_catalog_card'] )
+				? 'dewit_catalog_card'
+				: 'medium_large';
+			$image_data     = $image_id ? wp_get_attachment_image_src( $image_id, $image_size ) : false;
+			$image_srcset   = $image_id ? wp_get_attachment_image_srcset( $image_id, $image_size ) : false;
 
 			$items[] = array(
 				'id'           => absint( $post_id ),
