@@ -2394,15 +2394,26 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 		min-height: 100svh;
 		overflow-x: hidden;
 		overflow-y: auto !important;
+		overscroll-behavior-y: contain;
 	}
 
-	html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas),
+	html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas) {
+		height: auto !important;
+		min-height: 100svh;
+		overflow-x: hidden;
+		overflow-y: auto !important;
+		overscroll-behavior-y: contain;
+	}
+
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas {
 		height: auto !important;
 		min-height: 100svh;
-		overscroll-behavior-y: contain;
 		overflow-x: hidden;
-		overflow-y: auto !important;
+		overflow-y: visible !important;
+	}
+
+	html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-mobile-filter-open) {
+		overflow: hidden !important;
 	}
 
 	body.single-product {
@@ -2536,21 +2547,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 }
 
 @media (max-width: 560px) {
-	html {
-		height: auto !important;
-		min-height: 100svh;
-		overflow-x: hidden;
-		overflow-y: auto !important;
-	}
 
-	html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas),
-	body.theme-dewit-theme-woocommerce.elementor-template-canvas {
-		height: auto !important;
-		min-height: 100svh;
-		overscroll-behavior-y: contain;
-		overflow-x: hidden;
-		overflow-y: auto !important;
-	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas .site-header {
 		background: #003965;
