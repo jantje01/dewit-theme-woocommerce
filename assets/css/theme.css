@@ -2398,6 +2398,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	}
 
 	html:has(body.theme-dewit-theme-woocommerce.elementor-template-canvas) {
+		background-color: #003965 !important;
 		height: auto !important;
 		min-height: 100svh;
 		overflow-x: hidden;
@@ -2406,6 +2407,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .e-load-more-spinne
 	}
 
 	body.theme-dewit-theme-woocommerce.elementor-template-canvas {
+		background-color: #003965 !important;
 		height: auto !important;
 		min-height: 100svh;
 		overflow-x: hidden;
