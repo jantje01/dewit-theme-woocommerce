@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DEWIT_THEME_VERSION', '0.3.180' );
+define( 'DEWIT_THEME_VERSION', '0.3.181' );
 define( 'DEWIT_DEFAULT_PARENT_CATEGORY_SLUG', 'steigermateriaal' );
 define( 'DEWIT_SHOP_SOCIAL_IMAGE_URL', 'https://shop.dewitbouwmachines.nl/wp-content/uploads/2026/06/download.jpg' );
 define( 'DEWIT_THEME_LOGO_FILE', '/assets/images/dewit-logo.svg' );
@@ -1600,8 +1600,9 @@ function dewit_theme_get_grouped_category_products( string $slug ): array {
 				continue;
 			}
 
-			$image_id   = get_post_thumbnail_id( $post_id );
-			$image_data = $image_id ? wp_get_attachment_image_src( $image_id, 'woocommerce_thumbnail' ) : false;
+			$image_id     = get_post_thumbnail_id( $post_id );
+			$image_data   = $image_id ? wp_get_attachment_image_src( $image_id, 'woocommerce_single' ) : false;
+			$image_srcset = $image_id ? wp_get_attachment_image_srcset( $image_id, 'woocommerce_single' ) : false;
 
 			$items[] = array(
 				'id'           => absint( $post_id ),
@@ -1611,6 +1612,8 @@ function dewit_theme_get_grouped_category_products( string $slug ): array {
 				'image'        => $image_data ? $image_data[0] : false,
 				'image_width'  => $image_data ? absint( $image_data[1] ) : 300,
 				'image_height' => $image_data ? absint( $image_data[2] ) : 300,
+				'image_srcset' => $image_srcset ?: '',
+				'image_sizes'  => '(max-width: 766px) calc((100vw - 40px) / 2), 220px',
 			);
 		}
 
@@ -1664,6 +1667,8 @@ function dewit_theme_render_grouped_category_products_html( string $slug ): stri
 											alt=""
 											width="<?php echo esc_attr( $product['image_width'] ); ?>"
 											height="<?php echo esc_attr( $product['image_height'] ); ?>"
+											<?php if ( $product['image_srcset'] ) : ?>srcset="<?php echo esc_attr( $product['image_srcset'] ); ?>"<?php endif; ?>
+											sizes="<?php echo esc_attr( $product['image_sizes'] ); ?>"
 											loading="<?php echo esc_attr( $is_priority_image ? 'eager' : 'lazy' ); ?>"
 											decoding="async"
 											fetchpriority="<?php echo esc_attr( $is_lcp_candidate ? 'high' : 'low' ); ?>"
