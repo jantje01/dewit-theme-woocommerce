@@ -39,11 +39,10 @@ function dewit_theme_print_critical_font_style(): void {
 		input,
 		select,
 		textarea {
-			font-family: var(--dewit-system-font);
+			font-family: var(--dewit-system-font) !important;
 		}
 
-		body.theme-dewit-theme-woocommerce,
-		body.theme-dewit-theme-woocommerce :where(.elementor, .elementor-widget, .elementor-heading-title, .elementor-button, .elementor-item, .woocommerce, .woocommerce-loop-product__title, .product_title, [class^="dewit-"], [class*=" dewit-"]) {
+		html body :where(.elementor, .elementor-widget, .elementor-heading-title, .elementor-button, .elementor-item, .woocommerce, .woocommerce-loop-product__title, .product_title, [class^="dewit-"], [class*=" dewit-"]) {
 			font-family: var(--dewit-system-font) !important;
 		}
 	</style>
@@ -988,6 +987,33 @@ function dewit_theme_body_classes( array $classes ): array {
 add_filter( 'body_class', 'dewit_theme_body_classes' );
 
 /**
+ * Render the existing Elementor catalog container as the document main landmark.
+ *
+ * The live catalog is an Elementor Canvas page rather than a WooCommerce archive,
+ * so the normal WooCommerce content wrappers are not called on this route.
+ *
+ * @param \Elementor\Element_Base $element Elementor container instance.
+ */
+function dewit_theme_render_elementor_catalog_main( $element ): void {
+	$is_catalog_route = is_front_page() || isset( $_GET['dewit_parent_cat'] );
+
+	if (
+		! $is_catalog_route
+		|| ( function_exists( 'is_product' ) && is_product() )
+		|| '5c7860e' !== $element->get_id()
+	) {
+		return;
+	}
+
+	$element->set_settings( 'html_tag', 'main' );
+	$element->add_render_attribute( '_wrapper', array(
+		'id'    => 'primary',
+		'class' => 'site-main',
+	) );
+}
+add_action( 'elementor/frontend/container/before_render', 'dewit_theme_render_elementor_catalog_main', 5 );
+
+/**
  * Put grouped products into Elementor's loop before the footer scripts run.
  */
 function dewit_theme_print_grouped_products_bootstrap(): void {
@@ -1024,16 +1050,10 @@ function dewit_theme_print_grouped_products_bootstrap(): void {
 		}
 
 		function renderGroupedProducts() {
-			const main = document.querySelector('.elementor-location-archive.product, .elementor-location-archive, .elementor-element-5c7860e');
 			const widget = document.querySelector('.elementor-widget-loop-grid');
 			const container = widget ? widget.querySelector('.elementor-loop-container') : null;
 
 			markGroupedBody();
-
-			if (main) {
-				main.id = main.id || 'primary';
-				main.setAttribute('role', 'main');
-			}
 
 			if (!container || container.querySelector('.dewit-grouped-products')) {
 				return Boolean(container);
