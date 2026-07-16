@@ -216,19 +216,6 @@
 		});
 	}
 
-	function ensureMainLandmark() {
-		if (document.querySelector('main, [role="main"]')) {
-			return;
-		}
-
-		const mainCandidate = document.querySelector('.elementor-location-archive.product, .elementor-location-archive, .elementor-element-5c7860e, .site-content');
-
-		if (mainCandidate) {
-			mainCandidate.setAttribute('role', 'main');
-			mainCandidate.setAttribute('id', mainCandidate.id || 'primary');
-		}
-	}
-
 	function normalizeGroupedContainerAccessibility(container) {
 		if (!container) {
 			return;
@@ -518,13 +505,11 @@
 	}
 
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', ensureMainLandmark);
 		document.addEventListener('DOMContentLoaded', injectShopToolbar);
 		document.addEventListener('DOMContentLoaded', routeSidebarLogoToHome);
 		document.addEventListener('DOMContentLoaded', initPullRefreshGuard);
 		document.addEventListener('DOMContentLoaded', initFixedHeaderWheelScroll);
 	} else {
-		ensureMainLandmark();
 		injectShopToolbar();
 		routeSidebarLogoToHome();
 		initPullRefreshGuard();
