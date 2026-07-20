@@ -1069,7 +1069,6 @@
 					name: label,
 					parentSlug: parentSlug,
 				});
-
 			} catch (error) {
 				window.location.href = trigger.href;
 			}
@@ -1859,7 +1858,6 @@
 						try {
 							loadGroupedCategoryProducts(group);
 							closeMobileCategoryDrawer();
-
 						} catch (error) {
 							window.location.href = trigger.href;
 						}
