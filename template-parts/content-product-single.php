@@ -77,10 +77,6 @@ defined( 'ABSPATH' ) || exit;
 								</div>
 							<?php endif; ?>
 
-							<div class="dewit-product-notice" role="note">
-								<?php esc_html_e( 'Website in ontwikkeling: sommige productinformatie is nog niet beschikbaar.', 'dewit-theme-woocommerce' ); ?>
-							</div>
-
 							<?php if ( '' !== trim( wp_strip_all_tags( $product_description ) ) ) : ?>
 								<div class="dewit-product-description">
 									<?php echo $product_description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -101,6 +97,10 @@ defined( 'ABSPATH' ) || exit;
 									</div>
 								</div>
 							<?php endif; ?>
+
+							<div class="dewit-product-notice" role="note">
+								<?php esc_html_e( 'Website in ontwikkeling: sommige productinformatie is nog niet beschikbaar.', 'dewit-theme-woocommerce' ); ?>
+							</div>
 						</div>
 
 					</div>
