@@ -256,7 +256,6 @@ function dewit_theme_print_shop_meta_description(): void {
 		esc_attr( dewit_theme_get_shop_meta_description() )
 	);
 }
-add_action( 'wp_head', 'dewit_theme_print_shop_meta_description', 2 );
 
 function dewit_theme_print_shop_social_meta(): void {
 	if ( ! dewit_theme_is_shop_seo_context() ) {
@@ -282,7 +281,6 @@ function dewit_theme_print_shop_social_meta(): void {
 	printf( '<meta name="twitter:description" content="%s">' . "\n", esc_attr( $description ) );
 	printf( '<meta name="twitter:image" content="%s">' . "\n", esc_url( $image_url ) );
 }
-add_action( 'wp_head', 'dewit_theme_print_shop_social_meta', 3 );
 
 function dewit_theme_filter_shop_document_title( array $parts ): array {
 	if ( ! dewit_theme_is_shop_seo_context() ) {
@@ -294,7 +292,6 @@ function dewit_theme_filter_shop_document_title( array $parts ): array {
 
 	return $parts;
 }
-add_filter( 'document_title_parts', 'dewit_theme_filter_shop_document_title', 20 );
 
 function dewit_theme_filter_shop_document_title_text( string $title ): string {
 	if ( ! dewit_theme_is_shop_seo_context() ) {
@@ -303,7 +300,6 @@ function dewit_theme_filter_shop_document_title_text( string $title ): string {
 
 	return 'De Wit Bouwmachines Assortiment';
 }
-add_filter( 'pre_get_document_title', 'dewit_theme_filter_shop_document_title_text', 20 );
 
 function dewit_theme_should_render_shop_sidebar(): bool {
 	$is_shop             = function_exists( 'is_shop' ) && is_shop();

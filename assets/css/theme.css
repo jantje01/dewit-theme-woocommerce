@@ -669,6 +669,17 @@ body.single-product.woocommerce div.product div.summary {
 	width: 100%;
 }
 
+.dewit-product-notice {
+	margin: 0.75rem 0 1rem;
+	padding: 0.5rem 0.75rem;
+	border-left: 4px solid #f5a900;
+	border-radius: 4px;
+	background: #fff4d6;
+	color: #704d00;
+	font-size: 0.8125rem;
+	line-height: 1.4;
+}
+
 .dewit-product-description :where(p, ul, ol, table) {
 	margin: 0 0 10px;
 }
