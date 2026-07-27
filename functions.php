@@ -42,9 +42,6 @@ function dewit_theme_print_critical_font_style(): void {
 			font-family: var(--dewit-system-font) !important;
 		}
 
-		html body :where(.elementor, .elementor-widget, .elementor-heading-title, .elementor-button, .elementor-item, .woocommerce, .woocommerce-loop-product__title, .product_title, [class^="dewit-"], [class*=" dewit-"]) {
-			font-family: var(--dewit-system-font) !important;
-		}
 	</style>
 	<?php
 }
