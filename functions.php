@@ -42,6 +42,11 @@ function dewit_theme_print_critical_font_style(): void {
 			font-family: var(--dewit-system-font) !important;
 		}
 
+		html body #catalog-sidebar,
+		html body #catalog-sidebar * {
+			font-family: var(--dewit-system-font) !important;
+		}
+
 	</style>
 	<?php
 }
