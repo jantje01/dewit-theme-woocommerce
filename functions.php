@@ -184,6 +184,26 @@ function dewit_theme_redirect_product_tag_archives(): void {
 }
 add_action( 'template_redirect', 'dewit_theme_redirect_product_tag_archives', 1 );
 
+/**
+ * Route the bare shop homepage to the default catalog category.
+ *
+ * The catalog UI needs a parent-category context. Without it, WooCommerce
+ * can render the underlying Shop page instead of the catalog interface.
+ */
+function dewit_theme_redirect_bare_shop_home(): void {
+	if ( is_admin() || wp_doing_ajax() || is_feed() || dewit_theme_has_category_context_query() ) {
+		return;
+	}
+
+	if ( isset( $_GET['elementor_library'] ) || ! is_front_page() || ( function_exists( 'is_product' ) && is_product() ) ) {
+		return;
+	}
+
+	wp_safe_redirect( dewit_theme_get_default_shop_url(), 302 );
+	exit;
+}
+add_action( 'template_redirect', 'dewit_theme_redirect_bare_shop_home', 2 );
+
 function dewit_theme_noindex_product_tag_archives( array $robots ): array {
 	if ( ! dewit_theme_is_product_tag_archive() ) {
 		return $robots;
