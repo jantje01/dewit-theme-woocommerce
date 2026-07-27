@@ -1963,6 +1963,7 @@
 		if (!inlineGroups.length && !cachedGroups.length) {
 			fetchCategoryTree().then(function (groups) {
 				if (!groups.length) {
+					revealCategoryFilters();
 					return;
 				}
 
@@ -2284,12 +2285,8 @@
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', buildCategoryDropdowns);
-		document.addEventListener('DOMContentLoaded', function () {
-			window.setTimeout(revealCategoryFilters, 700);
-		});
 	} else {
 		buildCategoryDropdowns();
-		window.setTimeout(revealCategoryFilters, 700);
 	}
 
 	window.addEventListener('elementor/frontend/init', buildCategoryDropdowns);

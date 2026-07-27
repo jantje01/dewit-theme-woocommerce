@@ -2920,7 +2920,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-t
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter .e-filter:not(.dewit-category-dropdowns-ready) {
 	min-height: 48px;
-	visibility: visible;
+	visibility: hidden;
 }
 
 body.theme-dewit-theme-woocommerce.elementor-template-canvas #catalog-sidebar .elementor-widget-taxonomy-filter .e-filter.dewit-category-dropdowns-ready {
