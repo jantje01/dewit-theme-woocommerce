@@ -1879,7 +1879,7 @@ body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-l
 	overflow: hidden;
 }
 
-body.theme-dewit-theme-woocommerce.elementor-template-canvas.dewit-shop-grouped .elementor-widget-loop-grid .elementor-loop-container > .e-loop-item.product {
+body.theme-dewit-theme-woocommerce.elementor-template-canvas .elementor-widget-loop-grid.dewit-grouped-widget .elementor-loop-container > .e-loop-item.product {
 	display: none !important;
 }
 
